@@ -8,9 +8,9 @@ const spec = {
   openapi: "3.0.0",
   info: {
     title: "HTML to PDF API",
-    version: "5.0.0",
+    version: "5.2.1",
     description:
-      "Universal HTML/URL to PDF & Screenshot API with template engine, watermark, merge, batch, and admin panel.",
+      "Universal HTML/URL to PDF & Screenshot API with template engine, watermark, API Key management, and advanced admin panel.",
     contact: {
       name: "volumeee",
       url: "https://github.com/volumeee/html-to-pdf-api",
@@ -18,6 +18,22 @@ const spec = {
     license: { name: "MIT" },
   },
   servers: [{ url: "/", description: "Current Server" }],
+  components: {
+    securitySchemes: {
+      ApiKeyAuth: {
+        type: "apiKey",
+        in: "header",
+        name: "x-api-key",
+        description: "Your API key for authentication and tracking.",
+      },
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
+  security: [{ ApiKeyAuth: [] }],
   tags: [
     { name: "PDF", description: "Generate PDF documents" },
     { name: "Screenshot", description: "Capture screenshots" },

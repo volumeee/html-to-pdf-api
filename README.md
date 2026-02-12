@@ -1,25 +1,21 @@
-# HTML to PDF API v5.0.0 🚀
+# HTML to PDF API v5.2.1 🚀
 
 Universal HTML/URL to PDF & Screenshot API dengan Template Engine, Watermark, Merge, Batch, Security, dan Admin Panel.
 
-## 🌟 Fitur Unggulan v5.0.0
+## 🌟 Fitur Baru & Unggulan v5.2.x
 
-- **Admin Dashboard**: Panel monitoring penggunaan API, statistik, dan manajemen file berbasis web.
+- **Advanced Admin Dashboard**:
+  - **Manajemen API Key**: Buat, edit, dan hapus API Key dengan limit kustom.
+  - **Global Settings**: Atur mode Maintenance, batasi akses Guest, dan ubah konfigurasi server via UI tanpa restart.
+  - **Enhanced Monitoring**: Grafik penggunaan per Endpoint dan Top Users (API Key) secara real-time.
 - **Security & Reliability**:
-  - **Rate Limiting**: Pembatasan request untuk mencegah abuse.
-  - **JWT Authentication**: Akses dashboard admin yang aman.
-  - **Request Validation**: Validasi input menggunakan schema yang ketat.
+  - **API Key Authentication**: Gunakan header `x-api-key` untuk tracking dan kuota per client.
+  - **Private Mode**: Opsi untuk mewajibkan API Key bagi semua request (mematikan akses publik/guest).
+  - **Rate Limiting & Quota**: Batasi jumlah request per menit dan total kuota bulanan per user.
 - **Advanced Rendering**:
   - **Watermarking**: Tambahkan teks watermark pada PDF/Gambar.
   - **CSS Injection**: Suntikkan gaya custom ke URL sebelum render.
   - **Password PDF**: Lindungi PDF dengan enkripsi password (AES-256).
-- **Format Conversion**:
-  - **PDF to Image**: Konversi file PDF yang sudah ada menjadi gambar.
-  - **Data to CSV**: Export data batch menjadi file CSV.
-- **New Templates**:
-  - **Surat Resmi**: Template surat dengan kop, nomor, dan tanda tangan.
-  - **Sertifikat**: Desain landscape elegan dengan border dekoratif.
-  - **Label Pengiriman**: Label paket dengan info kurir dan resi.
 - **Interactive Documentation**: Swagger UI interaktif di `/docs`.
 
 ## 🛠️ Tech Stack
@@ -27,8 +23,7 @@ Universal HTML/URL to PDF & Screenshot API dengan Template Engine, Watermark, Me
 - **Runtime**: Node.js
 - **Engine**: Puppeteer (Chromium)
 - **Framework**: Express.js
-- **PDF Utils**: pdf-lib & qpdf
-- **Auth**: JSON Web Token (JWT)
+- **Security**: JWT & API Keys
 - **Docs**: Swagger/OpenAPI 3.0
 
 ## 🚀 Persiapan Cepat (Docker)
@@ -48,30 +43,34 @@ docker run -d \
   bagose/html-to-pdf-api:latest
 ```
 
-## 📖 Dokumentasi API
+## � Keamanan (Auth)
 
-Buka `http://localhost:3000/docs` untuk melihat dokumentasi interaktif dan mencoba endpoint secara langsung.
+### 1. Admin Panel (JWT)
 
-### Endpoints Utama:
+Akses dashboard di `/admin-panel` menggunakan username/password dari ENV.
+
+### 2. API Usage (API Key)
+
+Tambahkan header `x-api-key` pada setiap request API:
+
+```bash
+curl -X POST http://localhost:3000/generate \
+  -H "x-api-key: hp_your_secret_key" \
+  -H "Content-Type: application/json" \
+  -d '{ "template": "invoice", "data": { ... } }'
+```
+
+## 📖 Endpoints Utama
+
+Buka `http://localhost:3000/docs` untuk dokumentasi lengkap.
 
 - `POST /generate`: Render PDF menggunakan template.
 - `POST /cetak_struk_pdf`: Render PDF dari HTML mentah.
 - `POST /url-to-pdf`: Render URL menjadi PDF.
 - `POST /html-to-image`: Capture HTML menjadi gambar (PNG/JPG/WebP).
 - `POST /pdf-to-image`: Convert PDF menjadi gambar.
-- `POST /to-csv`: Convert data array menjadi CSV.
 - `POST /merge`: Gabungkan beberapa PDF menjadi satu.
-- `POST /batch`: Generate banyak dokumen (multi-page) dari array data.
-- `POST /webhook`: Generate PDF secara asinkron dan kirim hasil ke webhook.
-
-## 🔐 Admin Panel
-
-Akses dashboard di `http://localhost:3000/admin-panel`.
-
-- Monitor jumlah request harian.
-- Lihat log setiap request (IP, Endpoint, Waktu).
-- Kelola file di folder output (Lihat & Hapus).
-- Cek kesehatan sistem (Memori, Uptime).
+- `POST /batch`: Generate dokumen masif dari array data.
 
 ## 📄 Variabel Lingkungan (ENV)
 
