@@ -1,4 +1,4 @@
-# HTML to PDF API v5.2.1 🚀
+# HTML to PDF API v5.2.3 🚀
 
 Universal HTML/URL to PDF & Screenshot API dengan Template Engine, Watermark, Merge, Batch, Security, dan Admin Panel.
 
@@ -7,11 +7,12 @@ Universal HTML/URL to PDF & Screenshot API dengan Template Engine, Watermark, Me
 - **Advanced Admin Dashboard**:
   - **Manajemen API Key**: Buat, edit, dan hapus API Key dengan limit kustom.
   - **Global Settings**: Atur mode Maintenance, batasi akses Guest, dan ubah konfigurasi server via UI tanpa restart.
+  - **Admin Auth Control**: Ganti `username` dan `password` admin secara langsung dari Dashboard.
   - **Enhanced Monitoring**: Grafik penggunaan per Endpoint dan Top Users (API Key) secara real-time.
 - **Security & Reliability**:
   - **API Key Authentication**: Gunakan header `x-api-key` untuk tracking dan kuota per client.
   - **Private Mode**: Opsi untuk mewajibkan API Key bagi semua request (mematikan akses publik/guest).
-  - **Rate Limiting & Quota**: Batasi jumlah request per menit dan total kuota bulanan per user.
+  - **Rate Limiting & Quota**: Batasi jumlah request per menit dan total kuota harian per user.
 - **Advanced Rendering**:
   - **Watermarking**: Tambahkan teks watermark pada PDF/Gambar.
   - **CSS Injection**: Suntikkan gaya custom ke URL sebelum render.
@@ -36,6 +37,7 @@ docker pull bagose/html-to-pdf-api:latest
 docker run -d \
   --name pdf-api \
   -p 3000:3000 \
+  -v $(pwd)/data:/app/data \
   -e ADMIN_USERNAME=admin \
   -e ADMIN_PASSWORD=yourpassword \
   -e JWT_SECRET=random_secret_string \
@@ -43,11 +45,13 @@ docker run -d \
   bagose/html-to-pdf-api:latest
 ```
 
-## � Keamanan (Auth)
+_Catatan: Gunakan volume `-v $(pwd)/data:/app/data` agar pengaturan API Key dan Admin tersimpan permanen saat container diupdate._
+
+## 🔐 Keamanan (Auth)
 
 ### 1. Admin Panel (JWT)
 
-Akses dashboard di `/admin-panel` menggunakan username/password dari ENV.
+Akses dashboard di `/admin-panel` menggunakan username/password dari ENV (saat pertama kali) atau yang sudah diubah di Dashboard.
 
 ### 2. API Usage (API Key)
 
@@ -74,13 +78,12 @@ Buka `http://localhost:3000/docs` untuk dokumentasi lengkap.
 
 ## 📄 Variabel Lingkungan (ENV)
 
-| Variable             | Deskripsi                | Default    |
-| -------------------- | ------------------------ | ---------- |
-| `PORT`               | Port aplikasi            | `3000`     |
-| `ADMIN_USERNAME`     | Username admin panel     | `admin`    |
-| `ADMIN_PASSWORD`     | Password admin panel     | `admin123` |
-| `JWT_SECRET`         | Secret key untuk token   | `...`      |
-| `AUTO_CLEANUP_HOURS` | Hapus file setelah N jam | `24`       |
+| Variable         | Deskripsi              | Default    |
+| ---------------- | ---------------------- | ---------- |
+| `PORT`           | Port aplikasi          | `3000`     |
+| `ADMIN_USERNAME` | Username admin panel   | `admin`    |
+| `ADMIN_PASSWORD` | Password admin panel   | `admin123` |
+| `JWT_SECRET`     | Secret key untuk token | `...`      |
 
 ---
 

@@ -736,7 +736,7 @@
             <td style="font-family:monospace;font-size:12px;">${k.key_masked}</td>
             <td>${k.quota_used} / ${k.quota_limit === -1 ? '∞' : k.quota_limit}</td>
             <td>${k.rate_limit}</td>
-            <td><span class="badge ${k.status === 'active' ? 'badge-green' : 'badge-yellow'}">${k.status}</span></td>
+            <td><span class="badge ${k.state === 'active' ? 'badge-green' : 'badge-yellow'}">${k.state}</span></td>
             <td>
               <button class="btn" onclick='showEditKeyModal(${JSON.stringify(k)})' style="padding:4px 10px;font-size:11px;">✏️</button>
               <button class="btn btn-danger" onclick="deleteKey('${k.key_id}')" style="padding:4px 10px;font-size:11px;">🗑️</button>
@@ -763,7 +763,7 @@
       document.getElementById("keyName").value = k.name;
       document.getElementById("keyQuota").value = k.quota_limit;
       document.getElementById("keyRate").value = k.rate_limit;
-      document.getElementById("keyStatus").value = k.status;
+      document.getElementById("keyStatus").value = k.state;
       document.getElementById("newKeyValue").textContent = k.key_id;
       document.getElementById("keyMsg").textContent = "🔑 API Key ID:";
       document.getElementById("generatedKeyDisplay").style.display = "block";
@@ -781,7 +781,7 @@
         name: document.getElementById("keyName").value,
         quota_limit: parseInt(document.getElementById("keyQuota").value),
         rate_limit: parseInt(document.getElementById("keyRate").value),
-        status: document.getElementById("keyStatus").value
+        state: document.getElementById("keyStatus").value
       };
 
       if (!body.name) return alert("Please enter a key name");

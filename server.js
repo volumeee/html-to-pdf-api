@@ -39,12 +39,12 @@ app.listen(PORT, () => {
   const settings = getSettings();
   console.log(`
 ┌──────────────────────────────────────────────────┐
-│        🚀 HTML to PDF API v5.2.1                │
+│        🚀 HTML to PDF API v5.2.3                │
 ├──────────────────────────────────────────────────┤
 │  Port:        ${String(PORT).padEnd(34)}│
 │  Templates:   ${templates.join(", ").padEnd(34)}│
 │  Cleanup:     every ${String(settings.auto_cleanup_hours + "h").padEnd(28)}│
-│  Security:    API Keys & JWT active              │
+│  Security:    API Keys, JWT, & UI Auth Control   │
 │                                                  │
 │  📄 PDF:       /cetak_struk_pdf, /generate,      │
 │                /url-to-pdf                        │

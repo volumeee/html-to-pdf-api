@@ -23,6 +23,16 @@ function loadKeys() {
   try {
     if (fs.existsSync(KEYS_FILE)) {
       apiKeys = JSON.parse(fs.readFileSync(KEYS_FILE, "utf-8"));
+      // Migration: rename status to state if it exists
+      let migrated = false;
+      Object.keys(apiKeys).forEach((k) => {
+        if (apiKeys[k].status !== undefined) {
+          apiKeys[k].state = apiKeys[k].status;
+          delete apiKeys[k].status;
+          migrated = true;
+        }
+      });
+      if (migrated) saveKeys();
     }
   } catch (err) {
     console.error("[ApiKey] Could not load keys:", err.message);
@@ -51,7 +61,7 @@ function createKey(name, options = {}) {
     quota_limit: options.quota_limit || -1, // -1 = unlimited
     quota_used: 0,
     rate_limit: options.rate_limit || 60, // req per minute
-    status: "active",
+    state: options.state || "active",
     last_used: null,
     settings: options.settings || {},
   };
@@ -76,7 +86,7 @@ function getAllKeys() {
 function validateKey(key) {
   const keyData = apiKeys[key];
   if (!keyData) return { valid: false, error: "Invalid API Key" };
-  if (keyData.status !== "active")
+  if (keyData.state !== "active")
     return { valid: false, error: "API Key is inactive" };
 
   // Quota check

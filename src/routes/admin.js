@@ -148,10 +148,11 @@ router.get("/admin/keys", requireAdmin, (req, res) => {
 });
 
 router.post("/admin/keys", requireAdmin, (req, res) => {
-  const { name, quota_limit, rate_limit, settings } = req.body;
+  const { name, quota_limit, rate_limit, state, settings } = req.body;
   const newKey = apiKeyService.createKey(name, {
     quota_limit: parseInt(quota_limit),
     rate_limit: parseInt(rate_limit),
+    state: state || "active",
     settings,
   });
   return success(res, { message: "API Key created", ...newKey });
