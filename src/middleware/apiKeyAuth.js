@@ -9,6 +9,15 @@ const { validateKey, useKey } = require("../services/apiKey");
  * Middleware to handle API Key authentication and tracking
  */
 function apiKeyAuth(req, res, next) {
+  // Skip API Key check for admin routes (already protected by JWT)
+  if (
+    req.path.startsWith("/admin/") ||
+    req.path === "/admin-panel" ||
+    req.path === "/docs"
+  ) {
+    return next();
+  }
+
   const { getSettings } = require("../services/settings");
   const settings = getSettings();
 
@@ -24,12 +33,10 @@ function apiKeyAuth(req, res, next) {
   // 2. Guest Logic
   if (!key) {
     if (!settings.allow_guest_access) {
-      return res
-        .status(403)
-        .json({
-          status: "error",
-          error: "Private API: Valid x-api-key is required",
-        });
+      return res.status(403).json({
+        status: "error",
+        error: "Private API: Valid x-api-key is required",
+      });
     }
     req.userType = "guest";
     return next();
