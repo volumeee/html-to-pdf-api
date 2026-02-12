@@ -130,4 +130,45 @@ router.delete("/admin/files/:filename", requireAdmin, (req, res) => {
   });
 });
 
+// ─── API Key Management ─────────────────────────────────────
+const apiKeyService = require("../services/apiKey");
+const settingsService = require("../services/settings");
+
+router.get("/admin/settings", requireAdmin, (req, res) => {
+  return success(res, { settings: settingsService.getSettings() });
+});
+
+router.patch("/admin/settings", requireAdmin, (req, res) => {
+  const updated = settingsService.updateSettings(req.body);
+  return success(res, { message: "Settings updated", settings: updated });
+});
+
+router.get("/admin/keys", requireAdmin, (req, res) => {
+  return success(res, { keys: apiKeyService.getAllKeys() });
+});
+
+router.post("/admin/keys", requireAdmin, (req, res) => {
+  const { name, quota_limit, rate_limit, settings } = req.body;
+  const newKey = apiKeyService.createKey(name, {
+    quota_limit: parseInt(quota_limit),
+    rate_limit: parseInt(rate_limit),
+    settings,
+  });
+  return success(res, { message: "API Key created", ...newKey });
+});
+
+router.patch("/admin/keys/:id", requireAdmin, (req, res) => {
+  const keyId = req.params.id;
+  const updated = apiKeyService.updateKey(keyId, req.body);
+  if (!updated) return error(res, "Key not found", null, 404);
+  return success(res, { message: "API Key updated" });
+});
+
+router.delete("/admin/keys/:id", requireAdmin, (req, res) => {
+  const keyId = req.params.id;
+  const deleted = apiKeyService.deleteKey(keyId);
+  if (!deleted) return error(res, "Key not found", null, 404);
+  return success(res, { message: "API Key deleted" });
+});
+
 module.exports = router;

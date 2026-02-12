@@ -12,9 +12,12 @@ const { listTemplates } = require("../templates");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("../config");
 const { isQpdfAvailable } = require("../services/pdfUtils");
 const { recordRequest } = require("../services/stats");
+const { apiKeyAuth } = require("../middleware/apiKeyAuth");
 
 function registerRoutes(app) {
-  // ─── Request Logging Middleware ─────────────────────────────
+  // ─── API Key & Request Logging Middleware ──────────────────
+  app.use(apiKeyAuth);
+
   app.use((req, res, next) => {
     // Skip static files and admin panel
     if (

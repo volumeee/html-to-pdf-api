@@ -22,6 +22,7 @@ let stats = {
   total_images: 0,
   endpoints: {},
   daily: {},
+  top_keys: {},
   started_at: new Date().toISOString(),
 };
 
@@ -62,6 +63,9 @@ function recordRequest(req, extra = {}) {
   stats.endpoints[endpoint] = (stats.endpoints[endpoint] || 0) + 1;
   stats.daily[today] = (stats.daily[today] || 0) + 1;
 
+  const keyLabel = req.keyData?.name || `Guest (${req.ip})`;
+  stats.top_keys[keyLabel] = (stats.top_keys[keyLabel] || 0) + 1;
+
   if (extra.type === "pdf") stats.total_pdfs++;
   if (extra.type === "image") stats.total_images++;
 
@@ -73,9 +77,7 @@ function recordRequest(req, extra = {}) {
     endpoint,
     ip: req.ip || req.connection?.remoteAddress || "unknown",
     user_agent: (req.headers["user-agent"] || "").substring(0, 100),
-    api_key: req.headers["x-api-key"]
-      ? "***" + req.headers["x-api-key"].slice(-4)
-      : null,
+    api_key: req.apiKey ? "***" + req.apiKey.slice(-4) : null,
     ...extra,
   });
 

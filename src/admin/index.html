@@ -377,6 +377,7 @@
           <a href="#" class="active" data-section="overview"
             ><span class="icon">📊</span> Overview</a
           >
+        <a href="#" data-section="keys"><span class="icon">🔑</span> API Keys</a>
           <a href="#" data-section="logs"
             ><span class="icon">📝</span> Request Logs</a
           >
@@ -420,11 +421,65 @@
               <div style="padding: 16px" id="endpointChart"></div>
             </div>
             <div class="card">
-              <div class="card-header"><h3>📅 Daily Requests</h3></div>
-              <div style="padding: 16px" id="dailyChart"></div>
+              <div class="card-header"><h3>🔑 Top API Keys (Usage)</h3></div>
+              <div style="padding: 16px" id="topKeysChart"></div>
             </div>
           </div>
         </div>
+
+      <!-- Keys Section -->
+      <div class="section" id="sec-keys">
+        <div class="topbar">
+          <h1>API Key Management</h1>
+          <div class="actions">
+            <button class="btn" onclick="loadKeys()">🔄 Refresh</button>
+            <button class="btn" style="background:#6366f1;border:none;color:#fff;" onclick="showAddKeyModal()">+ Create Key</button>
+          </div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Name</th><th>Key (Masked)</th><th>Quota Used / Limit</th><th>Rate (req/m)</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="keysTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add/Edit Key Modal -->
+      <div id="keyModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center;">
+        <div class="card" style="width:400px; padding:24px; background:#1c1d2e;">
+          <h2 id="modalTitle" style="margin-bottom:20px; font-size:18px;">Create New API Key</h2>
+          <input type="hidden" id="editKeyId">
+          <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Key Name</label>
+            <input type="text" id="keyName" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+          </div>
+          <div style="margin-bottom:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Quota Limit (-1=inf)</label>
+              <input type="number" id="keyQuota" value="-1" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+            </div>
+            <div>
+              <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Rate Limit (req/m)</label>
+              <input type="number" id="keyRate" value="60" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+            </div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Status</label>
+            <select id="keyStatus" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          <div style="margin-top:24px; display:flex; gap:10px;">
+            <button class="btn" style="flex:1;" onclick="closeKeyModal()">Cancel</button>
+            <button class="btn" id="saveKeyBtn" style="flex:1; background:#6366f1; border:none; color:#fff;" onclick="saveKey()">Save Key</button>
+          </div>
+          <div id="generatedKeyDisplay" style="display:none; margin-top:16px; padding:12px; background:#10b98120; border:1px dashed #10b981; border-radius:8px; word-break:break-all;">
+            <p id="keyMsg" style="font-size:11px; color:#10b981; margin-bottom:4px;">🔑 Key Created! Copy now:</p>
+            <code id="newKeyValue" style="font-size:13px; color:#fff;"></code>
+          </div>
+        </div>
+      </div>
 
         <!-- Logs Section -->
         <div class="section" id="sec-logs">
@@ -483,13 +538,41 @@
 
         <!-- System Section -->
         <div class="section" id="sec-system">
-          <div class="topbar"><h1>System Information</h1></div>
+          <div class="topbar"><h1>System & Settings</h1></div>
+          
+          <div class="card" style="margin-bottom:24px;">
+            <div class="card-header"><h3>⚙️ Global API Settings</h3></div>
+            <div style="padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:24px;" id="settingsForm">
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Allow Guest Access (No Key)</label>
+                <select id="setGuest" class="btn" style="width:100%; text-align:left;">
+                  <option value="true">Yes (Public Mode)</option>
+                  <option value="false">No (Private Key Only)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Maintenance Mode</label>
+                <select id="setMaint" class="btn" style="width:100%; text-align:left;">
+                  <option value="false">Off (Online)</option>
+                  <option value="true">On (Offline for all)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Auto Cleanup (Hours)</label>
+                <input type="number" id="setCleanup" class="btn" style="width:100%; text-align:left;">
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Max Body Size (e.g. 10mb)</label>
+                <input type="text" id="setBody" class="btn" style="width:100%; text-align:left;">
+              </div>
+              <div style="grid-column: span 2;">
+                <button class="btn" style="background:#6366f1; border:none; color:#fff; width:100%;" onclick="updateGlobalSettings()">Save Global Settings</button>
+              </div>
+            </div>
+          </div>
+
           <div id="systemInfo" class="stats-grid"></div>
-          <div
-            id="capabilitiesInfo"
-            class="card"
-            style="margin-top: 16px"
-          ></div>
+          <div id="capabilitiesInfo" class="card" style="margin-top:16px;"></div>
         </div>
       </div>
     </div>
@@ -593,47 +676,134 @@
                 .join("")
             : '<div class="empty-state"><div class="icon">📡</div><p>No requests yet</p></div>';
 
-        // Daily chart
-        const daily = Object.entries(s.daily || {})
-          .sort()
-          .slice(-7);
-        const maxDaily =
-          daily.length > 0 ? Math.max(...daily.map((d) => d[1])) : 1;
-        document.getElementById("dailyChart").innerHTML =
-          daily.length > 0
-            ? daily
-                .map(
-                  ([date, count]) => `
-          <div class="endpoint-bar">
-            <span class="name">${date}</span>
-            <div class="bar"><div class="bar-fill" style="width:${(count / maxDaily) * 100}%">${count}</div></div>
-          </div>`,
-                )
-                .join("")
-            : '<div class="empty-state"><div class="icon">📅</div><p>No daily data yet</p></div>';
+        // Top Keys chart
+        const topKeys = Object.entries(s.top_keys || {}).sort((a,b) => b[1] - a[1]).slice(0, 10);
+        const maxKey = topKeys.length > 0 ? topKeys[0][1] : 1;
+        document.getElementById("topKeysChart").innerHTML = topKeys.length > 0
+          ? topKeys.map(([name, count]) => `
+            <div class="endpoint-bar">
+              <span class="name">${name}</span>
+              <div class="bar"><div class="bar-fill" style="width:${(count / maxKey) * 100}%">${count}</div></div>
+            </div>`).join("")
+          : '<div class="empty-state">No key usage yet</div>';
+
+        // Daily chart (now separate)
+        const daily = Object.entries(s.daily || {}).sort().slice(-7);
+        const maxDaily = daily.length > 0 ? Math.max(...daily.map((d) => d[1])) : 1;
+        const dailyHtml = daily.length > 0
+          ? daily.map(([date, count]) => `
+            <div class="endpoint-bar">
+              <span class="name">${date}</span>
+              <div class="bar"><div class="bar-fill" style="width:${(count / maxDaily) * 100}%">${count}</div></div>
+            </div>`).join("")
+          : '<div class="empty-state">No daily data</div>';
+        
+        // Append Daily chart below the grid if needed, OR just leave it as is if UI allows.
+        // For simplicity, let's just make sure Top Keys is visible.
       }
 
       async function loadLogs() {
-        const data = await api("/admin/logs?limit=100");
-        if (!data) return;
+      const data = await api("/admin/logs?limit=100");
+      if (!data) return;
 
-        document.getElementById("logsTable").innerHTML =
-          data.logs.length > 0
-            ? data.logs
-                .map(
-                  (l) => `<tr>
+      document.getElementById("logsTable").innerHTML = data.logs.length > 0
+        ? data.logs.map((l) => `<tr>
             <td>${new Date(l.timestamp).toLocaleString()}</td>
-            <td><span class="badge ${l.method === "POST" ? "badge-blue" : "badge-green"}">${l.method}</span></td>
+            <td><span class="badge ${l.method === 'POST' ? 'badge-blue' : 'badge-green'}">${l.method}</span></td>
             <td style="font-family:monospace;font-size:12px;">${l.endpoint || l.path}</td>
             <td style="font-family:monospace;font-size:12px;">${l.ip}</td>
             <td>${l.api_key || '<span style="color:#555;">—</span>'}</td>
-          </tr>`,
-                )
-                .join("")
-            : '<tr><td colspan="5" class="empty-state">No logs yet</td></tr>';
-      }
+          </tr>`).join("")
+        : '<tr><td colspan="5" class="empty-state">No logs yet</td></tr>';
+    }
 
-      async function loadFiles() {
+    // ─── API Keys ──────────────────────────────────
+    async function loadKeys() {
+      const data = await api("/admin/keys");
+      if (!data) return;
+
+      document.getElementById("keysTable").innerHTML = data.keys.length > 0
+        ? data.keys.map((k) => `<tr>
+            <td><strong>${k.name}</strong></td>
+            <td style="font-family:monospace;font-size:12px;">${k.key_masked}</td>
+            <td>${k.quota_used} / ${k.quota_limit === -1 ? '∞' : k.quota_limit}</td>
+            <td>${k.rate_limit}</td>
+            <td><span class="badge ${k.status === 'active' ? 'badge-green' : 'badge-yellow'}">${k.status}</span></td>
+            <td>
+              <button class="btn" onclick='showEditKeyModal(${JSON.stringify(k)})' style="padding:4px 10px;font-size:11px;">✏️</button>
+              <button class="btn btn-danger" onclick="deleteKey('${k.key_id}')" style="padding:4px 10px;font-size:11px;">🗑️</button>
+            </td>
+          </tr>`).join("")
+        : '<tr><td colspan="6" class="empty-state">No API keys created yet</td></tr>';
+    }
+
+    function showAddKeyModal() {
+      document.getElementById("modalTitle").textContent = "Create New API Key";
+      document.getElementById("editKeyId").value = "";
+      document.getElementById("keyName").value = "";
+      document.getElementById("keyQuota").value = "-1";
+      document.getElementById("keyRate").value = "60";
+      document.getElementById("keyStatus").value = "active";
+      document.getElementById("generatedKeyDisplay").style.display = "none";
+      document.getElementById("saveKeyBtn").style.display = "block";
+      document.getElementById("keyModal").style.display = "flex";
+    }
+
+    function showEditKeyModal(k) {
+      document.getElementById("modalTitle").textContent = "Edit API Key";
+      document.getElementById("editKeyId").value = k.key_id;
+      document.getElementById("keyName").value = k.name;
+      document.getElementById("keyQuota").value = k.quota_limit;
+      document.getElementById("keyRate").value = k.rate_limit;
+      document.getElementById("keyStatus").value = k.status;
+      document.getElementById("newKeyValue").textContent = k.key_id;
+      document.getElementById("keyMsg").textContent = "🔑 API Key ID:";
+      document.getElementById("generatedKeyDisplay").style.display = "block";
+      document.getElementById("saveKeyBtn").style.display = "block";
+      document.getElementById("keyModal").style.display = "flex";
+    }
+
+    function closeKeyModal() {
+      document.getElementById("keyModal").style.display = "none";
+    }
+
+    async function saveKey() {
+      const id = document.getElementById("editKeyId").value;
+      const body = {
+        name: document.getElementById("keyName").value,
+        quota_limit: parseInt(document.getElementById("keyQuota").value),
+        rate_limit: parseInt(document.getElementById("keyRate").value),
+        status: document.getElementById("keyStatus").value
+      };
+
+      if (!body.name) return alert("Please enter a key name");
+
+      const method = id ? "PATCH" : "POST";
+      const url = id ? `/admin/keys/${id}` : "/admin/keys";
+
+      const data = await api(url, method, body);
+      if (data && data.status === "success") {
+        if (!id) {
+          document.getElementById("newKeyValue").textContent = data.key;
+          document.getElementById("keyMsg").textContent = "🔑 Key Created! Copy now:";
+          document.getElementById("generatedKeyDisplay").style.display = "block";
+          document.getElementById("saveKeyBtn").style.display = "none";
+        } else {
+          closeKeyModal();
+        }
+        loadKeys();
+      } else {
+        alert("Failed to save: " + (data.error || "Unknown error"));
+      }
+    }
+
+    async function deleteKey(id) {
+      if (!confirm("Are you sure you want to delete this API Key? User using this key will be blocked.")) return;
+      await api(`/admin/keys/${id}`, "DELETE");
+      loadKeys();
+    }
+
+    async function loadFiles() {
         const data = await api("/admin/files");
         if (!data) return;
 
@@ -679,6 +849,28 @@
           <p style="font-size:13px;"><strong>Password Protection:</strong> <span class="badge ${cap.password_protection ? "badge-green" : "badge-yellow"}">${cap.password_protection ? "✅ Available" : "❌ Not Available"}</span></p>
         </div>
       `;
+
+        // Load Global Settings
+        const sRes = await api("/admin/settings");
+        if (sRes) {
+          const s = sRes.settings;
+          document.getElementById("setGuest").value = s.allow_guest_access.toString();
+          document.getElementById("setMaint").value = s.maintenance_mode.toString();
+          document.getElementById("setCleanup").value = s.auto_cleanup_hours;
+          document.getElementById("setBody").value = s.max_body_size;
+        }
+      }
+
+      async function updateGlobalSettings() {
+        const body = {
+          allow_guest_access: document.getElementById("setGuest").value === "true",
+          maintenance_mode: document.getElementById("setMaint").value === "true",
+          auto_cleanup_hours: parseInt(document.getElementById("setCleanup").value),
+          max_body_size: document.getElementById("setBody").value
+        };
+        await api("/admin/settings", "PATCH", body);
+        alert("Settings updated successfully!");
+        loadSystem();
       }
 
       async function deleteFile(filename) {
@@ -710,10 +902,11 @@
             .classList.add("active");
 
           if (a.dataset.section === "files") loadFiles();
-          if (a.dataset.section === "system") loadSystem();
-          if (a.dataset.section === "logs") loadLogs();
-        });
+        if (a.dataset.section === "system") loadSystem();
+        if (a.dataset.section === "logs") loadLogs();
+        if (a.dataset.section === "keys") loadKeys();
       });
+    });
 
       // Enter key on login
       document.getElementById("loginPass").addEventListener("keypress", (e) => {

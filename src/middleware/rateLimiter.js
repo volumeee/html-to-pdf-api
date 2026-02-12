@@ -3,29 +3,45 @@
  */
 const rateLimit = require("express-rate-limit");
 
+/**
+ * Key Generator: Use API Key if present, otherwise fallback to IP
+ */
+const keyGenerator = (req) => {
+  return req.headers["x-api-key"] || req.ip;
+};
+
 // General API rate limiter
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60, // 60 requests per minute
+  max: (req) => {
+    // If API Key has custom rate limit, use it, otherwise use 60
+    return req.keyData?.rate_limit || 60;
+  },
+  keyGenerator,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     status: "error",
     error: "Too many requests, please try again later.",
-    retry_after_seconds: 60,
+  },
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).send(options.message);
   },
 });
 
-// Stricter limiter for heavy endpoints (PDF/Image generation)
+// Stricter limiter for heavy endpoints
 const renderLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
-  max: 30, // 30 renders per minute
+  max: (req) => {
+    // Render limit is usually half of general limit, or custom
+    return Math.max(5, Math.floor((req.keyData?.rate_limit || 30) / 2));
+  },
+  keyGenerator,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     status: "error",
-    error: "Too many render requests. Max 30/minute.",
-    retry_after_seconds: 60,
+    error: "Too many render requests. Please check your plan limits.",
   },
 });
 
