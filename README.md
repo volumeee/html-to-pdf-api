@@ -2,7 +2,7 @@
   <img src="https://img.icons8.com/fluency/96/pdf-2.png" alt="Logo" width="96" height="96">
   <h1 align="center">HTML to PDF API</h1>
   <p align="center">
-    <strong>High-fidelity HTML/CSS to PDF converter — optimized for thermal receipts 🧾</strong>
+    <strong>High-fidelity HTML/CSS to PDF converter — optimized for thermal receipts & invoices 🧾</strong>
   </p>
   <p align="center">
     <a href="https://hub.docker.com/r/bagose/html-to-pdf-api">
@@ -21,12 +21,16 @@
 
 ## ✨ Features
 
-- 🖨️ **Thermal Receipt Optimized** — Preset 380px width, perfect for POS printers
-- 🎨 **Full CSS Support** — Inline styles & `<style>` tags rendered accurately
-- ⚡ **Fast & Lightweight** — Powered by Puppeteer with new Headless Chrome
-- 🐳 **Docker Ready** — One command to deploy anywhere
-- 🔗 **Returns Download URL** — Get a direct link to the generated PDF
-- 🛡️ **Production Ready** — Auto-restart, CORS enabled, error handling
+| Feature                 | Description                                          |
+| ----------------------- | ---------------------------------------------------- |
+| 🖨️ **Thermal Receipt**  | Optimized for 58mm, 80mm & custom width POS printers |
+| 📝 **Template Engine**  | Pre-built templates: Indomaret, Modern, Invoice      |
+| 📐 **Multi Page Sizes** | Thermal 58/80mm, A4, A5, Letter, Custom              |
+| 🎨 **Full CSS Support** | Inline styles & `<style>` tags rendered accurately   |
+| 📂 **File Management**  | List, download & delete generated PDFs               |
+| 🗑️ **Auto Cleanup**     | Automatically removes old PDFs (configurable)        |
+| 🐳 **Docker Ready**     | One command to deploy anywhere                       |
+| 🔗 **Returns URL**      | Get a direct download link to the generated PDF      |
 
 ---
 
@@ -55,125 +59,281 @@ npm start
 
 ---
 
+## 📸 Output Examples
+
+### 🧾 Indomaret Style Receipt
+
+> Template: `indomaret` — Classic thermal receipt with barcode
+
+![Indomaret Receipt](examples/screenshot_indomaret.png)
+
+<details>
+<summary>📥 View Request Body</summary>
+
+```json
+{
+  "template": "indomaret",
+  "data": {
+    "store_name": "INDOMARET",
+    "store_address": "Jl. Merdeka No. 45, Jakarta Pusat",
+    "store_phone": "021-5551234",
+    "order_id": "INV-20260212-001",
+    "cashier": "KASIR-01",
+    "items": [
+      { "name": "Indomie Goreng", "qty": 3, "price": 3500 },
+      { "name": "Teh Pucuk Harum 350ml", "qty": 2, "price": 4000 },
+      { "name": "Roti Tawar Sari Roti", "qty": 1, "price": 15000 },
+      { "name": "Sabun Lifebuoy 100g", "qty": 2, "price": 5500 },
+      { "name": "Aqua 600ml", "qty": 3, "price": 3000 }
+    ],
+    "discount": 2000,
+    "payment": 60000,
+    "payment_method": "TUNAI",
+    "footer_message": "Terima kasih sudah berbelanja!"
+  }
+}
+```
+
+</details>
+
+---
+
+### ✨ Modern Minimal Receipt
+
+> Template: `modern` — Clean, elegant design with dark total box
+
+![Modern Receipt](examples/screenshot_modern.png)
+
+<details>
+<summary>📥 View Request Body</summary>
+
+```json
+{
+  "template": "modern",
+  "data": {
+    "store_name": "KOPI KENANGAN",
+    "store_address": "Jl. Sudirman No. 88, Jakarta",
+    "order_id": "KK-20260212-042",
+    "items": [
+      { "name": "Kopi Kenangan Mantan", "qty": 2, "price": 18000 },
+      { "name": "Roti Bakar Coklat", "qty": 1, "price": 22000 },
+      { "name": "Es Teh Manis", "qty": 1, "price": 10000 }
+    ],
+    "discount": 5000,
+    "payment_method": "QRIS",
+    "footer_message": "Sampai jumpa lagi! ☕"
+  }
+}
+```
+
+</details>
+
+---
+
+### 📄 Professional Invoice (A4)
+
+> Template: `invoice` — Full-page invoice with PPN calculation & notes
+
+![Professional Invoice](examples/screenshot_invoice.png)
+
+<details>
+<summary>📥 View Request Body</summary>
+
+```json
+{
+  "template": "invoice",
+  "data": {
+    "store_name": "PT. BERKAH TEKNOLOGI",
+    "store_address": "Jl. Sudirman No. 88, Jakarta Selatan 12190",
+    "store_phone": "021-7891234",
+    "order_id": "INV-2026-0088",
+    "customer_name": "CV. Maju Bersama",
+    "customer_address": "Jl. Gatot Subroto No. 12, Jakarta",
+    "customer_phone": "0812-3456-7890",
+    "due_date": "28 Februari 2026",
+    "items": [
+      {
+        "name": "Jasa Maintenance Server (1 Bulan)",
+        "qty": 1,
+        "price": 5000000
+      },
+      { "name": "Lisensi Microsoft 365 Business", "qty": 10, "price": 250000 },
+      { "name": "Instalasi Jaringan LAN (Cat6)", "qty": 1, "price": 3500000 },
+      { "name": "Router Mikrotik RB750Gr3", "qty": 2, "price": 850000 }
+    ],
+    "discount": 500000,
+    "notes": "Pembayaran dapat ditransfer ke BCA 123-456-7890 a/n PT Berkah Teknologi.",
+    "footer_message": "Terima kasih atas kepercayaan Anda."
+  }
+}
+```
+
+</details>
+
+---
+
+### 🎨 Raw HTML (Custom Design)
+
+> Endpoint: `POST /cetak_struk_pdf` — Any HTML/CSS you want
+
+![Raw HTML PDF](examples/screenshot_raw_html.png)
+
+---
+
 ## 📡 API Reference
+
+### Endpoints Overview
+
+| Method   | Endpoint           | Description                           |
+| -------- | ------------------ | ------------------------------------- |
+| `POST`   | `/cetak_struk_pdf` | Generate PDF from raw HTML            |
+| `POST`   | `/generate`        | Generate PDF from template            |
+| `GET`    | `/templates`       | List available templates & page sizes |
+| `GET`    | `/files`           | List all generated PDFs               |
+| `DELETE` | `/files/:filename` | Delete a specific PDF                 |
+| `POST`   | `/cleanup`         | Remove old PDFs                       |
+| `GET`    | `/`                | Health check & API info               |
+
+---
 
 ### `POST /cetak_struk_pdf`
 
-Convert HTML content to a PDF file.
+Generate a PDF from raw HTML content.
 
-#### Request
+#### Request Body
 
-| Parameter      | Type     | Required | Description                                        |
-| -------------- | -------- | -------- | -------------------------------------------------- |
-| `html_content` | `string` | ✅ Yes   | Full HTML string to render                         |
-| `filename`     | `string` | ❌ No    | Custom filename (default: `struk_<timestamp>.pdf`) |
+| Parameter      | Type     | Required | Description                                                                     |
+| -------------- | -------- | -------- | ------------------------------------------------------------------------------- |
+| `html_content` | `string` | ✅       | Full HTML string to render                                                      |
+| `filename`     | `string` | ❌       | Custom filename (default: `struk_<timestamp>.pdf`)                              |
+| `page_size`    | `string` | ❌       | One of: `thermal_58mm`, `thermal_80mm`, `thermal_default`, `a4`, `a5`, `letter` |
+| `options`      | `object` | ❌       | `{ margin, landscape, format }`                                                 |
 
-#### Example Request
+#### Example
 
 ```bash
 curl -X POST http://localhost:3000/cetak_struk_pdf \
   -H "Content-Type: application/json" \
   -d '{
-    "html_content": "<html><body style=\"width:380px;font-family:Courier New;\"><h2 style=\"text-align:center;\">MY STORE</h2><hr><table style=\"width:100%;\"><tr><td>Coffee x2</td><td style=\"text-align:right;\">Rp 30.000</td></tr><tr><td>Bread x1</td><td style=\"text-align:right;\">Rp 15.000</td></tr></table><hr><p style=\"text-align:right;font-weight:bold;\">TOTAL: Rp 45.000</p><p style=\"text-align:center;font-size:12px;\">Thank you!</p></body></html>",
-    "filename": "receipt_001.pdf"
+    "html_content": "<h1>Hello PDF!</h1><p>Generated via API</p>",
+    "filename": "my_document.pdf",
+    "page_size": "a4"
   }'
 ```
 
-#### Success Response
+#### Response
 
 ```json
 {
   "status": "success",
   "message": "PDF created successfully",
   "base_url": "http://localhost:3000",
-  "file_url": "http://localhost:3000/output/receipt_001.pdf",
-  "filename": "receipt_001.pdf"
+  "file_url": "http://localhost:3000/output/my_document.pdf",
+  "filename": "my_document.pdf",
+  "page_size": "a4"
 }
 ```
-
-#### Error Response
-
-```json
-{
-  "error": "html_content is required"
-}
-```
-
-### `GET /`
-
-Health check endpoint.
 
 ---
 
-## 🧾 Thermal Receipt Template
+### `POST /generate`
 
-Here's an optimized HTML template for thermal receipts:
+Generate a PDF from a pre-built template.
 
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <style>
-      @page {
-        size: 380px auto;
-        margin: 0;
-      }
-      body {
-        width: 380px;
-        margin: 0;
-        padding: 10px;
-        font-family: "Courier New", monospace;
-        font-size: 14px;
-        line-height: 1.3;
-      }
-      .header {
-        text-align: center;
-      }
-      .separator {
-        border-top: 1px dashed #000;
-        margin: 8px 0;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      td {
-        padding: 3px 0;
-      }
-      .text-right {
-        text-align: right;
-      }
-      .text-center {
-        text-align: center;
-      }
-      .bold {
-        font-weight: bold;
-      }
-      .total {
-        font-size: 16px;
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <div class="bold" style="font-size:18px;">STORE NAME</div>
-      <div>Order: #ORD-001</div>
-    </div>
-    <div class="separator"></div>
-    <table>
-      <tr>
-        <td>Item Name x2</td>
-        <td class="text-right">Rp 50.000</td>
-      </tr>
-    </table>
-    <div class="separator"></div>
-    <div class="total text-right">TOTAL: Rp 50.000</div>
-    <div class="separator"></div>
-    <div class="text-center" style="font-size:12px;">--- THANK YOU ---</div>
-  </body>
-</html>
+#### Request Body
+
+| Parameter   | Type     | Required | Description                                     |
+| ----------- | -------- | -------- | ----------------------------------------------- |
+| `template`  | `string` | ✅       | Template name: `indomaret`, `modern`, `invoice` |
+| `data`      | `object` | ✅       | Template data (see examples above)              |
+| `filename`  | `string` | ❌       | Custom filename                                 |
+| `page_size` | `string` | ❌       | Override default page size                      |
+
+#### Template Data Fields
+
+<details>
+<summary><strong>🧾 Indomaret & Modern Templates</strong></summary>
+
+| Field            | Type     | Description              |
+| ---------------- | -------- | ------------------------ |
+| `store_name`     | `string` | Store name               |
+| `store_address`  | `string` | Store address            |
+| `store_phone`    | `string` | Store phone              |
+| `order_id`       | `string` | Order/Invoice number     |
+| `cashier`        | `string` | Cashier name             |
+| `date`           | `string` | Transaction date         |
+| `items`          | `array`  | `[{ name, qty, price }]` |
+| `discount`       | `number` | Discount amount          |
+| `tax`            | `number` | Tax amount               |
+| `payment`        | `number` | Payment amount           |
+| `payment_method` | `string` | e.g., TUNAI, QRIS, DEBIT |
+| `footer_message` | `string` | Custom footer text       |
+
+</details>
+
+<details>
+<summary><strong>📄 Invoice Template</strong></summary>
+
+All fields from Indomaret/Modern, plus:
+
+| Field              | Type     | Description           |
+| ------------------ | -------- | --------------------- |
+| `customer_name`    | `string` | Customer/Company name |
+| `customer_address` | `string` | Customer address      |
+| `customer_phone`   | `string` | Customer phone        |
+| `due_date`         | `string` | Payment due date      |
+| `notes`            | `string` | Additional notes      |
+
+</details>
+
+---
+
+### `GET /files`
+
+List all generated PDF files.
+
+```bash
+curl http://localhost:3000/files
 ```
+
+```json
+{
+  "total": 4,
+  "files": [
+    {
+      "filename": "example_invoice.pdf",
+      "url": "http://localhost:3000/output/example_invoice.pdf",
+      "size_kb": 71,
+      "created": "2026-02-12T16:24:18.377Z"
+    }
+  ]
+}
+```
+
+---
+
+### `POST /cleanup`
+
+Remove PDFs older than specified hours.
+
+```bash
+curl -X POST http://localhost:3000/cleanup \
+  -H "Content-Type: application/json" \
+  -d '{"max_age_hours": 12}'
+```
+
+---
+
+## 📐 Page Size Presets
+
+| Preset            | Width         | Best For                  |
+| ----------------- | ------------- | ------------------------- |
+| `thermal_58mm`    | 220px         | Small thermal printers    |
+| `thermal_80mm`    | 302px         | Standard thermal printers |
+| `thermal_default` | 380px         | Wide thermal / preview    |
+| `a4`              | 210mm × 297mm | Invoices, documents       |
+| `a5`              | 148mm × 210mm | Half-page documents       |
+| `letter`          | 8.5in × 11in  | US standard paper         |
 
 ---
 
@@ -182,6 +342,7 @@ Here's an optimized HTML template for thermal receipts:
 | Variable                    | Default | Description                           |
 | --------------------------- | ------- | ------------------------------------- |
 | `PORT`                      | `3000`  | Server port                           |
+| `AUTO_CLEANUP_HOURS`        | `24`    | Auto-delete PDFs older than X hours   |
 | `PUPPETEER_EXECUTABLE_PATH` | —       | Custom Chromium path (auto in Docker) |
 
 ---
@@ -189,30 +350,30 @@ Here's an optimized HTML template for thermal receipts:
 ## 🐳 Docker Commands
 
 ```bash
-# Build locally
-docker build -t html-to-pdf-api .
-
-# Run with auto-restart
-docker run -d --name html-to-pdf --restart always -p 3000:3000 html-to-pdf-api
+# Pull & Run
+docker run -d --name html-to-pdf --restart always -p 3000:3000 bagose/html-to-pdf-api:latest
 
 # View logs
 docker logs -f html-to-pdf
 
 # Stop & remove
 docker stop html-to-pdf && docker rm html-to-pdf
+
+# Build locally
+docker build -t html-to-pdf-api .
 ```
 
 ---
 
 ## 🏗️ Tech Stack
 
-| Technology    | Purpose                         |
-| ------------- | ------------------------------- |
-| **Node.js**   | Runtime                         |
-| **Express**   | HTTP Server                     |
-| **Puppeteer** | HTML rendering & PDF generation |
-| **Chromium**  | Headless browser engine         |
-| **Docker**    | Containerization                |
+| Technology     | Purpose                         |
+| -------------- | ------------------------------- |
+| **Node.js 20** | Runtime                         |
+| **Express**    | HTTP Server                     |
+| **Puppeteer**  | HTML rendering & PDF generation |
+| **Chromium**   | Headless browser engine         |
+| **Docker**     | Containerization                |
 
 ---
 
@@ -220,40 +381,45 @@ docker stop html-to-pdf && docker rm html-to-pdf
 
 ```
 html-to-pdf-api/
-├── server.js          # Main API server
-├── package.json       # Dependencies
-├── Dockerfile         # Docker build config
-├── .dockerignore      # Docker ignore rules
-├── .env               # Environment variables
-├── .gitignore         # Git ignore rules
-└── output/            # Generated PDF files
+├── server.js              # Main API server (templates + endpoints)
+├── package.json           # Dependencies
+├── Dockerfile             # Docker build config
+├── .dockerignore          # Docker ignore rules
+├── .gitignore             # Git ignore rules
+├── .env                   # Environment variables
+├── LICENSE                # MIT License
+├── examples/              # Sample outputs
+│   ├── example_indomaret.pdf
+│   ├── example_modern.pdf
+│   ├── example_invoice.pdf
+│   ├── example_raw_html.pdf
+│   ├── screenshot_indomaret.png
+│   ├── screenshot_modern.png
+│   ├── screenshot_invoice.png
+│   └── screenshot_raw_html.png
+└── output/                # Generated PDF files (runtime)
 ```
 
 ---
 
-## 🤝 Integration Examples
+## 🤝 Integration with n8n
 
-### n8n Workflow (AI Agent + POS)
-
-This API is designed to work seamlessly with **n8n** automation workflows. Use it as a tool for AI Agents to generate thermal receipts on-the-fly.
+This API is designed to work seamlessly with **n8n** workflows and AI Agents:
 
 ```json
 {
   "method": "POST",
-  "url": "https://your-domain.com/cetak_struk_pdf",
+  "url": "https://your-domain.com/generate",
   "body": {
-    "html_content": "{{ $json.html_from_ai }}",
-    "filename": "{{ $json.order_id }}.pdf"
+    "template": "indomaret",
+    "data": {
+      "store_name": "{{ $json.business_name }}",
+      "order_id": "{{ $json.order_id }}",
+      "items": "{{ $json.raw_items }}",
+      "payment": "{{ $json.grand_total }}"
+    }
   }
 }
-```
-
-### cURL
-
-```bash
-curl -s http://localhost:3000/cetak_struk_pdf \
-  -H "Content-Type: application/json" \
-  -d '{"html_content":"<h1>Hello PDF</h1>"}' | jq .
 ```
 
 ---
