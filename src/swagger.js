@@ -8,7 +8,7 @@ const spec = {
   openapi: "3.0.0",
   info: {
     title: "HTML to PDF API",
-    version: "5.2.4",
+    version: "5.2.5",
     description:
       "Universal HTML/URL to PDF & Screenshot API with template engine, watermark, API Key management, and advanced admin panel.",
     contact: {
