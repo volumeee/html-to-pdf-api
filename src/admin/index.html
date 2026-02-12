@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard — HTML to PDF API</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #0f1117;
+        color: #e4e4e7;
+        min-height: 100vh;
+      }
+
+      /* ─── Login Screen ─────────────────────────────── */
+      .login-screen {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f1117 0%, #1a1b2e 100%);
+      }
+      .login-box {
+        background: #1c1d2e;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        width: 380px;
+        border: 1px solid #2a2b3d;
+      }
+      .login-box h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #fff;
+      }
+      .login-box p {
+        color: #71717a;
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+      .login-box input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #2a2b3d;
+        border-radius: 8px;
+        background: #12131f;
+        color: #fff;
+        font-size: 14px;
+        margin-bottom: 12px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .login-box input:focus {
+        border-color: #6366f1;
+      }
+      .login-box button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .login-box button:hover {
+        opacity: 0.9;
+      }
+      .login-error {
+        color: #ef4444;
+        font-size: 12px;
+        margin-bottom: 12px;
+        display: none;
+      }
+
+      /* ─── Dashboard ────────────────────────────────── */
+      .dashboard {
+        display: none;
+      }
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 220px;
+        height: 100vh;
+        background: #1c1d2e;
+        border-right: 1px solid #2a2b3d;
+        padding: 20px 0;
+        z-index: 10;
+      }
+      .sidebar .logo {
+        padding: 0 20px;
+        margin-bottom: 30px;
+      }
+      .sidebar .logo h2 {
+        font-size: 16px;
+        color: #fff;
+      }
+      .sidebar .logo span {
+        font-size: 11px;
+        color: #6366f1;
+      }
+      .sidebar nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        color: #71717a;
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar nav a:hover,
+      .sidebar nav a.active {
+        color: #e4e4e7;
+        background: #2a2b3d33;
+        border-left-color: #6366f1;
+      }
+      .sidebar nav a .icon {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .main {
+        margin-left: 220px;
+        padding: 24px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .topbar h1 {
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .topbar .actions {
+        display: flex;
+        gap: 8px;
+      }
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid #2a2b3d;
+        background: #1c1d2e;
+        color: #e4e4e7;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+      }
+      .btn:hover {
+        border-color: #6366f1;
+      }
+      .btn-danger {
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+      .btn-danger:hover {
+        background: #ef444420;
+      }
+
+      /* ─── Stats Cards ──────────────────────────────── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .stat-card {
+        background: #1c1d2e;
+        border: 1px solid #2a2b3d;
+        border-radius: 12px;
+        padding: 20px;
+        transition: border-color 0.2s;
+      }
+      .stat-card:hover {
+        border-color: #6366f1;
+      }
+      .stat-card .label {
+        font-size: 12px;
+        color: #71717a;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .stat-card .value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+        margin-top: 4px;
+      }
+      .stat-card .sub {
+        font-size: 11px;
+        color: #6366f1;
+        margin-top: 2px;
+      }
+
+      /* ─── Tables ───────────────────────────────────── */
+      .card {
+        background: #1c1d2e;
+        border: 1px solid #2a2b3d;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #2a2b3d;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-header h3 {
+        font-size: 14px;
+        font-weight: 600;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        text-align: left;
+        padding: 10px 16px;
+        font-size: 11px;
+        color: #71717a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #2a2b3d;
+      }
+      td {
+        padding: 10px 16px;
+        font-size: 13px;
+        border-bottom: 1px solid #2a2b3d22;
+      }
+      tr:hover {
+        background: #2a2b3d22;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .badge-green {
+        background: #10b98120;
+        color: #10b981;
+      }
+      .badge-blue {
+        background: #6366f120;
+        color: #6366f1;
+      }
+      .badge-yellow {
+        background: #f59e0b20;
+        color: #f59e0b;
+      }
+
+      /* ─── Sections ─────────────────────────────────── */
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+
+      .endpoint-chart {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .endpoint-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .endpoint-bar .name {
+        font-size: 11px;
+        color: #a1a1aa;
+        min-width: 180px;
+        font-family: monospace;
+      }
+      .endpoint-bar .bar {
+        flex: 1;
+        height: 20px;
+        background: #2a2b3d;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .endpoint-bar .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        border-radius: 4px;
+        transition: width 0.5s;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 6px;
+        font-size: 10px;
+        color: #fff;
+        font-weight: 600;
+        min-width: 30px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #71717a;
+      }
+      .empty-state .icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        .main {
+          margin-left: 0;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .endpoint-chart {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+      <div class="login-box">
+        <h1>🔐 Admin Login</h1>
+        <p>HTML to PDF API Dashboard</p>
+        <div class="login-error" id="loginError">Invalid credentials</div>
+        <input
+          type="text"
+          id="loginUser"
+          placeholder="Username"
+          value="admin"
+          autocomplete="username"
+        />
+        <input
+          type="password"
+          id="loginPass"
+          placeholder="Password"
+          autocomplete="current-password"
+        />
+        <button onclick="doLogin()">Sign In</button>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+      <div class="sidebar">
+        <div class="logo">
+          <h2>📄 PDF API</h2>
+          <span>v5.0.0 Admin</span>
+        </div>
+        <nav>
+          <a href="#" class="active" data-section="overview"
+            ><span class="icon">📊</span> Overview</a
+          >
+          <a href="#" data-section="logs"
+            ><span class="icon">📝</span> Request Logs</a
+          >
+          <a href="#" data-section="files"
+            ><span class="icon">📂</span> Files</a
+          >
+          <a href="#" data-section="system"
+            ><span class="icon">⚙️</span> System</a
+          >
+        </nav>
+        <div
+          style="
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+          "
+        >
+          <button class="btn" style="width: 100%" onclick="doLogout()">
+            🚪 Logout
+          </button>
+        </div>
+      </div>
+
+      <div class="main">
+        <!-- Overview Section -->
+        <div class="section active" id="sec-overview">
+          <div class="topbar">
+            <h1>Dashboard Overview</h1>
+            <div class="actions">
+              <button class="btn" onclick="refreshData()">🔄 Refresh</button>
+            </div>
+          </div>
+
+          <div class="stats-grid" id="statsGrid"></div>
+
+          <div class="endpoint-chart">
+            <div class="card">
+              <div class="card-header"><h3>📡 Endpoint Usage</h3></div>
+              <div style="padding: 16px" id="endpointChart"></div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3>📅 Daily Requests</h3></div>
+              <div style="padding: 16px" id="dailyChart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logs Section -->
+        <div class="section" id="sec-logs">
+          <div class="topbar">
+            <h1>Request Logs</h1>
+            <div class="actions">
+              <button class="btn" onclick="loadLogs()">🔄 Refresh</button>
+              <button class="btn btn-danger" onclick="resetStatsConfirm()">
+                🗑️ Reset All
+              </button>
+            </div>
+          </div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Method</th>
+                  <th>Endpoint</th>
+                  <th>IP</th>
+                  <th>API Key</th>
+                </tr>
+              </thead>
+              <tbody id="logsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Files Section -->
+        <div class="section" id="sec-files">
+          <div class="topbar">
+            <h1>File Manager</h1>
+            <div class="actions">
+              <button class="btn" onclick="loadFiles()">🔄 Refresh</button>
+            </div>
+          </div>
+          <div
+            id="fileSummary"
+            class="stats-grid"
+            style="margin-bottom: 16px"
+          ></div>
+          <div class="card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Filename</th>
+                  <th>Size</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="filesTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- System Section -->
+        <div class="section" id="sec-system">
+          <div class="topbar"><h1>System Information</h1></div>
+          <div id="systemInfo" class="stats-grid"></div>
+          <div
+            id="capabilitiesInfo"
+            class="card"
+            style="margin-top: 16px"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API = window.location.origin;
+      let token = localStorage.getItem("admin_token");
+
+      // ─── Auth ──────────────────────────────────────
+      async function doLogin() {
+        const username = document.getElementById("loginUser").value;
+        const password = document.getElementById("loginPass").value;
+        const errorEl = document.getElementById("loginError");
+
+        try {
+          const res = await fetch(`${API}/admin/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+          const data = await res.json();
+
+          if (data.status === "success") {
+            token = data.token;
+            localStorage.setItem("admin_token", token);
+            showDashboard();
+          } else {
+            errorEl.textContent = data.error || "Invalid credentials";
+            errorEl.style.display = "block";
+          }
+        } catch {
+          errorEl.textContent = "Connection failed";
+          errorEl.style.display = "block";
+        }
+      }
+
+      function doLogout() {
+        token = null;
+        localStorage.removeItem("admin_token");
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("loginScreen").style.display = "flex";
+      }
+
+      async function api(path, method = "GET", body = null) {
+        const opts = {
+          method,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        };
+        if (body) opts.body = JSON.stringify(body);
+
+        const res = await fetch(`${API}${path}`, opts);
+        if (res.status === 401) {
+          doLogout();
+          return null;
+        }
+        return res.json();
+      }
+
+      // ─── Dashboard ─────────────────────────────────
+      async function showDashboard() {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        refreshData();
+      }
+
+      async function refreshData() {
+        await loadStats();
+        await loadLogs();
+      }
+
+      async function loadStats() {
+        const data = await api("/admin/stats");
+        if (!data) return;
+        const s = data.stats;
+
+        document.getElementById("statsGrid").innerHTML = `
+        <div class="stat-card"><div class="label">Total Requests</div><div class="value">${s.total_requests.toLocaleString()}</div><div class="sub">since ${new Date(s.started_at).toLocaleDateString()}</div></div>
+        <div class="stat-card"><div class="label">PDFs Generated</div><div class="value">${s.total_pdfs.toLocaleString()}</div><div class="sub">📄 documents</div></div>
+        <div class="stat-card"><div class="label">Images Generated</div><div class="value">${s.total_images.toLocaleString()}</div><div class="sub">🖼️ screenshots</div></div>
+        <div class="stat-card"><div class="label">Uptime</div><div class="value">${s.uptime_human}</div><div class="sub">Memory: ${s.memory.rss_mb}MB RSS</div></div>
+      `;
+
+        // Endpoint chart
+        const endpoints = Object.entries(s.endpoints || {}).sort(
+          (a, b) => b[1] - a[1],
+        );
+        const maxCount = endpoints.length > 0 ? endpoints[0][1] : 1;
+        document.getElementById("endpointChart").innerHTML =
+          endpoints.length > 0
+            ? endpoints
+                .map(
+                  ([name, count]) => `
+          <div class="endpoint-bar">
+            <span class="name">${name}</span>
+            <div class="bar"><div class="bar-fill" style="width:${(count / maxCount) * 100}%">${count}</div></div>
+          </div>`,
+                )
+                .join("")
+            : '<div class="empty-state"><div class="icon">📡</div><p>No requests yet</p></div>';
+
+        // Daily chart
+        const daily = Object.entries(s.daily || {})
+          .sort()
+          .slice(-7);
+        const maxDaily =
+          daily.length > 0 ? Math.max(...daily.map((d) => d[1])) : 1;
+        document.getElementById("dailyChart").innerHTML =
+          daily.length > 0
+            ? daily
+                .map(
+                  ([date, count]) => `
+          <div class="endpoint-bar">
+            <span class="name">${date}</span>
+            <div class="bar"><div class="bar-fill" style="width:${(count / maxDaily) * 100}%">${count}</div></div>
+          </div>`,
+                )
+                .join("")
+            : '<div class="empty-state"><div class="icon">📅</div><p>No daily data yet</p></div>';
+      }
+
+      async function loadLogs() {
+        const data = await api("/admin/logs?limit=100");
+        if (!data) return;
+
+        document.getElementById("logsTable").innerHTML =
+          data.logs.length > 0
+            ? data.logs
+                .map(
+                  (l) => `<tr>
+            <td>${new Date(l.timestamp).toLocaleString()}</td>
+            <td><span class="badge ${l.method === "POST" ? "badge-blue" : "badge-green"}">${l.method}</span></td>
+            <td style="font-family:monospace;font-size:12px;">${l.endpoint || l.path}</td>
+            <td style="font-family:monospace;font-size:12px;">${l.ip}</td>
+            <td>${l.api_key || '<span style="color:#555;">—</span>'}</td>
+          </tr>`,
+                )
+                .join("")
+            : '<tr><td colspan="5" class="empty-state">No logs yet</td></tr>';
+      }
+
+      async function loadFiles() {
+        const data = await api("/admin/files");
+        if (!data) return;
+
+        document.getElementById("fileSummary").innerHTML = `
+        <div class="stat-card"><div class="label">Total Files</div><div class="value">${data.total}</div></div>
+        <div class="stat-card"><div class="label">Storage Used</div><div class="value">${data.total_size_kb > 1024 ? (data.total_size_kb / 1024).toFixed(1) + "MB" : data.total_size_kb + "KB"}</div></div>
+      `;
+
+        document.getElementById("filesTable").innerHTML =
+          data.files.length > 0
+            ? data.files
+                .map(
+                  (f) => `<tr>
+            <td><a href="${f.url}" target="_blank" style="color:#6366f1;text-decoration:none;">${f.filename}</a></td>
+            <td>${f.size_kb}KB</td>
+            <td>${new Date(f.created).toLocaleString()}</td>
+            <td><button class="btn btn-danger" onclick="deleteFile('${f.filename}')" style="padding:4px 10px;font-size:11px;">🗑️</button></td>
+          </tr>`,
+                )
+                .join("")
+            : '<tr><td colspan="4" class="empty-state">No files</td></tr>';
+      }
+
+      async function loadSystem() {
+        const data = await api("/admin/system");
+        if (!data) return;
+        const sys = data.system;
+        const stor = data.storage;
+        const cap = data.capabilities;
+
+        document.getElementById("systemInfo").innerHTML = `
+        <div class="stat-card"><div class="label">Node.js</div><div class="value">${sys.node_version}</div></div>
+        <div class="stat-card"><div class="label">Platform</div><div class="value">${sys.platform} ${sys.arch}</div></div>
+        <div class="stat-card"><div class="label">PID</div><div class="value">${sys.pid}</div></div>
+        <div class="stat-card"><div class="label">Storage</div><div class="value">${stor.total_size_mb}MB</div><div class="sub">${stor.total_files} files</div></div>
+      `;
+
+        document.getElementById("capabilitiesInfo").innerHTML = `
+        <div class="card-header"><h3>🔧 Capabilities</h3></div>
+        <div style="padding:16px;">
+          <p style="margin-bottom:8px;font-size:13px;"><strong>Templates:</strong> ${cap.templates.map((t) => `<span class="badge badge-blue">${t.name}</span>`).join(" ")}</p>
+          <p style="margin-bottom:8px;font-size:13px;"><strong>Page Sizes:</strong> ${cap.page_sizes.map((s) => `<span class="badge badge-green">${s}</span>`).join(" ")}</p>
+          <p style="font-size:13px;"><strong>Password Protection:</strong> <span class="badge ${cap.password_protection ? "badge-green" : "badge-yellow"}">${cap.password_protection ? "✅ Available" : "❌ Not Available"}</span></p>
+        </div>
+      `;
+      }
+
+      async function deleteFile(filename) {
+        if (!confirm(`Delete ${filename}?`)) return;
+        await api(`/admin/files/${filename}`, "DELETE");
+        loadFiles();
+      }
+
+      async function resetStatsConfirm() {
+        if (!confirm("Reset ALL statistics and logs? This cannot be undone."))
+          return;
+        await api("/admin/reset", "POST");
+        refreshData();
+      }
+
+      // ─── Navigation ────────────────────────────────
+      document.querySelectorAll(".sidebar nav a").forEach((a) => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          document
+            .querySelectorAll(".sidebar nav a")
+            .forEach((x) => x.classList.remove("active"));
+          a.classList.add("active");
+          document
+            .querySelectorAll(".section")
+            .forEach((s) => s.classList.remove("active"));
+          document
+            .getElementById(`sec-${a.dataset.section}`)
+            .classList.add("active");
+
+          if (a.dataset.section === "files") loadFiles();
+          if (a.dataset.section === "system") loadSystem();
+          if (a.dataset.section === "logs") loadLogs();
+        });
+      });
+
+      // Enter key on login
+      document.getElementById("loginPass").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") doLogin();
+      });
+
+      // Auto-login if token exists
+      if (token) {
+        api("/admin/stats").then((data) => {
+          if (data) showDashboard();
+          else doLogout();
+        });
+      }
+    </script>
+  </body>
+</html>

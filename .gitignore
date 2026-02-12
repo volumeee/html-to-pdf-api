@@ -6,6 +6,11 @@ node_modules/
 
 # Output PDFs
 output/*.pdf
+output/*.png
+output/*.csv
+
+# Stats & logs data
+data/
 
 # Logs
 npm-debug.log*

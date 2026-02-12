@@ -1,0 +1,133 @@
+/**
+ * Admin Routes
+ *
+ * POST   /admin/login     - Get JWT token
+ * GET    /admin/stats      - Usage statistics
+ * GET    /admin/logs       - Request logs
+ * POST   /admin/reset      - Reset statistics
+ * GET    /admin/system     - System information
+ * GET    /admin/files      - Detailed file management
+ * DELETE /admin/files/:fn  - Delete file (with logging)
+ */
+const express = require("express");
+const router = express.Router();
+const fs = require("fs");
+const path = require("path");
+const { login, requireAdmin } = require("../middleware/adminAuth");
+const { getStats, getLogs, resetStats } = require("../services/stats");
+const {
+  listFiles,
+  deleteFile,
+  getOutputDir,
+} = require("../services/fileManager");
+const { listTemplates } = require("../templates");
+const { isQpdfAvailable } = require("../services/pdfUtils");
+const { success, error } = require("../utils/response");
+const config = require("../config");
+
+// ─── Login ───────────────────────────────────────────────────
+router.post("/admin/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return error(res, "username and password are required");
+  }
+
+  const result = login(username, password);
+  if (!result) {
+    return error(res, "Invalid credentials", null, 401);
+  }
+
+  return success(res, { message: "Login successful", ...result });
+});
+
+// ─── Stats ───────────────────────────────────────────────────
+router.get("/admin/stats", requireAdmin, (req, res) => {
+  return success(res, { stats: getStats() });
+});
+
+// ─── Request Logs ────────────────────────────────────────────
+router.get("/admin/logs", requireAdmin, (req, res) => {
+  const limit = parseInt(req.query.limit) || 50;
+  const offset = parseInt(req.query.offset) || 0;
+
+  return success(res, getLogs(limit, offset));
+});
+
+// ─── Reset Stats ─────────────────────────────────────────────
+router.post("/admin/reset", requireAdmin, (req, res) => {
+  resetStats();
+  return success(res, { message: "Statistics reset successfully" });
+});
+
+// ─── System Info ─────────────────────────────────────────────
+router.get("/admin/system", requireAdmin, (req, res) => {
+  const outputDir = getOutputDir();
+  const files = fs.readdirSync(outputDir);
+  const totalSize = files.reduce((sum, f) => {
+    try {
+      return sum + fs.statSync(path.join(outputDir, f)).size;
+    } catch {
+      return sum;
+    }
+  }, 0);
+
+  return success(res, {
+    system: {
+      node_version: process.version,
+      platform: process.platform,
+      arch: process.arch,
+      pid: process.pid,
+      uptime: Math.floor(process.uptime()),
+      memory: process.memoryUsage(),
+      cwd: process.cwd(),
+    },
+    config: {
+      port: config.PORT,
+      auto_cleanup_hours: config.AUTO_CLEANUP_HOURS,
+      max_body_size: config.MAX_BODY_SIZE,
+    },
+    storage: {
+      total_files: files.length,
+      total_size_mb: Math.round((totalSize / 1024 / 1024) * 100) / 100,
+      output_dir: outputDir,
+    },
+    capabilities: {
+      templates: listTemplates(),
+      page_sizes: Object.keys(config.PAGE_SIZES),
+      image_formats: config.IMAGE_FORMATS,
+      password_protection: isQpdfAvailable(),
+    },
+  });
+});
+
+// ─── Detailed File List ──────────────────────────────────────
+router.get("/admin/files", requireAdmin, (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  const type = req.query.type || null;
+  const files = listFiles(baseUrl, type);
+
+  const totalSize = files.reduce((sum, f) => sum + f.size_kb, 0);
+
+  return success(res, {
+    total: files.length,
+    total_size_kb: totalSize,
+    files,
+  });
+});
+
+// ─── Delete File (Admin) ────────────────────────────────────
+router.delete("/admin/files/:filename", requireAdmin, (req, res) => {
+  const deleted = deleteFile(req.params.filename);
+
+  if (!deleted) {
+    return error(res, "File not found", null, 404);
+  }
+
+  return success(res, {
+    message: "File deleted by admin",
+    filename: req.params.filename,
+  });
+});
+
+module.exports = router;

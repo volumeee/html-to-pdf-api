@@ -6,16 +6,55 @@ const pdfRoutes = require("./pdf");
 const screenshotRoutes = require("./screenshot");
 const fileRoutes = require("./files");
 const advancedRoutes = require("./advanced");
+const convertRoutes = require("./convert");
+const adminRoutes = require("./admin");
 const { listTemplates } = require("../templates");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("../config");
 const { isQpdfAvailable } = require("../services/pdfUtils");
+const { recordRequest } = require("../services/stats");
 
 function registerRoutes(app) {
-  // Mount route modules
+  // ─── Request Logging Middleware ─────────────────────────────
+  app.use((req, res, next) => {
+    // Skip static files and admin panel
+    if (
+      req.path.startsWith("/output/") ||
+      req.path.startsWith("/admin-panel") ||
+      req.path === "/docs"
+    ) {
+      return next();
+    }
+
+    // Record after response finishes
+    res.on("finish", () => {
+      const extra = {};
+      if (
+        req.path.includes("pdf") ||
+        req.path === "/generate" ||
+        req.path === "/batch" ||
+        req.path === "/merge"
+      ) {
+        extra.type = "pdf";
+      } else if (
+        req.path.includes("image") ||
+        req.path.includes("screenshot")
+      ) {
+        extra.type = "image";
+      }
+      if (res.statusCode < 400) {
+        recordRequest(req, extra);
+      }
+    });
+    next();
+  });
+
+  // ─── Mount Route Modules ───────────────────────────────────
   app.use(pdfRoutes);
   app.use(screenshotRoutes);
   app.use(fileRoutes);
   app.use(advancedRoutes);
+  app.use(convertRoutes);
+  app.use(adminRoutes);
 
   // ─── Templates & Capabilities Info ──────────────────────────
   app.get("/templates", (req, res) => {
@@ -35,6 +74,10 @@ function registerRoutes(app) {
         merge_pdf: true,
         batch_generation: true,
         webhook: true,
+        pdf_to_image: true,
+        csv_export: true,
+        admin_panel: true,
+        swagger_docs: true,
       },
     });
   });
@@ -43,8 +86,10 @@ function registerRoutes(app) {
   app.get("/", (req, res) => {
     res.json({
       name: "HTML to PDF API",
-      version: "4.0.0",
+      version: "5.0.0",
       status: "running",
+      docs: "/docs",
+      admin: "/admin-panel",
       endpoints: {
         pdf: [
           "POST /cetak_struk_pdf  → HTML to PDF",
@@ -55,18 +100,26 @@ function registerRoutes(app) {
           "POST /html-to-image    → HTML to PNG/JPEG/WebP",
           "POST /url-to-image     → URL to PNG/JPEG/WebP",
         ],
+        convert: [
+          "POST /pdf-to-image     → PDF to PNG/JPEG/WebP",
+          "POST /to-csv           → Data to CSV",
+        ],
         advanced: [
           "POST /merge            → Merge multiple PDFs",
           "POST /batch            → Batch generate from template",
-          "POST /webhook          → Async generate + webhook callback",
+          "POST /webhook          → Async generate + webhook",
         ],
         files: [
           "GET    /files            → List all files",
           "DELETE /files/:filename  → Delete a file",
           "POST   /cleanup          → Remove old files",
+          "GET    /templates        → Templates & capabilities",
         ],
-        info: [
-          "GET /templates          → Templates, page sizes & capabilities",
+        admin: [
+          "POST /admin/login      → Get JWT token",
+          "GET  /admin/stats       → Usage statistics",
+          "GET  /admin/logs        → Request logs",
+          "GET  /admin/system      → System info",
         ],
       },
     });

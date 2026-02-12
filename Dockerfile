@@ -60,7 +60,7 @@ RUN npm install
 COPY . .
 
 # Create output directory
-RUN mkdir -p output
+RUN mkdir -p output data
 
 # Expose port
 EXPOSE 3000

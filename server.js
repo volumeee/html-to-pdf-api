@@ -1,14 +1,15 @@
 /**
  * HTML to PDF API — Server Entry Point
- * v4.0.0
+ * v5.0.0
  */
 const app = require("./src/app");
 const { PORT, AUTO_CLEANUP_HOURS } = require("./src/config");
 const { cleanupOldFiles } = require("./src/services/fileManager");
 const { listTemplates } = require("./src/templates");
 const { closeBrowser } = require("./src/services/browser");
+const { saveStats } = require("./src/services/stats");
 
-// ─── Auto Cleanup (runs every 6 hours) ──────────────────────
+// ─── Auto Cleanup (every 6 hours) ──────────────────────────
 setInterval(
   () => {
     const result = cleanupOldFiles(AUTO_CLEANUP_HOURS);
@@ -22,6 +23,7 @@ setInterval(
 // ─── Graceful Shutdown ──────────────────────────────────────
 async function shutdown() {
   console.log("\n[Server] Shutting down...");
+  saveStats();
   await closeBrowser();
   process.exit(0);
 }
@@ -33,29 +35,22 @@ process.on("SIGTERM", shutdown);
 app.listen(PORT, () => {
   const templates = listTemplates().map((t) => t.name);
   console.log(`
-┌─────────────────────────────────────────────┐
-│     🚀 HTML to PDF API v4.0.0              │
-├─────────────────────────────────────────────┤
-│  Port:       ${String(PORT).padEnd(30)}│
-│  Templates:  ${templates.join(", ").padEnd(30)}│
-│  Cleanup:    every ${String(AUTO_CLEANUP_HOURS + "h").padEnd(24)}│
-│                                             │
-│  PDF Endpoints:                             │
-│   POST /cetak_struk_pdf  (HTML → PDF)       │
-│   POST /generate         (Tmpl → PDF)       │
-│   POST /url-to-pdf       (URL  → PDF)       │
-│                                             │
-│  Screenshot Endpoints:                      │
-│   POST /html-to-image    (HTML → IMG)       │
-│   POST /url-to-image     (URL  → IMG)       │
-│                                             │
-│  Advanced:                                  │
-│   POST /merge            (Merge PDFs)       │
-│   POST /batch            (Batch generate)   │
-│   POST /webhook          (Async + callback) │
-│                                             │
-│  Features: Watermark, Base64, CSS Inject,   │
-│            Password, Merge, Batch, Webhook  │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│        🚀 HTML to PDF API v5.0.0                │
+├──────────────────────────────────────────────────┤
+│  Port:        ${String(PORT).padEnd(34)}│
+│  Templates:   ${templates.join(", ").padEnd(34)}│
+│  Cleanup:     every ${String(AUTO_CLEANUP_HOURS + "h").padEnd(28)}│
+│                                                  │
+│  📄 PDF:       /cetak_struk_pdf, /generate,      │
+│                /url-to-pdf                        │
+│  📸 Screenshot: /html-to-image, /url-to-image    │
+│  🔄 Convert:   /pdf-to-image, /to-csv            │
+│  ⚡ Advanced:  /merge, /batch, /webhook           │
+│  📂 Files:     /files, /cleanup, /templates       │
+│                                                  │
+│  📖 API Docs:  http://localhost:${PORT}/docs${" ".repeat(Math.max(0, 11 - String(PORT).length))}│
+│  🔐 Admin:     http://localhost:${PORT}/admin-panel${" ".repeat(Math.max(0, 4 - String(PORT).length))}│
+└──────────────────────────────────────────────────┘
 `);
 });
