@@ -1,21 +1,80 @@
 /**
  * PDF Routes
  *
- * POST /cetak_struk_pdf   - HTML → PDF (raw)
+ * POST /cetak_struk_pdf   - HTML → PDF
  * POST /generate          - Template → PDF
  * POST /url-to-pdf        - URL → PDF
+ *
+ * All endpoints support: watermark, base64, password, CSS injection
  */
 const express = require("express");
 const router = express.Router();
+const fs = require("fs");
 const { renderPdf } = require("../services/renderer");
+const { protectPdf, isQpdfAvailable } = require("../services/pdfUtils");
 const { getFilePath } = require("../services/fileManager");
 const { getTemplate, listTemplates } = require("../templates");
 const { generateFilename } = require("../utils/format");
 const { success, error } = require("../utils/response");
 
+/**
+ * Shared logic: apply password protection and build response
+ */
+async function finalizePdf(req, res, pdfFilename, renderResult, options = {}) {
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  let finalFilename = pdfFilename;
+
+  // Apply password protection if requested
+  if (options.password) {
+    if (!isQpdfAvailable()) {
+      return error(
+        res,
+        "Password protection is not available (qpdf not installed)",
+        null,
+        501,
+      );
+    }
+
+    const inputPath = getFilePath(pdfFilename);
+    const protectedFilename = pdfFilename.replace(".pdf", "_protected.pdf");
+    const outputPath = getFilePath(protectedFilename);
+
+    await protectPdf(inputPath, outputPath, options.password);
+
+    // Remove unprotected version
+    fs.unlinkSync(inputPath);
+    finalFilename = protectedFilename;
+  }
+
+  const responseData = {
+    file_url: `${baseUrl}/output/${finalFilename}`,
+    filename: finalFilename,
+    ...options.extraData,
+  };
+
+  // Include base64 if requested
+  if (renderResult.base64) {
+    responseData.base64 = renderResult.base64;
+  } else if (options.return_base64) {
+    responseData.base64 = fs
+      .readFileSync(getFilePath(finalFilename))
+      .toString("base64");
+  }
+
+  return success(res, responseData);
+}
+
 // ─── HTML → PDF ──────────────────────────────────────────────
 router.post("/cetak_struk_pdf", async (req, res) => {
-  const { html_content, filename, page_size, options } = req.body;
+  const {
+    html_content,
+    filename,
+    page_size,
+    options,
+    watermark,
+    return_base64,
+    password,
+  } = req.body;
 
   if (!html_content) {
     return error(res, "html_content is required");
@@ -25,17 +84,20 @@ router.post("/cetak_struk_pdf", async (req, res) => {
   const pdfPath = getFilePath(pdfFilename);
 
   try {
-    await renderPdf({ html: html_content }, pdfPath, {
+    const renderResult = await renderPdf({ html: html_content }, pdfPath, {
       pageSize: page_size,
+      watermark,
+      return_base64,
       ...options,
     });
 
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    return success(res, {
-      message: "PDF created successfully",
-      file_url: `${baseUrl}/output/${pdfFilename}`,
-      filename: pdfFilename,
-      page_size: page_size || "thermal_default",
+    return finalizePdf(req, res, pdfFilename, renderResult, {
+      password,
+      return_base64,
+      extraData: {
+        message: "PDF created successfully",
+        page_size: page_size || "thermal_default",
+      },
     });
   } catch (err) {
     console.error("[PDF] HTML→PDF error:", err.message);
@@ -45,7 +107,15 @@ router.post("/cetak_struk_pdf", async (req, res) => {
 
 // ─── Template → PDF ──────────────────────────────────────────
 router.post("/generate", async (req, res) => {
-  const { template, data, filename, page_size } = req.body;
+  const {
+    template,
+    data,
+    filename,
+    page_size,
+    watermark,
+    return_base64,
+    password,
+  } = req.body;
 
   const tmpl = getTemplate(template);
   if (!tmpl) {
@@ -65,15 +135,16 @@ router.post("/generate", async (req, res) => {
   const pdfPath = getFilePath(pdfFilename);
 
   try {
-    await renderPdf({ html: html_content }, pdfPath, {
+    const renderResult = await renderPdf({ html: html_content }, pdfPath, {
       pageSize: page_size || tmpl.defaultPageSize,
+      watermark,
+      return_base64,
     });
 
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    return success(res, {
-      template,
-      file_url: `${baseUrl}/output/${pdfFilename}`,
-      filename: pdfFilename,
+    return finalizePdf(req, res, pdfFilename, renderResult, {
+      password,
+      return_base64,
+      extraData: { template },
     });
   } catch (err) {
     console.error("[PDF] Template error:", err.message);
@@ -83,7 +154,16 @@ router.post("/generate", async (req, res) => {
 
 // ─── URL → PDF ───────────────────────────────────────────────
 router.post("/url-to-pdf", async (req, res) => {
-  const { url, filename, page_size, options } = req.body;
+  const {
+    url,
+    filename,
+    page_size,
+    options,
+    watermark,
+    inject_css,
+    return_base64,
+    password,
+  } = req.body;
 
   if (!url) {
     return error(res, "url is required");
@@ -93,18 +173,22 @@ router.post("/url-to-pdf", async (req, res) => {
   const pdfPath = getFilePath(pdfFilename);
 
   try {
-    await renderPdf({ url }, pdfPath, {
+    const renderResult = await renderPdf({ url }, pdfPath, {
       pageSize: page_size || "a4",
+      watermark,
+      inject_css,
+      return_base64,
       ...options,
     });
 
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    return success(res, {
-      message: "URL converted to PDF successfully",
-      source_url: url,
-      file_url: `${baseUrl}/output/${pdfFilename}`,
-      filename: pdfFilename,
-      page_size: page_size || "a4",
+    return finalizePdf(req, res, pdfFilename, renderResult, {
+      password,
+      return_base64,
+      extraData: {
+        message: "URL converted to PDF",
+        source_url: url,
+        page_size: page_size || "a4",
+      },
     });
   } catch (err) {
     console.error("[PDF] URL→PDF error:", err.message);

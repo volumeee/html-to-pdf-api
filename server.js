@@ -1,6 +1,6 @@
 /**
  * HTML to PDF API — Server Entry Point
- * v3.0.0
+ * v4.0.0
  */
 const app = require("./src/app");
 const { PORT, AUTO_CLEANUP_HOURS } = require("./src/config");
@@ -33,21 +33,29 @@ process.on("SIGTERM", shutdown);
 app.listen(PORT, () => {
   const templates = listTemplates().map((t) => t.name);
   console.log(`
-┌──────────────────────────────────────────┐
-│     🚀 HTML to PDF API v3.0.0           │
-├──────────────────────────────────────────┤
-│  Port:       ${String(PORT).padEnd(27)}│
-│  Templates:  ${templates.join(", ").padEnd(27)}│
-│  Cleanup:    every ${String(AUTO_CLEANUP_HOURS + "h").padEnd(21)}│
-│                                          │
-│  Endpoints:                              │
-│   POST /cetak_struk_pdf  (HTML → PDF)    │
-│   POST /generate         (Tmpl → PDF)    │
-│   POST /url-to-pdf       (URL  → PDF)    │
-│   POST /html-to-image    (HTML → IMG)    │
-│   POST /url-to-image     (URL  → IMG)    │
-│   GET  /files            (List files)    │
-│   GET  /templates        (Info)          │
-└──────────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│     🚀 HTML to PDF API v4.0.0              │
+├─────────────────────────────────────────────┤
+│  Port:       ${String(PORT).padEnd(30)}│
+│  Templates:  ${templates.join(", ").padEnd(30)}│
+│  Cleanup:    every ${String(AUTO_CLEANUP_HOURS + "h").padEnd(24)}│
+│                                             │
+│  PDF Endpoints:                             │
+│   POST /cetak_struk_pdf  (HTML → PDF)       │
+│   POST /generate         (Tmpl → PDF)       │
+│   POST /url-to-pdf       (URL  → PDF)       │
+│                                             │
+│  Screenshot Endpoints:                      │
+│   POST /html-to-image    (HTML → IMG)       │
+│   POST /url-to-image     (URL  → IMG)       │
+│                                             │
+│  Advanced:                                  │
+│   POST /merge            (Merge PDFs)       │
+│   POST /batch            (Batch generate)   │
+│   POST /webhook          (Async + callback) │
+│                                             │
+│  Features: Watermark, Base64, CSS Inject,   │
+│            Password, Merge, Batch, Webhook  │
+└─────────────────────────────────────────────┘
 `);
 });

@@ -1,9 +1,10 @@
 # Use Node.js LTS version
 FROM node:20-slim
 
-# Install Chromium and dependencies
+# Install Chromium, qpdf, and dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
+    qpdf \
     fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
