@@ -565,6 +565,14 @@
                 <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Max Body Size (e.g. 10mb)</label>
                 <input type="text" id="setBody" class="btn" style="width:100%; text-align:left;">
               </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Admin Username</label>
+                <input type="text" id="setAdminUser" class="btn" style="width:100%; text-align:left;">
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:8px;">Admin Password</label>
+                <input type="password" id="setAdminPass" class="btn" style="width:100%; text-align:left;" placeholder="••••••••">
+              </div>
               <div style="grid-column: span 2;">
                 <button class="btn" style="background:#6366f1; border:none; color:#fff; width:100%;" onclick="updateGlobalSettings()">Save Global Settings</button>
               </div>
@@ -858,6 +866,8 @@
           document.getElementById("setMaint").value = s.maintenance_mode.toString();
           document.getElementById("setCleanup").value = s.auto_cleanup_hours;
           document.getElementById("setBody").value = s.max_body_size;
+          document.getElementById("setAdminUser").value = s.admin_username;
+          document.getElementById("setAdminPass").value = s.admin_password;
         }
       }
 
@@ -866,10 +876,12 @@
           allow_guest_access: document.getElementById("setGuest").value === "true",
           maintenance_mode: document.getElementById("setMaint").value === "true",
           auto_cleanup_hours: parseInt(document.getElementById("setCleanup").value),
-          max_body_size: document.getElementById("setBody").value
+          max_body_size: document.getElementById("setBody").value,
+          admin_username: document.getElementById("setAdminUser").value,
+          admin_password: document.getElementById("setAdminPass").value
         };
         await api("/admin/settings", "PATCH", body);
-        alert("Settings updated successfully!");
+        alert("Settings updated successfully! You may need to login again if you changed credentials.");
         loadSystem();
       }
 

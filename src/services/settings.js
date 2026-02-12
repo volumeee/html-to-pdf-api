@@ -11,6 +11,8 @@ const SETTINGS_FILE = path.join(__dirname, "../../data/app_settings.json");
 
 // Default settings from config.js
 let appSettings = {
+  admin_username: config.ADMIN_USERNAME,
+  admin_password: config.ADMIN_PASSWORD,
   auto_cleanup_hours: config.AUTO_CLEANUP_HOURS,
   max_body_size: config.MAX_BODY_SIZE,
   default_watermark: {

@@ -11,7 +11,13 @@ const { ADMIN_USERNAME, ADMIN_PASSWORD, JWT_SECRET } = require("../config");
  * Login and return JWT token
  */
 function login(username, password) {
-  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+  const { getSettings } = require("../services/settings");
+  const settings = getSettings();
+
+  if (
+    username === settings.admin_username &&
+    password === settings.admin_password
+  ) {
     const token = jwt.sign({ role: "admin", username }, JWT_SECRET, {
       expiresIn: "24h",
     });
@@ -27,12 +33,10 @@ function requireAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json({
-        status: "error",
-        error: "Authorization required. Use: Bearer <token>",
-      });
+    return res.status(401).json({
+      status: "error",
+      error: "Authorization required. Use: Bearer <token>",
+    });
   }
 
   const token = authHeader.split(" ")[1];
