@@ -1,7 +1,7 @@
 {
   "name": "html-to-pdf-api",
-  "version": "1.0.0",
-  "description": "API to convert HTML to PDF, specialized for thermal receipts.",
+  "version": "3.0.0",
+  "description": "Universal HTML/URL to PDF & Screenshot API with template engine.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
