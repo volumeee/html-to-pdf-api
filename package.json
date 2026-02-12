@@ -1,6 +1,6 @@
 {
   "name": "html-to-pdf-api",
-  "version": "5.2.3",
+  "version": "5.2.4",
   "description": "Universal HTML/URL to PDF & Screenshot API with template engine.",
   "main": "server.js",
   "scripts": {

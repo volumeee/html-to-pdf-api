@@ -18,6 +18,7 @@ const apiLimiter = rateLimit({
     return req.keyData?.rate_limit || 60;
   },
   keyGenerator,
+  validate: { keyGenerator: false }, // Disable IPv6 keygen validation as we use custom key/IP
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -37,6 +38,7 @@ const renderLimiter = rateLimit({
     return Math.max(5, Math.floor((req.keyData?.rate_limit || 30) / 2));
   },
   keyGenerator,
+  validate: { keyGenerator: false },
   standardHeaders: true,
   legacyHeaders: false,
   message: {

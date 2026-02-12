@@ -1,4 +1,4 @@
-# HTML to PDF API v5.2.3 🚀
+# HTML to PDF API v5.2.4 🚀
 
 Universal HTML/URL to PDF & Screenshot API dengan Template Engine, Watermark, Merge, Batch, Security, dan Admin Panel.
 
