@@ -211,6 +211,16 @@ async function runMasterTest() {
     const m4 = await client.get("/");
     await logResult("mgmt_root", {}, m4.data);
 
+    // --- 7. AUTOMATIC QUEUEING (NEW) ---
+    console.log("\n--- Testing Automatic Queueing via /render ---");
+    const qv1 = {
+      source_type: "html",
+      source: "<h1>Async Auto Test</h1>",
+      async: true,
+    };
+    const rqv1 = await client.post("/render", qv1);
+    await logResult("render_async_auto", qv1, rqv1.data);
+
     console.log("\n🌟 ALL TESTS COMPLETED SUCCESSFULLY!");
   } catch (err) {
     console.error("\n❌ MASTER TEST FAILED");

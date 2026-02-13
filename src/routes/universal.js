@@ -32,12 +32,65 @@ router.post("/render", async (req, res) => {
     filename,
     signed_url,
     cloud_upload,
+    async: isAsync, // NEW: Support for automatic queueing
   } = req.body;
 
   if (!source_type || !source) {
     return error(res, "source_type and source are required.");
   }
 
+  // Handle Async / Queueing Automatically
+  if (isAsync) {
+    try {
+      const { enqueue } = require("../services/queue");
+      const jobData = {
+        ...req.body,
+        _base_url: `${req.protocol}://${req.get("host")}`,
+      };
+
+      const handler = async (jData) => {
+        const outName =
+          jData.filename ||
+          generateFilename(
+            "render",
+            jData.output === "image" ? jData.options?.format || "png" : "pdf",
+          );
+        const outputPath = getFilePath(outName);
+
+        const renderSource = {};
+        if (jData.source_type === "url") renderSource.url = jData.source;
+        else if (jData.source_type === "html") renderSource.html = jData.source;
+        else if (jData.source_type === "template") {
+          const tmpl = getTemplate(jData.source);
+          if (!tmpl) throw new Error(`Template "${jData.source}" not found`);
+          renderSource.html = tmpl.fn(jData.data || {});
+        }
+
+        const isPdf = (jData.output || "pdf").toLowerCase() === "pdf";
+        const result = isPdf
+          ? await renderPdf(renderSource, outputPath, jData.options || {})
+          : await renderImage(renderSource, outputPath, jData.options || {});
+
+        return {
+          message: `${isPdf ? "PDF" : "Image"} rendered via queue`,
+          file_url: `${jData._base_url}/output/${outName}`,
+          filename: outName,
+          ...result,
+        };
+      };
+
+      const job = enqueue("render", jobData, handler);
+      return res.status(202).json({
+        status: "success",
+        message: "Request accepted and queued for processing",
+        ...job,
+      });
+    } catch (e) {
+      return error(res, "Failed to enqueue request", e.message, 500);
+    }
+  }
+
+  // --- Sync Processing (Standard) ---
   try {
     const isPdf = (output || "pdf").toLowerCase() === "pdf";
     const ext = isPdf ? "pdf" : options.format || "png";

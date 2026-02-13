@@ -99,6 +99,12 @@ const spec = {
                     description:
                       "Upload to configured S3-compatible cloud storage",
                   },
+                  async: {
+                    type: "boolean",
+                    description:
+                      "Process in background (queue) and return job_id immediately",
+                    default: false,
+                  },
                   options: {
                     type: "object",
                     properties: {

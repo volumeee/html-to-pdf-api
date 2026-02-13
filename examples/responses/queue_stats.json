@@ -1,11 +1,11 @@
 {
   "status": "success",
   "queue": {
-    "total": 5,
+    "total": 6,
     "pending": 0,
     "processing": 0,
     "completed": 1,
-    "failed": 4,
+    "failed": 5,
     "max_concurrent": 3,
     "max_queue_size": 100
   }

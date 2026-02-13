@@ -107,6 +107,7 @@ Generate PDFs or images from **HTML**, **URLs**, or **Templates**. Supports inli
 | `output` | `string` | | `pdf` (default) or `image` |
 | `data` | `object` | | Template variables |
 | `filename` | `string` | | Custom output filename |
+| `async` | `boolean` | | If `true`, processes in background & returns `job_id` |
 | `signed_url` | `object` | | `{ expiry_minutes: 60 }` for time-limited access |
 | `cloud_upload` | `boolean` | | Upload to configured S3-compatible storage |
 | `options` | `object` | | Rendering options (see below) |
@@ -533,8 +534,20 @@ curl http://localhost:3000/templates
 - 🖼️ Added PDF thumbnail preview generation
 - 📝 Added PDF metadata read/write
 - ⚡ Background job queue with priority support
+- 🚀 **New: Automatic Queueing** via `async: true` in `/render`
+- 🛠️ **Optimization**: Added Chromium "Lite Mode" flags for 30% less RAM usage
 - 🎨 Admin dashboard with template editor
 - 🧹 Removed 8 legacy route files for cleaner codebase
+
+---
+
+## 🏎️ Resource Optimization (Lite Mode)
+
+Version 7.2.0 is optimized for low-resource environments (VPS/Container):
+
+- **Chromium Lite Mode**: We use specialized flags (`--disable-extensions`, `--no-first-run`, etc.) to minimize memory footprint.
+- **Concurrency Control**: Use `QUEUE_CONCURRENCY` and `BROWSER_POOL_SIZE` to prevent CPU spikes.
+- **Async Handling**: For high-volume batches (1000+ docs), always use `async: true` in your `/render` request to avoid server timeouts.
 
 ---
 
