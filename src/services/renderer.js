@@ -105,41 +105,39 @@ async function injectQrCode(page, qrConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      // Bulletproof centering: Use inline-block inside a full-width text-align:center container
-      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:inline-block !important; vertical-align:top;" />`;
+      // Use absolute bulletproof centering: Table with 100% width and center align
+      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:inline-block; vertical-align:top;" />`;
       const labelHtml = params.label
-        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center; word-break:break-word;">${params.label}</div>`
+        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center;">${params.label}</div>`
         : "";
 
       const pos = params.position;
+      const align = pos.includes("right")
+        ? "right"
+        : pos.includes("left")
+          ? "left"
+          : "center";
 
-      // Force container to occupy 100% of printable width
-      let containerStyle =
-        "clear:both; width:100% !important; box-sizing:border-box; padding:8px 0; font-family:Arial,sans-serif;";
-
-      if (pos.includes("right")) {
-        containerStyle += " text-align:right !important;";
-      } else if (pos.includes("left")) {
-        containerStyle += " text-align:left !important;";
-      } else {
-        containerStyle += " text-align:center !important;";
-      }
+      const content = `<div style="display:inline-block; text-align:center;">${imgHtml}${labelHtml}</div>`;
+      const tableWrapper = `
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:16px 0; clear:both; border-collapse:collapse;">
+          <tr>
+            <td align="${align}" style="padding:0;">${content}</td>
+          </tr>
+        </table>
+      `;
 
       if (pos.includes("top")) {
-        containerStyle += " margin-bottom:12px;";
-        container.style.cssText = containerStyle;
-        container.innerHTML = `<div style="display:inline-block; text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
+        container.innerHTML = tableWrapper;
         document.body.insertBefore(container, document.body.firstChild);
       } else if (pos === "center") {
         container.style.cssText =
           "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; text-align:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
-        container.innerHTML = imgHtml + labelHtml;
+        container.innerHTML = content;
         document.body.appendChild(container);
       } else {
         // Bottom positions or default
-        containerStyle += " margin-top:16px;";
-        container.style.cssText = containerStyle;
-        container.innerHTML = `<div style="display:inline-block; text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
+        container.innerHTML = tableWrapper;
         document.body.appendChild(container);
       }
     },
@@ -169,23 +167,31 @@ async function injectBarcode(page, barcodeConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      const imgHtml = `<img src="${params.dataUri}" style="display:inline-block !important; vertical-align:top; max-width:100%;" />`;
+      const imgHtml = `<img src="${params.dataUri}" style="display:inline-block; vertical-align:top; max-width:100%;" />`;
       const labelHtml = params.label
         ? `<div style="font-size:9px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center;">${params.label}</div>`
         : "";
 
-      let containerStyle =
-        "clear:both; width:100% !important; text-align:center !important; padding:8px 0;";
+      const align = params.position.includes("right")
+        ? "right"
+        : params.position.includes("left")
+          ? "left"
+          : "center";
+      const tableWrapper = `
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:16px 0; clear:both; border-collapse:collapse;">
+          <tr>
+            <td align="${align}" style="padding:0;">
+              <div style="display:inline-block; text-align:center;">${imgHtml}${labelHtml}</div>
+            </td>
+          </tr>
+        </table>
+      `;
 
       if (params.position === "top-center") {
-        containerStyle += " margin-bottom:12px;";
-        container.style.cssText = containerStyle;
-        container.innerHTML = imgHtml + labelHtml;
+        container.innerHTML = tableWrapper;
         document.body.insertBefore(container, document.body.firstChild);
       } else {
-        containerStyle += " margin-top:16px;";
-        container.style.cssText = containerStyle;
-        container.innerHTML = imgHtml + labelHtml;
+        container.innerHTML = tableWrapper;
         document.body.appendChild(container);
       }
     },

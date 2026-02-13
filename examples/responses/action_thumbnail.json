@@ -1,10 +1,10 @@
 {
   "status": "success",
   "message": "Action \"thumbnail\" completed successfully",
-  "file_url": "http://localhost:3000/output/thumb_1770999393441.jpeg",
-  "filename": "thumb_1770999393441.jpeg",
+  "file_url": "http://localhost:3000/output/thumb_1770999505330.jpeg",
+  "filename": "thumb_1770999505330.jpeg",
   "width": 400,
   "height": 566,
   "format": "jpeg",
-  "size": 12723
+  "size": 12766
 }
