@@ -1,6 +1,7 @@
 {
-  "status": "success",
-  "message": "PDF rendered successfully",
-  "file_url": "http://localhost:3000/output/render_1770999517545.pdf",
-  "filename": "render_1770999517545.pdf"
+  "status": "processing",
+  "message": "Request accepted and queued for processing",
+  "id": "5f15a041-5570-478d-b938-e6e2dfe053a3",
+  "position": 0,
+  "queue_size": 4
 }

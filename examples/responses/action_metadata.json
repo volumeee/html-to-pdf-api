@@ -1,11 +1,11 @@
 {
   "status": "success",
   "message": "Action \"metadata\" completed successfully",
-  "file_url": "http://localhost:3000/output/render_1770999498680.pdf",
-  "filename": "render_1770999498680.pdf",
+  "file_url": "http://localhost:3003/output/render_1771001572888.pdf",
+  "filename": "render_1771001572888.pdf",
   "updated": true,
   "metadata": {
-    "title": "Master Test PDF",
+    "title": "Master Test PDF v7.2.1",
     "author": "AI Agent"
   }
 }

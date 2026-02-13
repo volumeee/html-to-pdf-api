@@ -12,17 +12,19 @@
         "type": "line",
         "data": {
           "labels": [
-            "A",
-            "B",
-            "C"
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr"
           ],
           "datasets": [
             {
-              "label": "Sales",
+              "label": "Revenue",
               "data": [
                 100,
-                200,
-                150
+                250,
+                180,
+                350
               ]
             }
           ]
@@ -33,15 +35,23 @@
       "data": [
         [
           "Item",
+          "Qty",
           "Price"
         ],
         [
-          "Laptop",
-          "1500"
+          "Laptop Pro",
+          "5",
+          "Rp 15.000.000"
         ],
         [
-          "Mouse",
-          "25"
+          "Mouse Wireless",
+          "20",
+          "Rp 250.000"
+        ],
+        [
+          "Keyboard Mech",
+          "10",
+          "Rp 750.000"
         ]
       ],
       "options": {

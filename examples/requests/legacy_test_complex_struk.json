@@ -2,45 +2,150 @@
   "template": "indomaret",
   "data": {
     "store_name": "ENTERPRISE MART V7",
+    "store_address": "Jl. Sudirman No. 999, Jakarta Pusat",
+    "store_phone": "021-9999888",
     "cashier": "Super-AI",
+    "order_id": "INV-2026021399001",
     "items": [
       {
-        "name": "Monitor 24 Inch",
+        "name": "Monitor LG 27\" 4K IPS",
         "qty": 2,
-        "price": 1500000
+        "price": 4500000
       },
       {
-        "name": "Mechanical Keyboard",
+        "name": "Mechanical Keyboard RGB",
         "qty": 1,
-        "price": 750000
+        "price": 1250000
       },
       {
-        "name": "Gaming Mouse",
+        "name": "Gaming Mouse Logitech G502",
         "qty": 1,
-        "price": 450000
+        "price": 850000
       },
       {
-        "name": "Mousepad XL",
+        "name": "Mousepad XL 900x400mm",
+        "qty": 2,
+        "price": 175000
+      },
+      {
+        "name": "HDMI Cable 2M Gold Plated",
+        "qty": 5,
+        "price": 75000
+      },
+      {
+        "name": "USB-C Hub 7-in-1",
         "qty": 3,
+        "price": 350000
+      },
+      {
+        "name": "Webcam Logitech C920 HD",
+        "qty": 2,
+        "price": 1200000
+      },
+      {
+        "name": "Headset Gaming HyperX",
+        "qty": 1,
+        "price": 950000
+      },
+      {
+        "name": "SSD NVMe 1TB Samsung",
+        "qty": 2,
+        "price": 1350000
+      },
+      {
+        "name": "RAM DDR5 16GB Kit",
+        "qty": 2,
+        "price": 1100000
+      },
+      {
+        "name": "PSU 750W Modular Gold",
+        "qty": 1,
+        "price": 1450000
+      },
+      {
+        "name": "Casing ATX Tempered Glass",
+        "qty": 1,
+        "price": 850000
+      },
+      {
+        "name": "CPU Cooler AIO 240mm",
+        "qty": 1,
+        "price": 1200000
+      },
+      {
+        "name": "Thermal Paste MX-5",
+        "qty": 3,
+        "price": 95000
+      },
+      {
+        "name": "Cable Management Kit",
+        "qty": 2,
         "price": 125000
       },
       {
-        "name": "HDMI Cable 2M",
+        "name": "Monitor Arm Dual",
+        "qty": 1,
+        "price": 650000
+      },
+      {
+        "name": "Desk Mat Leather 80x40",
+        "qty": 1,
+        "price": 250000
+      },
+      {
+        "name": "USB Flash Drive 64GB",
+        "qty": 10,
+        "price": 85000
+      },
+      {
+        "name": "Ethernet Cable Cat6 3M",
         "qty": 5,
         "price": 45000
+      },
+      {
+        "name": "Screen Cleaner Kit",
+        "qty": 3,
+        "price": 55000
+      },
+      {
+        "name": "Laptop Stand Aluminum",
+        "qty": 2,
+        "price": 450000
+      },
+      {
+        "name": "Wireless Charger 15W",
+        "qty": 3,
+        "price": 175000
+      },
+      {
+        "name": "Power Strip 6 Socket",
+        "qty": 2,
+        "price": 195000
+      },
+      {
+        "name": "LED Desk Lamp Dimmable",
+        "qty": 2,
+        "price": 285000
+      },
+      {
+        "name": "Webcam Privacy Cover 3pcs",
+        "qty": 5,
+        "price": 25000
       }
     ],
-    "payment": 5000000
+    "payment": 80000000,
+    "payment_method": "TRANSFER BCA"
   },
   "page_size": "thermal_80mm",
   "qr_code": {
-    "text": "TX-999-PRO-MAX",
+    "text": "https://enterprise-mart.co.id/receipt/INV-2026021399001",
     "position": "bottom-center",
-    "label": "Scan for Warranty"
+    "label": "Scan for Digital Receipt",
+    "width": 140
   },
   "watermark": {
     "text": "PAID / LUNAS",
-    "opacity": 0.15,
+    "opacity": 0.12,
     "color": "#ff0000"
   }
 }

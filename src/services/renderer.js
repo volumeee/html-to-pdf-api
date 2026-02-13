@@ -87,6 +87,7 @@ async function injectWatermark(page, watermark) {
 
 /**
  * Inject QR Code into the rendered page
+ * Uses display:block + margin:0 auto for centering (simplest & most reliable method)
  */
 async function injectQrCode(page, qrConfig) {
   if (!qrConfig || !qrConfig.text) return;
@@ -102,42 +103,50 @@ async function injectQrCode(page, qrConfig) {
   const width = qrConfig.width || 120;
   const label = qrConfig.label || "";
 
+  // First, ensure body doesn't allow overflow (prevents wide elements from expanding page width)
+  await page.evaluate(() => {
+    document.body.style.overflowX = "hidden";
+  });
+
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      // Use absolute bulletproof centering: Table with 100% width and center align
-      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:inline-block; vertical-align:top;" />`;
+      const pos = params.position;
+
+      // Determine alignment
+      let imgStyle, labelStyle;
+      if (pos.includes("right")) {
+        imgStyle = "display:block; margin-left:auto; margin-right:0;";
+        labelStyle = "text-align:right;";
+      } else if (pos.includes("left")) {
+        imgStyle = "display:block; margin-left:0; margin-right:auto;";
+        labelStyle = "text-align:left;";
+      } else {
+        // CENTER - using display:block + margin:auto (the most reliable centering)
+        imgStyle = "display:block; margin-left:auto; margin-right:auto;";
+        labelStyle = "text-align:center;";
+      }
+
+      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="${imgStyle}" />`;
       const labelHtml = params.label
-        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center;">${params.label}</div>`
+        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:4px; ${labelStyle} word-break:break-word;">${params.label}</div>`
         : "";
 
-      const pos = params.position;
-      const align = pos.includes("right")
-        ? "right"
-        : pos.includes("left")
-          ? "left"
-          : "center";
-
-      const content = `<div style="display:inline-block; text-align:center;">${imgHtml}${labelHtml}</div>`;
-      const tableWrapper = `
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:16px 0; clear:both; border-collapse:collapse;">
-          <tr>
-            <td align="${align}" style="padding:0;">${content}</td>
-          </tr>
-        </table>
-      `;
-
-      if (pos.includes("top")) {
-        container.innerHTML = tableWrapper;
-        document.body.insertBefore(container, document.body.firstChild);
-      } else if (pos === "center") {
+      if (pos === "center") {
+        // Center overlay (absolutely positioned)
         container.style.cssText =
           "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; text-align:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
-        container.innerHTML = content;
+        container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
+      } else if (pos.includes("top")) {
+        container.style.cssText =
+          "clear:both; margin-bottom:12px; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.insertBefore(container, document.body.firstChild);
       } else {
         // Bottom positions or default
-        container.innerHTML = tableWrapper;
+        container.style.cssText = "clear:both; margin-top:16px; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       }
     },
@@ -147,6 +156,7 @@ async function injectQrCode(page, qrConfig) {
 
 /**
  * Inject Barcode into the rendered page
+ * Uses display:block + margin:0 auto for centering
  */
 async function injectBarcode(page, barcodeConfig) {
   if (!barcodeConfig || !barcodeConfig.text) return;
@@ -164,34 +174,27 @@ async function injectBarcode(page, barcodeConfig) {
   const position = barcodeConfig.position || "inline";
   const label = barcodeConfig.label || "";
 
+  // Ensure body doesn't allow overflow
+  await page.evaluate(() => {
+    document.body.style.overflowX = "hidden";
+  });
+
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      const imgHtml = `<img src="${params.dataUri}" style="display:inline-block; vertical-align:top; max-width:100%;" />`;
+      const imgHtml = `<img src="${params.dataUri}" style="display:block; margin-left:auto; margin-right:auto; max-width:100%;" />`;
       const labelHtml = params.label
         ? `<div style="font-size:9px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center;">${params.label}</div>`
         : "";
 
-      const align = params.position.includes("right")
-        ? "right"
-        : params.position.includes("left")
-          ? "left"
-          : "center";
-      const tableWrapper = `
-        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin:16px 0; clear:both; border-collapse:collapse;">
-          <tr>
-            <td align="${align}" style="padding:0;">
-              <div style="display:inline-block; text-align:center;">${imgHtml}${labelHtml}</div>
-            </td>
-          </tr>
-        </table>
-      `;
-
       if (params.position === "top-center") {
-        container.innerHTML = tableWrapper;
+        container.style.cssText =
+          "clear:both; margin-bottom:12px; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
         document.body.insertBefore(container, document.body.firstChild);
       } else {
-        container.innerHTML = tableWrapper;
+        container.style.cssText = "clear:both; margin-top:16px; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       }
     },

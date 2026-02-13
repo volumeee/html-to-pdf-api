@@ -24,7 +24,7 @@ module.exports = function invoice(data) {
 <html><head><style>
   @page { size: A4; margin: 20mm; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #333; padding: 40px; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #333; padding: 40px; overflow: hidden; }
   .r { text-align: right; } .center { text-align: center; } .bold { font-weight: bold; }
   .header { display: flex; justify-content: space-between; margin-bottom: 30px; }
   .company { font-size: 24px; font-weight: 800; color: #1a1a2e; }

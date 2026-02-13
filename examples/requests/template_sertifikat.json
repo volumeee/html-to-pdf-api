@@ -1,0 +1,30 @@
+{
+  "source_type": "template",
+  "source": "sertifikat",
+  "data": {
+    "judul": "SERTIFIKAT",
+    "sub_judul": "Certificate of Professional Excellence",
+    "nama_penerima": "Muhammad Bagus Eko Prabowo",
+    "keterangan_atas": "Dengan bangga diberikan kepada:",
+    "deskripsi": "Atas dedikasi dan kontribusi luar biasa dalam pengembangan platform HTML to PDF API yang telah melayani ribuan pengguna enterprise di seluruh Indonesia.",
+    "tempat": "Jakarta",
+    "nomor": "CERT/2026/PRO-001",
+    "penandatangan": [
+      {
+        "nama": "Dr. Siti Aminah, M.T.",
+        "jabatan": "Direktur Akademik"
+      },
+      {
+        "nama": "Prof. Budi Santoso",
+        "jabatan": "Ketua Dewan Penguji"
+      }
+    ]
+  },
+  "options": {
+    "qr_code": {
+      "text": "CERT-PRO-001-2026",
+      "position": "bottom-center",
+      "label": "Verify Certificate"
+    }
+  }
+}

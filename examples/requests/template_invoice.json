@@ -1,0 +1,50 @@
+{
+  "source_type": "template",
+  "source": "invoice",
+  "data": {
+    "store_name": "PT TEKNOLOGI MAJU",
+    "store_address": "Jl. Gatot Subroto No. 88, Jakarta 12950",
+    "store_phone": "021-5551234",
+    "customer_name": "PT SOLUSI DIGITAL",
+    "customer_address": "Jl. TB Simatupang No. 55, Jakarta Selatan",
+    "customer_phone": "021-7784321",
+    "order_id": "INV-2026-00158",
+    "due_date": "28 Februari 2026",
+    "items": [
+      {
+        "name": "Jasa Konsultasi IT (per jam)",
+        "qty": 40,
+        "price": 500000
+      },
+      {
+        "name": "Lisensi Software ERP 1 Tahun",
+        "qty": 1,
+        "price": 25000000
+      },
+      {
+        "name": "Training Staff (per sesi)",
+        "qty": 5,
+        "price": 2000000
+      },
+      {
+        "name": "Server Maintenance Bulanan",
+        "qty": 3,
+        "price": 3500000
+      },
+      {
+        "name": "Cloud Hosting (per bulan)",
+        "qty": 12,
+        "price": 1500000
+      }
+    ],
+    "discount": 5000000,
+    "notes": "Pembayaran melalui transfer ke BCA 1234567890 a.n. PT TEKNOLOGI MAJU. Jatuh tempo 30 hari. Denda keterlambatan 2% per bulan."
+  },
+  "options": {
+    "qr_code": {
+      "text": "INV-2026-00158",
+      "position": "bottom-center",
+      "label": "Scan to Pay"
+    }
+  }
+}

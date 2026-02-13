@@ -1,0 +1,6 @@
+{
+  "status": "success",
+  "message": "PDF rendered successfully",
+  "file_url": "http://localhost:3003/output/render_1771001588052.pdf",
+  "filename": "render_1771001588052.pdf"
+}

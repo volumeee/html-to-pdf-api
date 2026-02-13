@@ -2,13 +2,14 @@
   "html_content": "<div style=\"text-align:center\"><h1>LEGACY FULL TEST</h1><p>Thermal printing mockup</p></div>",
   "page_size": "thermal_80mm",
   "qr_code": {
-    "text": "LEGACY-QR",
-    "position": "bottom-center"
+    "text": "LEGACY-QR-2026",
+    "position": "bottom-center",
+    "label": "QR Center Test"
   },
   "barcode": {
     "text": "12345678",
     "type": "code128",
-    "position": "bottom-right"
+    "position": "bottom-center"
   },
   "watermark": {
     "text": "LEGACY",

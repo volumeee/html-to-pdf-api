@@ -1,0 +1,59 @@
+{
+  "template": "modern",
+  "data": {
+    "store_name": "DIGITAL COFFEE",
+    "store_address": "Jl. Senopati No. 77, Jakarta",
+    "cashier": "Machine-01",
+    "order_id": "DC-20260213-001",
+    "items": [
+      {
+        "name": "Espresso Single Origin",
+        "qty": 2,
+        "price": 38000
+      },
+      {
+        "name": "Caramel Macchiato Ice",
+        "qty": 1,
+        "price": 52000
+      },
+      {
+        "name": "Green Tea Frappe",
+        "qty": 1,
+        "price": 48000
+      },
+      {
+        "name": "Belgian Waffle",
+        "qty": 2,
+        "price": 35000
+      },
+      {
+        "name": "Chicken Sandwich",
+        "qty": 1,
+        "price": 42000
+      },
+      {
+        "name": "Caesar Salad",
+        "qty": 1,
+        "price": 55000
+      },
+      {
+        "name": "Mineral Water 500ml",
+        "qty": 3,
+        "price": 8000
+      }
+    ],
+    "payment": 500000,
+    "payment_method": "GOPAY",
+    "discount": 25000
+  },
+  "page_size": "thermal_80mm",
+  "qr_code": {
+    "text": "RATE-DC-20260213-001",
+    "position": "bottom-center",
+    "label": "Rate your experience!"
+  },
+  "watermark": {
+    "text": "THANK YOU",
+    "opacity": 0.08
+  }
+}

@@ -25,7 +25,7 @@ module.exports = function indomaret(data) {
 <html><head><style>
   @page { size: auto; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { width: 100%; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; color: #000; }
+  body { width: 100%; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; color: #000; overflow: hidden; }
   .center { text-align: center; } .r { text-align: right; } .bold { font-weight: bold; }
   .sep { border-top: 1px dashed #000; margin: 6px 0; }
   .sep-double { border-top: 2px double #000; margin: 6px 0; }
@@ -33,7 +33,7 @@ module.exports = function indomaret(data) {
   td { padding: 1px 0; vertical-align: top; }
   .store-name { font-size: 18px; font-weight: bold; letter-spacing: 2px; }
   .footer { font-size: 11px; margin-top: 10px; }
-  .barcode { font-family: 'Libre Barcode 39', cursive; font-size: 40px; letter-spacing: 2px; }
+  .barcode { font-family: 'Libre Barcode 39', cursive; font-size: 40px; letter-spacing: 2px; overflow-wrap: break-word; word-break: break-all; max-width: 100%; }
   .total-line { font-size: 16px; font-weight: bold; }
 </style></head><body>
   <div class="center">

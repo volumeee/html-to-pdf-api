@@ -6,7 +6,7 @@ module.exports = function label(data) {
 <html><head><style>
   @page { size: 100mm 150mm; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { width: 100mm; height: 150mm; font-family: Arial, sans-serif; font-size: 10px; padding: 8px; color: #000; }
+  body { width: 100mm; height: 150mm; font-family: Arial, sans-serif; font-size: 10px; padding: 8px; color: #000; overflow: hidden; }
 
   .header { background: #000; color: #fff; padding: 6px 10px; text-align: center; font-size: 14px; font-weight: bold; letter-spacing: 2px; border-radius: 4px 4px 0 0; }
   .section { border: 1px solid #000; padding: 8px; margin-top: -1px; }

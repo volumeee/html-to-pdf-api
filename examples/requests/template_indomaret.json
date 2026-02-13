@@ -1,0 +1,34 @@
+{
+  "source_type": "template",
+  "source": "indomaret",
+  "data": {
+    "store_name": "INDOMARET EXPRESS",
+    "store_address": "Jl. Sudirman No. 123, Jakarta",
+    "cashier": "Kasir-07",
+    "items": [
+      {
+        "name": "Indomie Goreng",
+        "qty": 3,
+        "price": 3500
+      },
+      {
+        "name": "Aqua 600ml",
+        "qty": 2,
+        "price": 4000
+      },
+      {
+        "name": "Pocari Sweat",
+        "qty": 1,
+        "price": 7500
+      }
+    ],
+    "payment": 30000
+  },
+  "options": {
+    "qr_code": {
+      "text": "IDM-RECEIPT-001",
+      "position": "bottom-center",
+      "label": "Scan QR"
+    }
+  }
+}

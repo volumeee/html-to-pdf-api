@@ -1,26 +1,26 @@
 {
   "status": "healthy",
   "version": "7.2.0",
-  "started_at": "2026-02-13T15:10:10.269Z",
-  "uptime_seconds": 4108,
+  "started_at": "2026-02-13T16:49:00.689Z",
+  "uptime_seconds": 340,
   "system": {
     "platform": "linux",
     "arch": "x64",
     "node_version": "v20.20.0",
     "cpus": 8,
     "load_avg": [
-      3.3,
-      2.96,
-      2.72
+      5.23,
+      4.08,
+      3.67
     ],
     "total_memory_mb": 32029,
-    "free_memory_mb": 12917
+    "free_memory_mb": 10552
   },
   "process": {
-    "pid": 1,
-    "rss_mb": 99,
-    "heap_used_mb": 29,
-    "heap_total_mb": 36
+    "pid": 2848815,
+    "rss_mb": 96,
+    "heap_used_mb": 33,
+    "heap_total_mb": 34
   },
   "browser": {
     "connected": true,
@@ -28,11 +28,11 @@
     "active_instances": 1,
     "pages": 1,
     "launch_count": 1,
-    "last_check": "2026-02-13T16:18:37.535Z",
-    "version": "Chrome/144.0.7559.109"
+    "last_check": "2026-02-13T16:54:40.163Z",
+    "version": "Chrome/121.0.6167.85"
   },
   "storage": {
-    "files": 125,
-    "size_mb": 3.23
+    "files": 53,
+    "size_mb": 1.63
   }
 }

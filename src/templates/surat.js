@@ -14,7 +14,7 @@ module.exports = function surat(data) {
 <html><head><style>
   @page { size: A4; margin: 25mm; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Times New Roman', serif; font-size: 12pt; color: #222; line-height: 1.6; padding: 40px; }
+  body { font-family: 'Times New Roman', serif; font-size: 12pt; color: #222; line-height: 1.6; padding: 40px; overflow: hidden; }
 
   .kop { text-align: center; border-bottom: 3px double #333; padding-bottom: 15px; margin-bottom: 20px; }
   .kop .nama { font-size: 18pt; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }

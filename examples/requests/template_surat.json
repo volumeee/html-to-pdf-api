@@ -1,0 +1,33 @@
+{
+  "source_type": "template",
+  "source": "surat",
+  "data": {
+    "instansi": "PT TEKNOLOGI MAJU",
+    "sub_instansi": "Divisi Research & Development",
+    "alamat_instansi": "Jl. Gatot Subroto No. 88, Jakarta 12950",
+    "kontak_instansi": "Telp: (021) 555-1234 | Email: info@teknologimaju.co.id",
+    "nomor_surat": "088/TM-RND/II/2026",
+    "perihal": "Penawaran Kerjasama Pengembangan Sistem",
+    "tujuan_nama": "Bapak Direktur IT",
+    "tujuan_alamat": "PT Solusi Digital, Jl. TB Simatupang No. 55, Jakarta Selatan",
+    "isi": [
+      "Dengan hormat, bersama surat ini kami bermaksud menawarkan kerjasama dalam pengembangan sistem informasi terpadu untuk perusahaan Bapak/Ibu.",
+      "Kami memiliki pengalaman lebih dari 10 tahun dalam bidang pengembangan solusi enterprise, dengan portofolio klien dari berbagai sektor industri.",
+      "Sebagai langkah awal, kami mengusulkan pertemuan teknis untuk membahas kebutuhan dan lingkup proyek secara detail."
+    ],
+    "nama_ttd": "Dr. Ahmad Fauzi, M.T.",
+    "jabatan_ttd": "Direktur R&D",
+    "nip": "198506152010011023",
+    "tembusan": [
+      "Direktur Utama",
+      "Kepala Divisi Keuangan"
+    ]
+  },
+  "options": {
+    "qr_code": {
+      "text": "SURAT-088-TM-2026",
+      "position": "bottom-center",
+      "label": "Verifikasi Digital"
+    }
+  }
+}

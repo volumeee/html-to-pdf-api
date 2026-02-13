@@ -1,0 +1,27 @@
+{
+  "source_type": "template",
+  "source": "label",
+  "data": {
+    "kurir": "JNE REGULER",
+    "pengirim_nama": "Toko Elektronik ABC",
+    "pengirim_alamat": "Jl. Mangga Dua Raya No. 45, Jakarta Utara",
+    "pengirim_telp": "081234567890",
+    "penerima_nama": "Budi Santoso",
+    "penerima_alamat": "Jl. Merdeka No. 123, RT 05/RW 02, Kel. Sukajaya, Kec. Coblong, Bandung 40134",
+    "penerima_telp": "089876543210",
+    "berat": "2.5",
+    "layanan": "REG",
+    "cod": 350000,
+    "koli": 1,
+    "total_koli": 1,
+    "resi": "JNE-2026021300123",
+    "catatan": "FRAGILE - Handle with care! Barang elektronik."
+  },
+  "options": {
+    "qr_code": {
+      "text": "JNE-2026021300123",
+      "position": "bottom-center",
+      "label": "Track Shipment"
+    }
+  }
+}

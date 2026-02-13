@@ -1,0 +1,44 @@
+{
+  "source_type": "template",
+  "source": "modern",
+  "data": {
+    "store_name": "KOPI KENANGAN",
+    "store_address": "Mall Grand Indonesia, Lt. 3",
+    "cashier": "Barista Elite",
+    "items": [
+      {
+        "name": "Cappuccino Grande",
+        "qty": 2,
+        "price": 35000
+      },
+      {
+        "name": "Matcha Latte",
+        "qty": 1,
+        "price": 42000
+      },
+      {
+        "name": "Croissant Butter",
+        "qty": 2,
+        "price": 28000
+      },
+      {
+        "name": "Tiramisu Slice",
+        "qty": 1,
+        "price": 45000
+      }
+    ],
+    "payment": 250000,
+    "payment_method": "QRIS"
+  },
+  "options": {
+    "qr_code": {
+      "text": "KOPI-TRX-12345",
+      "position": "bottom-center",
+      "label": "Rate Us!"
+    },
+    "watermark": {
+      "text": "PAID",
+      "opacity": 0.08
+    }
+  }
+}
