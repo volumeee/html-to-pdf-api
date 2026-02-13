@@ -1,7 +1,7 @@
 {
   "name": "html-to-pdf-api",
-  "version": "7.1.0",
-  "description": "Enterprise-Grade Document Generation Platform — PDF/Screenshot/QR/Barcode with browser pool, job queue, PDF compression, metadata, thumbnails, email delivery, and cloud storage.",
+  "version": "7.2.0",
+  "description": "Enterprise-Grade HTML to PDF API with Browser Pool, Job Queue, Charts, Tables, and Advanced PDF Security",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

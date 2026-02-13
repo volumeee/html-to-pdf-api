@@ -3,7 +3,7 @@ version: "3.8"
 services:
   html-to-pdf-api:
     build: .
-    image: bagose/html-to-pdf-api:7.1.0
+    image: bagose/html-to-pdf-api:7.2.0
     container_name: html-to-pdf-api
     restart: unless-stopped
     ports:

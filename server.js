@@ -1,6 +1,6 @@
 /**
  * HTML to PDF API — Server Entry Point
- * v7.0.0
+ * v7.2.0
  */
 const app = require("./src/app");
 const config = require("./src/config");
@@ -104,27 +104,22 @@ const server = app.listen(config.PORT, () => {
   const settings = getSettings();
   console.log(`
 ┌──────────────────────────────────────────────────┐
-│        🚀 HTML to PDF API v7.0.0                │
+│        🚀 HTML to PDF API v7.2.0                │
 ├──────────────────────────────────────────────────┤
 │  Port:        ${String(config.PORT).padEnd(34)}│
 │  Templates:   ${String(templates.length + " registered").padEnd(34)}│
-│  Cleanup:     every ${String(settings.auto_cleanup_hours + "h").padEnd(28)}│
-│  Security:    Helmet, CORS, API Keys, JWT        │
-│  Timeout:     ${String(config.REQUEST_TIMEOUT_MS / 1000 + "s per request").padEnd(34)}│
+│  Parallelism: ${String(config.BROWSER_POOL_SIZE + " browser instances").padEnd(34)}│
+│  Status:      Enterprise / Unified Architecture  │
 │                                                  │
-│  📄 PDF:       /cetak_struk_pdf, /generate,      │
-│                /url-to-pdf                        │
-│  📸 Screenshot: /html-to-image, /url-to-image    │
-│  📱 QR/Barcode: /qr-code, /barcode, /qr-pdf     │
-│  🔄 Convert:   /pdf-to-image, /to-csv            │
-│  ⚡ Advanced:  /merge, /batch, /webhook           │
-│  🔐 Security:  /encrypt-pdf, /sign-pdf           │
-│  ❤️  Health:    /health                            │
-│  📂 Files:     /files, /cleanup, /templates       │
-│  🎨 Templates: Custom upload via Admin Panel     │
+│  ✨ UNIFIED ENDPOINTS:                           │
+│  POST /render     → Produce documents/images      │
+│  POST /pdf-action → Process/Manipulate PDFs       │
+│  POST /queue      → Async Job Submission          │
 │                                                  │
+│  🔗 MANAGEMENT:                                  │
 │  📖 API Docs:  http://localhost:${config.PORT}/docs${" ".repeat(Math.max(0, 11 - String(config.PORT).length))}│
 │  🔐 Admin:     http://localhost:${config.PORT}/admin-panel${" ".repeat(Math.max(0, 4 - String(config.PORT).length))}│
+│  ❤️  Health:    http://localhost:${config.PORT}/health${" ".repeat(Math.max(0, 9 - String(config.PORT).length))}│
 └──────────────────────────────────────────────────┘
 `);
 });

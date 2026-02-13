@@ -39,7 +39,7 @@ router.get("/health", async (req, res) => {
 
   res.status(status === "healthy" ? 200 : 503).json({
     status,
-    version: "7.1.0",
+    version: "7.2.0",
     started_at: startedAt,
     uptime_seconds: Math.floor(uptime),
     system: {

@@ -1,6 +1,6 @@
 /**
  * Express Application Setup
- * v7.0.0 — with Helmet, CORS, Request Timeout
+ * v7.2.0 — with Unified API & Enhanced Security
  */
 const express = require("express");
 const cors = require("cors");
@@ -67,6 +67,8 @@ app.use((req, res, next) => {
 app.use(apiLimiter);
 app.use(
   [
+    "/render",
+    "/pdf-action",
     "/cetak_struk_pdf",
     "/generate",
     "/url-to-pdf",
