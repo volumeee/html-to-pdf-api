@@ -142,7 +142,14 @@ const spec = {
                           color: { type: "string" },
                           fontSize: { type: "integer" },
                           rotate: { type: "integer" },
+                          repeat: {
+                            type: "boolean",
+                            description:
+                              "Tile watermark text across entire page (default: false for single centered text)",
+                          },
                         },
+                        description:
+                          "Overlay watermark. Use repeat: true to tile text diagonally across entire page (ideal for receipts)",
                       },
                       chart: {
                         type: "object",
@@ -541,7 +548,17 @@ const spec = {
                   page_size: { type: "string", default: "thermal_default" },
                   qr_code: { type: "object" },
                   barcode: { type: "object" },
-                  watermark: { type: "object" },
+                  watermark: {
+                    type: "object",
+                    properties: {
+                      text: { type: "string" },
+                      opacity: { type: "number" },
+                      color: { type: "string" },
+                      fontSize: { type: "integer" },
+                      rotate: { type: "integer" },
+                      repeat: { type: "boolean" },
+                    },
+                  },
                 },
               },
             },

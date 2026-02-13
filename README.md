@@ -134,7 +134,7 @@ Generate PDFs or images from **HTML**, **URLs**, or **Templates**. Supports inli
 | `landscape` | `boolean` | Landscape orientation |
 | `margin` | `object` | `{ top, bottom, left, right }` |
 | `inject_css` | `string` | Custom CSS to inject into the page |
-| `watermark` | `object` | `{ text, opacity, color, fontSize, rotate }` |
+| `watermark` | `object` | `{ text, opacity, color, fontSize, rotate, repeat }` — Overlay watermark. Set `repeat: true` to tile text across entire page |
 | `chart` | `object` | Chart.js configuration: `{ data: { type, data, options }, width, height }` |
 | `table` | `object` | `{ data: [...], options: { columns, headers, zebra } }` |
 | `qr_code` | `object` | `{ text, position, width, label, color, background }` |
@@ -230,6 +230,29 @@ Generate PDFs or images from **HTML**, **URLs**, or **Templates**. Supports inli
   }
 }
 ```
+
+**Receipt with Repeating Watermark** _(Thermal Paper)_
+```json
+{
+  "source_type": "template",
+  "source": "indomaret",
+  "data": {
+    "store_name": "My Coffee Shop",
+    "items": [{ "name": "Espresso", "qty": 2, "price": 35000 }],
+    "payment": 100000
+  },
+  "options": {
+    "pageSize": "thermal_80mm",
+    "qr_code": { "text": "ORDER-12345", "position": "bottom-center" },
+    "watermark": {
+      "text": "My Coffee Shop",
+      "repeat": true,
+      "opacity": 0.08
+    }
+  }
+}
+```
+> The **`repeat: true`** option tiles the watermark text diagonally across the entire receipt, perfect for store branding.
 
 ---
 
