@@ -7,6 +7,8 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![Puppeteer](https://img.shields.io/badge/Puppeteer-21+-40B5A4?logo=googlechrome&logoColor=white)](https://pptr.dev)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://docker.com)
+[![Docker Pulls](https://img.shields.io/docker/pulls/bagose/html-to-pdf-api.svg)](https://hub.docker.com/r/bagose/html-to-pdf-api)
+[![Docker Stars](https://img.shields.io/docker/stars/bagose/html-to-pdf-api.svg)](https://hub.docker.com/r/bagose/html-to-pdf-api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
