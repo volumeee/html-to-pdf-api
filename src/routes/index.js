@@ -1,5 +1,5 @@
 /**
- * Route Aggregator (Slim Version v7.2.0)
+ * Route Aggregator (Slim Version v7.2.1)
  *
  * CORE ROUTES ONLY. Specific feature routes are now consolidated into:
  * - /render (Unified Renderer)
@@ -62,7 +62,7 @@ function registerRoutes(app) {
   app.get("/", (req, res) => {
     res.json({
       name: "HTML to PDF API",
-      version: "7.2.0",
+      version: "7.2.1",
       architecture: "Unified Gateway",
       docs: "/docs",
       health: "/health",
