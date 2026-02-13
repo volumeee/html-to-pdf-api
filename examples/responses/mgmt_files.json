@@ -1,7 +1,73 @@
 {
   "status": "success",
-  "total": 103,
+  "total": 114,
   "files": [
+    {
+      "filename": "struk_1770999404281.pdf",
+      "url": "http://localhost:3000/output/struk_1770999404281.pdf",
+      "size_kb": 46,
+      "created": "2026-02-13T16:16:46.366Z"
+    },
+    {
+      "filename": "struk_1770999402227.pdf",
+      "url": "http://localhost:3000/output/struk_1770999402227.pdf",
+      "size_kb": 28,
+      "created": "2026-02-13T16:16:44.262Z"
+    },
+    {
+      "filename": "struk_1770999400079.pdf",
+      "url": "http://localhost:3000/output/struk_1770999400079.pdf",
+      "size_kb": 24,
+      "created": "2026-02-13T16:16:42.162Z"
+    },
+    {
+      "filename": "render_1770999397964.pdf",
+      "url": "http://localhost:3000/output/render_1770999397964.pdf",
+      "size_kb": 12,
+      "created": "2026-02-13T16:16:40.057Z"
+    },
+    {
+      "filename": "extracted_1770999395933.pdf",
+      "url": "http://localhost:3000/output/extracted_1770999395933.pdf",
+      "size_kb": 34,
+      "created": "2026-02-13T16:16:35.940Z"
+    },
+    {
+      "filename": "compressed_1770999395490.pdf",
+      "url": "http://localhost:3000/output/compressed_1770999395490.pdf",
+      "size_kb": 38,
+      "created": "2026-02-13T16:16:35.548Z"
+    },
+    {
+      "filename": "thumb_1770999393441.jpeg",
+      "url": "http://localhost:3000/output/thumb_1770999393441.jpeg",
+      "size_kb": 12,
+      "created": "2026-02-13T16:16:35.474Z"
+    },
+    {
+      "filename": "render_1770999391305.pdf",
+      "url": "http://localhost:3000/output/render_1770999391305.pdf",
+      "size_kb": 29,
+      "created": "2026-02-13T16:16:33.358Z"
+    },
+    {
+      "filename": "render_1770999389968.png",
+      "url": "http://localhost:3000/output/render_1770999389968.png",
+      "size_kb": 31,
+      "created": "2026-02-13T16:16:31.285Z"
+    },
+    {
+      "filename": "render_1770999386792.pdf",
+      "url": "http://localhost:3000/output/render_1770999386792.pdf",
+      "size_kb": 34,
+      "created": "2026-02-13T16:16:29.944Z"
+    },
+    {
+      "filename": "render_1770999224951.pdf",
+      "url": "http://localhost:3000/output/render_1770999224951.pdf",
+      "size_kb": 7,
+      "created": "2026-02-13T16:13:46.973Z"
+    },
     {
       "filename": "struk_1770999222807.pdf",
       "url": "http://localhost:3000/output/struk_1770999222807.pdf",

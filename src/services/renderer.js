@@ -105,40 +105,41 @@ async function injectQrCode(page, qrConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:block;" />`;
+      // Bulletproof centering: Use inline-block inside a full-width text-align:center container
+      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:inline-block !important; vertical-align:top;" />`;
       const labelHtml = params.label
-        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center; word-break:break-word;">${params.label}</div>`
+        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center; word-break:break-word;">${params.label}</div>`
         : "";
 
       const pos = params.position;
 
-      // Use Flexbox for guaranteed centering on any paper width
+      // Force container to occupy 100% of printable width
       let containerStyle =
-        "clear:both; width:100%; display:flex; flex-direction:column; padding:8px 0; font-family:Arial,sans-serif; box-sizing:border-box;";
+        "clear:both; width:100% !important; box-sizing:border-box; padding:8px 0; font-family:Arial,sans-serif;";
 
       if (pos.includes("right")) {
-        containerStyle += " align-items: flex-end;";
+        containerStyle += " text-align:right !important;";
       } else if (pos.includes("left")) {
-        containerStyle += " align-items: flex-start;";
+        containerStyle += " text-align:left !important;";
       } else {
-        containerStyle += " align-items: center;";
+        containerStyle += " text-align:center !important;";
       }
 
       if (pos.includes("top")) {
         containerStyle += " margin-bottom:12px;";
         container.style.cssText = containerStyle;
-        container.innerHTML = `<div style="text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
+        container.innerHTML = `<div style="display:inline-block; text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
         document.body.insertBefore(container, document.body.firstChild);
       } else if (pos === "center") {
         container.style.cssText =
-          "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; display:flex; flex-direction:column; align-items:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
+          "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; text-align:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
         container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       } else {
         // Bottom positions or default
         containerStyle += " margin-top:16px;";
         container.style.cssText = containerStyle;
-        container.innerHTML = `<div style="text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
+        container.innerHTML = `<div style="display:inline-block; text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
         document.body.appendChild(container);
       }
     },
@@ -168,13 +169,13 @@ async function injectBarcode(page, barcodeConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      const imgHtml = `<img src="${params.dataUri}" style="display:block; max-width:100%;" />`;
+      const imgHtml = `<img src="${params.dataUri}" style="display:inline-block !important; vertical-align:top; max-width:100%;" />`;
       const labelHtml = params.label
-        ? `<div style="font-size:9px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center;">${params.label}</div>`
+        ? `<div style="font-size:9px; color:#555; font-family:Arial,sans-serif; margin-top:4px; text-align:center;">${params.label}</div>`
         : "";
 
       let containerStyle =
-        "clear:both; width:100%; display:flex; flex-direction:column; align-items:center; padding:8px 0;";
+        "clear:both; width:100% !important; text-align:center !important; padding:8px 0;";
 
       if (params.position === "top-center") {
         containerStyle += " margin-bottom:12px;";
