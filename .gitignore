@@ -3,23 +3,33 @@ node_modules/
 
 # Environment
 .env
+.env.*
 
-# Output PDFs
+# Output files (generated at runtime)
 output/*.pdf
 output/*.png
+output/*.jpg
+output/*.webp
 output/*.csv
 
-# Stats & logs data
+# Data (persisted via Docker volumes)
 data/
 
 # Logs
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 *.log
 
 # OS
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~

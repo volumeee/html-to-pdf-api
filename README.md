@@ -1,19 +1,20 @@
 <p align="center">
-  <h1 align="center">📄 HTML to PDF API v6.0.0</h1>
+  <h1 align="center">📄 HTML to PDF API</h1>
   <p align="center">
-    <strong>Universal Document Generation & Conversion Platform</strong>
+    <strong>Enterprise-Grade Document Generation & Conversion Platform</strong>
   </p>
   <p align="center">
-    HTML/URL → PDF • Screenshot • QR Code • Barcode • Custom Templates • API Key Management
+    HTML/URL → PDF • Screenshot • QR Code • Barcode • Digital Signatures • PDF Encryption • Signed URLs
   </p>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-6.0.0-blue.svg" alt="Version" />
+  <img src="https://img.shields.io/badge/version-7.0.0-blue.svg" alt="Version" />
   <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg" alt="Node.js" />
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
   <img src="https://img.shields.io/badge/docker-ready-2496ED.svg" alt="Docker" />
   <img src="https://img.shields.io/badge/puppeteer-powered-blueviolet.svg" alt="Puppeteer" />
+  <img src="https://img.shields.io/badge/security-helmet-orange.svg" alt="Security" />
 </p>
 
 ---
@@ -21,22 +22,30 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [What's New in v7.0.0](#-whats-new-in-v700)
 - [Architecture](#-architecture)
 - [Quick Start](#-quick-start)
 - [API Endpoints](#-api-endpoints)
   - [PDF Generation](#-pdf-generation)
   - [Screenshots](#-screenshots)
   - [QR Code & Barcode](#-qr-code--barcode)
+  - [Security & Encryption](#-security--encryption)
   - [Conversion](#-conversion)
-  - [Advanced Operations](#%EF%B8%8F-advanced-operations)
+  - [Advanced Operations](#️-advanced-operations)
+  - [Monitoring](#-monitoring)
   - [File Management](#-file-management)
   - [Admin Panel](#-admin-panel)
 - [Embedded QR Code & Barcode in PDFs](#-embedded-qr-code--barcode-in-pdfs)
 - [Header, Footer & Page Numbers](#-header-footer--page-numbers)
 - [Custom Templates](#-custom-templates)
 - [Authentication & Security](#-authentication--security)
-- [Configuration](#%EF%B8%8F-configuration)
+- [Configuration](#️-configuration)
 - [Deployment](#-deployment)
+- [API Response Format](#-api-response-format)
+- [Tech Stack](#-tech-stack)
+- [Changelog](#-changelog)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
@@ -47,30 +56,68 @@
 - 📄 **PDF Generation** — Convert HTML, URLs, or templates to PDF with pixel-perfect rendering
 - 📸 **Screenshots** — Capture full-page or viewport screenshots in PNG, JPEG, or WebP
 - 📱 **QR Codes & Barcodes** — Generate standalone or embed directly into PDFs/receipts
+- 🔐 **PDF Encryption** — AES-256 password protection via qpdf
+- ✍️ **Digital Signatures** — Embed signature stamp images onto PDF documents
+- 🔗 **Signed URLs** — Time-limited, tamper-proof file access with HMAC-SHA256
 - 🎨 **Custom Templates** — Upload and manage HTML templates via Admin Panel
-- 📑 **Advanced Operations** — Merge PDFs, batch generation, async webhooks
-- 🔒 **Enterprise Security** — API keys with quotas, rate limiting, JWT admin auth
+- 📑 **Advanced Operations** — Merge PDFs, batch generation, async webhooks with retry
+- 🛡️ **Enterprise Security** — Helmet.js headers, CORS, API keys with quotas, rate limiting, JWT
+- ❤️ **Health Monitoring** — Real-time system metrics, browser status, disk usage
 - 🖥️ **Admin Dashboard** — Full-featured web panel for monitoring and configuration
+
+---
+
+## 🆕 What's New in v7.0.0
+
+> **v7.0.0** is a major release focused on **enterprise security** and new document features.
+
+### 🔐 Security Enhancements
+
+| Feature                    | Description                                                                 |
+| -------------------------- | --------------------------------------------------------------------------- |
+| **Helmet.js**              | HTTP security headers (HSTS, X-Content-Type-Options, X-Frame-Options, etc.) |
+| **Configurable CORS**      | Restrict origins via `CORS_ORIGINS` env var                                 |
+| **Request Timeout**        | Per-request timeout (120s default) prevents hanging                         |
+| **Environment Validation** | Startup warnings for default/insecure secrets                               |
+| **Graceful Shutdown**      | Connection draining, stats persistence on SIGTERM/SIGINT                    |
+
+### ✨ New Features
+
+| Feature                  | Endpoint                       | Description                                |
+| ------------------------ | ------------------------------ | ------------------------------------------ |
+| **PDF Encryption**       | `POST /encrypt-pdf`            | AES-256 password protection                |
+| **Digital Signatures**   | `POST /sign-pdf`               | Stamp image overlay with position control  |
+| **Signed URLs**          | `POST /secure/generate`        | HMAC-SHA256 time-limited file access       |
+| **Template Preview**     | `GET /templates/:name/preview` | Generate sample PDF with built-in data     |
+| **Health Check**         | `GET /health`                  | System metrics, browser status, disk usage |
+| **Webhook Retry**        | `POST /webhook`                | Exponential backoff (configurable retries) |
+| **Signature Management** | `/admin/signatures`            | CRUD for stamp images via admin panel      |
+
+### 🐳 DevOps
+
+- **Docker Compose** with health check, resource limits, log rotation
+- **Dockerfile HEALTHCHECK** instruction
+- **Legal page size** preset (8.5" × 14")
 
 ---
 
 ## 🏗 Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Express Server                       │
-├──────┬──────┬──────┬──────┬──────┬──────┬──────────────┤
-│ PDF  │Screen│ QR/  │ File │Admin │ Adv  │ Convert      │
-│Routes│ shot │Barcd │Mgmt  │Panel │ anced│ Routes       │
-├──────┴──────┴──────┴──────┴──────┴──────┴──────────────┤
-│              Middleware Layer                            │
-│  API Key Auth │ Rate Limiter │ Body Parser │ CORS       │
-├─────────────────────────────────────────────────────────┤
-│              Service Layer                              │
-│  Renderer │ QR/Barcode │ Templates │ File Manager       │
-├─────────────────────────────────────────────────────────┤
-│  Puppeteer (Chromium) │ qrcode │ bwip-js │ qpdf        │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                      Express Server                           │
+├──────┬──────┬──────┬──────┬──────┬──────┬──────┬────────────┤
+│ PDF  │Screen│ QR/  │Secur-│Health│ Adv  │ File │ Admin      │
+│Routes│ shot │Barcd │ ity  │Check │ anced│ Mgmt │ Panel      │
+├──────┴──────┴──────┴──────┴──────┴──────┴──────┴────────────┤
+│                   Middleware Layer                             │
+│  Helmet │ CORS │ Timeout │ API Key Auth │ Rate Limiter │ JWT │
+├──────────────────────────────────────────────────────────────┤
+│                    Service Layer                              │
+│  Renderer │ QR/Barcode │ Signature │ SignedUrl │ Templates   │
+├──────────────────────────────────────────────────────────────┤
+│  Puppeteer (Chromium) │ pdf-lib │ qrcode │ bwip-js │ qpdf   │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -83,12 +130,13 @@
 docker run -d \
   --name pdf-api \
   -p 3000:3000 \
-  -v $(pwd)/data:/app/data \
-  -e ADMIN_USERNAME=admin \
-  -e ADMIN_PASSWORD=yourpassword \
+  -v pdf_output:/app/output \
+  -v pdf_data:/app/data \
+  -e ADMIN_PASSWORD=your_strong_password \
   -e JWT_SECRET=your_random_secret_key \
-  --restart always \
-  bagose/html-to-pdf-api:latest
+  -e SIGNED_URL_SECRET=your_signed_url_secret \
+  --restart unless-stopped \
+  bagose/html-to-pdf-api:7.0.0
 ```
 
 ### Docker Compose
@@ -97,18 +145,28 @@ docker run -d \
 version: "3.8"
 services:
   pdf-api:
-    image: bagose/html-to-pdf-api:latest
+    image: bagose/html-to-pdf-api:7.0.0
     container_name: pdf-api
     ports:
       - "3000:3000"
-    volumes:
-      - ./data:/app/data
     environment:
-      - ADMIN_USERNAME=admin
-      - ADMIN_PASSWORD=yourpassword
+      - ADMIN_PASSWORD=your_strong_password
       - JWT_SECRET=your_random_secret_key
+      - SIGNED_URL_SECRET=your_signed_url_secret
+      - CORS_ORIGINS=https://yourdomain.com
       - AUTO_CLEANUP_HOURS=24
-    restart: always
+    volumes:
+      - pdf_output:/app/output
+      - pdf_data:/app/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+volumes:
+  pdf_output:
+  pdf_data:
 ```
 
 ### Manual Installation
@@ -120,7 +178,13 @@ npm install
 node server.js
 ```
 
-> **💡 Tip:** Use the `-v $(pwd)/data:/app/data` volume mount to persist API keys, custom templates, and application settings across container restarts.
+> **💡 Tip:** On first startup, the API validates your configuration and warns about insecure defaults. Always set `ADMIN_PASSWORD`, `JWT_SECRET`, and `SIGNED_URL_SECRET` in production!
+
+Once running, access:
+
+- **📖 API Docs:** [http://localhost:3000/docs](http://localhost:3000/docs)
+- **🔐 Admin Panel:** [http://localhost:3000/admin-panel](http://localhost:3000/admin-panel)
+- **❤️ Health Check:** [http://localhost:3000/health](http://localhost:3000/health)
 
 ---
 
@@ -154,11 +218,11 @@ curl -X POST http://localhost:3000/cetak_struk_pdf \
 |---|---|---|
 | `html_content` | `string` | **Required.** HTML string to convert |
 | `filename` | `string` | Custom output filename |
-| `page_size` | `string` | `thermal_58mm`, `thermal_80mm`, `thermal_default`, `a4`, `a5`, `letter`, `label`, `sertifikat` |
+| `page_size` | `string` | `thermal_58mm`, `thermal_80mm`, `thermal_default`, `a4`, `a5`, `letter`, `legal`, `label`, `sertifikat` |
 | `watermark` | `object` | `{ text, opacity, color, fontSize, rotate }` |
 | `qr_code` | `object` | Embed QR code (see [QR Code Params](#qr-code-params)) |
 | `barcode` | `object` | Embed barcode (see [Barcode Params](#barcode-params)) |
-| `options` | `object` | Additional options: `{ displayHeaderFooter, headerTemplate, footerTemplate, margin, landscape }` |
+| `options` | `object` | `{ displayHeaderFooter, headerTemplate, footerTemplate, margin, landscape }` |
 | `password` | `string` | PDF password protection (requires qpdf) |
 | `return_base64` | `boolean` | Also return base64 encoded PDF |
 
@@ -223,6 +287,16 @@ curl -X POST http://localhost:3000/url-to-pdf \
 
 ---
 
+#### `GET /templates/:name/preview` — Template Preview 🆕
+
+Generate a sample PDF from any built-in template using pre-configured data. Perfect for exploring templates before integrating.
+
+```bash
+curl http://localhost:3000/templates/invoice/preview
+```
+
+---
+
 ### 📸 Screenshots
 
 #### `POST /html-to-image` — HTML → Image
@@ -232,7 +306,7 @@ curl -X POST http://localhost:3000/url-to-pdf \
   "html_content": "<div style='padding:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;'><h1>Hello!</h1></div>",
   "format": "png",
   "full_page": true,
-  "qr_code": { "text": "https://example.com", "position": "bottom-right" }
+  "watermark": { "text": "DRAFT" }
 }
 ```
 
@@ -332,7 +406,283 @@ Generate a styled PDF document with an embedded QR code.
 
 ---
 
-### 📱 Embedded QR Code & Barcode in PDFs
+### 🔐 Security & Encryption
+
+#### `POST /encrypt-pdf` — PDF Password Protection 🆕
+
+Add AES-256 encryption to an existing PDF file.
+
+```bash
+curl -X POST http://localhost:3000/encrypt-pdf \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filename": "invoice_1234567890.pdf",
+    "password": "mySecret123"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "message": "PDF encrypted with password protection",
+  "source": "invoice_1234567890.pdf",
+  "file_url": "http://localhost:3000/output/encrypted_1234567890.pdf",
+  "filename": "encrypted_1234567890.pdf",
+  "encryption": "AES-256"
+}
+```
+
+---
+
+#### `POST /sign-pdf` — Digital Signature Stamp 🆕
+
+Embed a signature stamp image onto a specific page of a PDF.
+
+```bash
+curl -X POST http://localhost:3000/sign-pdf \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filename": "contract.pdf",
+    "signature_name": "ceo_signature",
+    "position": "bottom-right",
+    "page": 0,
+    "width": 120,
+    "height": 60,
+    "opacity": 0.9
+  }'
+```
+
+| Parameter          | Type      | Default        | Description                                                                                               |
+| ------------------ | --------- | -------------- | --------------------------------------------------------------------------------------------------------- |
+| `filename`         | `string`  | —              | **Required.** PDF in output folder                                                                        |
+| `signature_name`   | `string`  | —              | Name of saved signature stamp                                                                             |
+| `signature_base64` | `string`  | —              | OR inline base64 image (PNG/JPG)                                                                          |
+| `position`         | `string`  | `bottom-right` | `bottom-right`, `bottom-left`, `bottom-center`, `top-right`, `top-left`, `top-center`, `center`, `custom` |
+| `page`             | `integer` | `0` (last)     | Page to sign (1-based, 0 = last page)                                                                     |
+| `width`            | `integer` | `120`          | Signature width in points                                                                                 |
+| `height`           | `integer` | `60`           | Signature height in points                                                                                |
+| `opacity`          | `number`  | `1.0`          | Opacity (0.0 – 1.0)                                                                                       |
+| `x`, `y`           | `number`  | —              | Custom coordinates (if `position: "custom"`)                                                              |
+
+---
+
+#### `POST /secure/generate` — Generate Signed URL 🆕
+
+Create a time-limited, tamper-proof URL for file access.
+
+```bash
+curl -X POST http://localhost:3000/secure/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filename": "invoice_1234567890.pdf",
+    "expiry_minutes": 30
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "status": "success",
+  "signed_url": "http://localhost:3000/secure/invoice_123.pdf?expires=1770981166331&sig=fec796a0...",
+  "expires_at": "2026-02-13T11:12:46.331Z",
+  "expires_in_minutes": 30
+}
+```
+
+#### `GET /secure/:filename` — Access File via Signed URL
+
+Access a file using a valid signed URL. Returns `403` if the signature is invalid or expired.
+
+```bash
+# Use the signed_url from the generate response
+curl "http://localhost:3000/secure/invoice_123.pdf?expires=1770981166331&sig=fec796a0..."
+```
+
+---
+
+### 🔄 Conversion
+
+#### `POST /pdf-to-image` — PDF → Image
+
+```json
+{
+  "filename": "document_abc123.pdf",
+  "format": "png",
+  "quality": 90,
+  "page_size": "a4"
+}
+```
+
+#### `POST /to-csv` — Data → CSV
+
+```json
+{
+  "columns": ["Name", "Email", "Role"],
+  "rows": [
+    ["John", "john@example.com", "Admin"],
+    ["Jane", "jane@example.com", "User"]
+  ],
+  "filename": "users.csv"
+}
+```
+
+---
+
+### ⚡️ Advanced Operations
+
+#### `POST /merge` — Merge Multiple PDFs
+
+```json
+{
+  "files": ["invoice_001.pdf", "invoice_002.pdf", "invoice_003.pdf"],
+  "filename": "merged_invoices.pdf"
+}
+```
+
+#### `POST /batch` — Batch Template Generation
+
+Generate multiple documents from a template and merge into one PDF.
+
+```json
+{
+  "template": "label",
+  "batch": [
+    { "name": "Package 1", "address": "Jl. Sudirman 1" },
+    { "name": "Package 2", "address": "Jl. Thamrin 5" }
+  ]
+}
+```
+
+#### `POST /webhook` — Async Generation with Webhook & Retry 🆕
+
+Generate a PDF asynchronously and deliver the result to your webhook URL with configurable retry and exponential backoff.
+
+```json
+{
+  "source": { "html": "<h1>Invoice</h1>" },
+  "webhook_url": "https://yourserver.com/callback",
+  "options": {
+    "page_size": "a4",
+    "watermark": { "text": "PREVIEW" },
+    "qr_code": { "text": "INV-001", "position": "top-right" },
+    "max_retries": 5,
+    "retry_delay_ms": 2000
+  }
+}
+```
+
+| Parameter                | Type      | Default | Description                                               |
+| ------------------------ | --------- | ------- | --------------------------------------------------------- |
+| `webhook_url`            | `string`  | —       | **Required.** URL to receive the result                   |
+| `source.html`            | `string`  | —       | HTML content (or use `source.url` or `template` + `data`) |
+| `source.url`             | `string`  | —       | URL to capture                                            |
+| `template`               | `string`  | —       | Template name                                             |
+| `data`                   | `object`  | —       | Template data                                             |
+| `options.max_retries`    | `integer` | `3`     | Max delivery retry attempts                               |
+| `options.retry_delay_ms` | `integer` | `3000`  | Base delay between retries (exponential backoff)          |
+
+---
+
+### ❤️ Monitoring
+
+#### `GET /health` — System Health Check 🆕
+
+Returns real-time system status, browser health, and resource usage. No authentication required.
+
+```bash
+curl http://localhost:3000/health
+```
+
+**Response:**
+
+```json
+{
+  "status": "healthy",
+  "version": "7.0.0",
+  "uptime_seconds": 3600,
+  "system": {
+    "platform": "linux",
+    "cpus": 8,
+    "load_avg": [1.5, 1.2, 1.0],
+    "total_memory_mb": 32029,
+    "free_memory_mb": 15783
+  },
+  "process": {
+    "pid": 1,
+    "rss_mb": 82,
+    "heap_used_mb": 22
+  },
+  "browser": {
+    "connected": true,
+    "pages": 0,
+    "launch_count": 1,
+    "version": "Chrome/131.0.6778.204"
+  },
+  "storage": {
+    "output_files": 12,
+    "total_size_mb": 4.5
+  }
+}
+```
+
+Returns `200` when healthy, `503` when degraded (browser disconnected).
+
+---
+
+### 📂 File Management
+
+| Method   | Endpoint            | Description                       |
+| -------- | ------------------- | --------------------------------- |
+| `GET`    | `/files`            | List all generated files          |
+| `DELETE` | `/files/:filename`  | Delete a specific file            |
+| `POST`   | `/cleanup`          | Remove old files                  |
+| `GET`    | `/output/:filename` | Direct file download              |
+| `GET`    | `/templates`        | List all templates & capabilities |
+
+---
+
+### 🔐 Admin Panel
+
+Access the web-based admin panel at `/admin-panel`.
+
+| Method  | Endpoint          | Description                    |
+| ------- | ----------------- | ------------------------------ |
+| `POST`  | `/admin/login`    | Authenticate and get JWT token |
+| `GET`   | `/admin/stats`    | Usage statistics & charts      |
+| `GET`   | `/admin/logs`     | Request history                |
+| `GET`   | `/admin/system`   | System info & capabilities     |
+| `PATCH` | `/admin/settings` | Update global settings         |
+| `POST`  | `/admin/reset`    | Reset all statistics           |
+
+**API Key Management:**
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/admin/keys` | List all API keys |
+| `POST` | `/admin/keys` | Create new API key |
+| `PATCH` | `/admin/keys/:id` | Update API key |
+| `DELETE` | `/admin/keys/:id` | Delete API key |
+
+**Custom Template Management:**
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/admin/templates/custom` | List custom templates |
+| `GET` | `/admin/templates/custom/:name` | Get template source |
+| `POST` | `/admin/templates/custom` | Create/update template |
+| `DELETE` | `/admin/templates/custom/:name` | Delete template |
+
+**Digital Signature Management:** 🆕
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/admin/signatures` | List all signature stamps |
+| `POST` | `/admin/signatures` | Upload signature stamp (base64 image) |
+| `DELETE` | `/admin/signatures/:name` | Delete signature stamp |
+
+---
+
+## 📱 Embedded QR Code & Barcode in PDFs
 
 **This is the key feature** — you can embed QR codes and barcodes directly into **any** PDF or image generation endpoint by adding the `qr_code` or `barcode` parameter.
 
@@ -385,7 +735,7 @@ Generate a styled PDF document with an embedded QR code.
 curl -X POST http://localhost:3000/cetak_struk_pdf \
   -H "Content-Type: application/json" \
   -d '{
-    "html_content": "<div style=\"font-family:monospace;width:300px;padding:20px;\"><h2 style=\"text-align:center;\">TOKO SERBA ADA</h2><hr><p>Item 1 ........... Rp 25.000</p><p>Item 2 ........... Rp 15.000</p><hr><p><strong>TOTAL: Rp 40.000</strong></p><p style=\"font-size:10px;color:#888;\">Terima kasih telah berbelanja!</p></div>",
+    "html_content": "<div style=\"font-family:monospace;width:300px;padding:20px;\"><h2 style=\"text-align:center;\">TOKO SERBA ADA</h2><hr><p>Item 1 ........... Rp 25.000</p><p>Item 2 ........... Rp 15.000</p><hr><p><strong>TOTAL: Rp 40.000</strong></p></div>",
     "page_size": "thermal_80mm",
     "qr_code": {
       "text": "https://toko.com/verify/TRX-001",
@@ -424,7 +774,7 @@ curl -X POST http://localhost:3000/generate \
 
 ---
 
-### 📑 Header, Footer & Page Numbers
+## 📑 Header, Footer & Page Numbers
 
 Add custom headers and footers with automatic page numbering to any PDF endpoint.
 
@@ -457,113 +807,6 @@ Add custom headers and footers with automatic page numbering to any PDF endpoint
 | `<span class="totalPages"></span>` | Total number of pages |
 
 > **⚠️ Important:** Header and footer templates must use inline styles. External CSS and `<link>` tags are not supported. Font size must be explicitly set (Chromium defaults to very small text).
-
----
-
-### 🔄 Conversion
-
-#### `POST /pdf-to-image` — PDF → Image
-
-```json
-{
-  "filename": "document_abc123.pdf",
-  "format": "png",
-  "quality": 90,
-  "page_size": "a4"
-}
-```
-
-#### `POST /to-csv` — Data → CSV
-
-```json
-{
-  "columns": ["Name", "Email", "Role"],
-  "rows": [
-    ["John", "john@example.com", "Admin"],
-    ["Jane", "jane@example.com", "User"]
-  ],
-  "filename": "users.csv"
-}
-```
-
----
-
-### ⚡️ Advanced Operations
-
-#### `POST /merge` — Merge Multiple PDFs
-
-```json
-{
-  "files": ["invoice_001.pdf", "invoice_002.pdf", "invoice_003.pdf"],
-  "filename": "merged_invoices.pdf"
-}
-```
-
-#### `POST /batch` — Batch Template Generation
-
-```json
-{
-  "template": "label",
-  "items": [
-    { "data": { "name": "Package 1", "address": "Jl. Sudirman 1" } },
-    { "data": { "name": "Package 2", "address": "Jl. Thamrin 5" } }
-  ]
-}
-```
-
-#### `POST /webhook` — Async Generation with Webhook
-
-```json
-{
-  "template": "invoice",
-  "data": { "invoice_no": "INV-001" },
-  "webhook_url": "https://yourserver.com/callback",
-  "webhook_method": "POST"
-}
-```
-
----
-
-### 📂 File Management
-
-| Method   | Endpoint            | Description                       |
-| -------- | ------------------- | --------------------------------- |
-| `GET`    | `/files`            | List all generated files          |
-| `DELETE` | `/files/:filename`  | Delete a specific file            |
-| `POST`   | `/cleanup`          | Remove old files                  |
-| `GET`    | `/output/:filename` | Direct file download              |
-| `GET`    | `/templates`        | List all templates & capabilities |
-
----
-
-### 🔐 Admin Panel
-
-Access the web-based admin panel at `/admin-panel`.
-
-| Method  | Endpoint          | Description                    |
-| ------- | ----------------- | ------------------------------ |
-| `POST`  | `/admin/login`    | Authenticate and get JWT token |
-| `GET`   | `/admin/stats`    | Usage statistics & charts      |
-| `GET`   | `/admin/logs`     | Request history                |
-| `GET`   | `/admin/system`   | System info & capabilities     |
-| `PATCH` | `/admin/settings` | Update global settings         |
-| `POST`  | `/admin/reset`    | Reset all statistics           |
-
-**API Key Management:**
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/admin/keys` | List all API keys |
-| `POST` | `/admin/keys` | Create new API key |
-| `PATCH` | `/admin/keys/:id` | Update API key |
-| `DELETE` | `/admin/keys/:id` | Delete API key |
-
-**Custom Template Management:**
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/admin/templates/custom` | List custom templates |
-| `GET` | `/admin/templates/custom/:name` | Get template source |
-| `POST` | `/admin/templates/custom` | Create/update template |
-| `DELETE` | `/admin/templates/custom/:name` | Delete template |
 
 ---
 
@@ -630,18 +873,34 @@ curl -X POST http://localhost:3000/generate \
 
 ### Built-in Templates
 
-| Template     | Description                                 | Default Page      |
-| ------------ | ------------------------------------------- | ----------------- |
-| `indomaret`  | Thermal receipt (Indomaret/Alfamart style)  | `thermal_default` |
-| `modern`     | Modern minimalist receipt                   | `thermal_default` |
-| `invoice`    | Professional A4 invoice with tax            | `a4`              |
-| `surat`      | Official letter with letterhead & signature | `a4`              |
-| `sertifikat` | Certificate/award with decorative border    | `sertifikat`      |
-| `label`      | Shipping label (100x150mm)                  | `label`           |
+| Template     | Description                                 | Default Page      | Preview |
+| ------------ | ------------------------------------------- | ----------------- | ------- |
+| `indomaret`  | Thermal receipt (Indomaret/Alfamart style)  | `thermal_default` | ✅      |
+| `modern`     | Modern minimalist receipt                   | `thermal_default` | ✅      |
+| `invoice`    | Professional A4 invoice with tax            | `a4`              | ✅      |
+| `surat`      | Official letter with letterhead & signature | `a4`              | ✅      |
+| `sertifikat` | Certificate/award with decorative border    | `sertifikat`      | ✅      |
+| `label`      | Shipping label (100×150mm)                  | `label`           | ✅      |
+
+> **💡 New:** All built-in templates now support `GET /templates/:name/preview` for instant sample PDF generation!
 
 ---
 
 ## 🔒 Authentication & Security
+
+### Security Headers (Helmet.js) 🆕
+
+All responses include enterprise-grade security headers:
+
+```
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 0
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Permitted-Cross-Domain-Policies: none
+```
 
 ### API Key Authentication
 
@@ -678,9 +937,22 @@ Configure via Admin Panel or settings:
 - **Public Mode** (`allow_guest_access: true`) — No API key required
 - **Private Mode** (`allow_guest_access: false`) — API key required for all requests
 
+### Signed URLs 🆕
+
+Generate time-limited, tamper-proof URLs for secure file distribution:
+
+```bash
+# Generate a signed URL valid for 30 minutes
+curl -X POST http://localhost:3000/secure/generate \
+  -H "Content-Type: application/json" \
+  -d '{ "filename": "invoice.pdf", "expiry_minutes": 30 }'
+```
+
+The signed URL uses HMAC-SHA256 to ensure the URL cannot be tampered with. Once expired, the URL returns `403 Forbidden`.
+
 ### PDF Password Protection
 
-Any PDF endpoint supports password protection (requires `qpdf` installed in container):
+Any PDF endpoint supports inline password protection (requires `qpdf`):
 
 ```json
 {
@@ -689,21 +961,37 @@ Any PDF endpoint supports password protection (requires `qpdf` installed in cont
 }
 ```
 
+Or encrypt an existing PDF:
+
+```json
+POST /encrypt-pdf
+{ "filename": "existing.pdf", "password": "secret" }
+```
+
 ---
 
 ## ⚙️ Configuration
 
 ### Environment Variables
 
-| Variable                    | Default             | Description                          |
-| --------------------------- | ------------------- | ------------------------------------ |
-| `PORT`                      | `3000`              | Server port                          |
-| `ADMIN_USERNAME`            | `admin`             | Admin panel username                 |
-| `ADMIN_PASSWORD`            | `admin123`          | Admin panel password                 |
-| `JWT_SECRET`                | `auto-generated`    | JWT signing secret                   |
-| `AUTO_CLEANUP_HOURS`        | `24`                | Auto-delete files older than N hours |
-| `MAX_BODY_SIZE`             | `10mb`              | Maximum request body size            |
-| `PUPPETEER_EXECUTABLE_PATH` | `/usr/bin/chromium` | Path to Chromium binary              |
+| Variable                    | Default                                | Description                           |
+| --------------------------- | -------------------------------------- | ------------------------------------- |
+| `PORT`                      | `3000`                                 | Server port                           |
+| `ADMIN_USERNAME`            | `admin`                                | Admin panel username                  |
+| `ADMIN_PASSWORD`            | `admin123`                             | Admin panel password ⚠️               |
+| `JWT_SECRET`                | `html-to-pdf-secret-key-change-in-...` | JWT signing secret ⚠️                 |
+| `AUTO_CLEANUP_HOURS`        | `24`                                   | Auto-delete files older than N hours  |
+| `MAX_BODY_SIZE`             | `10mb`                                 | Maximum request body size             |
+| `CORS_ORIGINS`              | `*`                                    | Comma-separated allowed origins 🆕    |
+| `REQUEST_TIMEOUT_MS`        | `120000`                               | Per-request timeout in ms 🆕          |
+| `SIGNED_URL_SECRET`         | `signed-url-secret-change-me`          | HMAC-SHA256 secret for signed URLs 🆕 |
+| `SIGNED_URL_EXPIRY_MINUTES` | `60`                                   | Default signed URL expiry 🆕          |
+| `WEBHOOK_MAX_RETRIES`       | `3`                                    | Max webhook delivery retries 🆕       |
+| `WEBHOOK_RETRY_DELAY_MS`    | `3000`                                 | Base webhook retry delay 🆕           |
+| `BROWSER_POOL_SIZE`         | `1`                                    | Number of browser instances           |
+| `PUPPETEER_EXECUTABLE_PATH` | `/usr/bin/chromium`                    | Path to Chromium binary               |
+
+> **⚠️ Security Warning:** The API will display warnings at startup if `ADMIN_PASSWORD`, `JWT_SECRET`, or `SIGNED_URL_SECRET` are using default values. Always change these in production!
 
 ### Page Size Presets
 
@@ -715,6 +1003,7 @@ Any PDF endpoint supports password protection (requires `qpdf` installed in cont
 | `a4`              | 210mm × 297mm | Standard document        |
 | `a5`              | 148mm × 210mm | Half A4                  |
 | `letter`          | 8.5in × 11in  | US Letter                |
+| `legal`           | 8.5in × 14in  | US Legal 🆕              |
 | `label`           | 100mm × 150mm | Shipping label           |
 | `sertifikat`      | 297mm × 210mm | Landscape certificate    |
 
@@ -726,30 +1015,54 @@ Any PDF endpoint supports password protection (requires `qpdf` installed in cont
 
 ```bash
 docker pull bagose/html-to-pdf-api:latest
-docker pull bagose/html-to-pdf-api:6.0.0
+docker pull bagose/html-to-pdf-api:7.0.0
 ```
 
 ### Build from Source
 
 ```bash
+git clone https://github.com/volumeee/html-to-pdf-api.git
+cd html-to-pdf-api
 docker build -t html-to-pdf-api .
-docker run -d -p 3000:3000 -v $(pwd)/data:/app/data html-to-pdf-api
+docker run -d -p 3000:3000 \
+  -v pdf_output:/app/output \
+  -v pdf_data:/app/data \
+  html-to-pdf-api
+```
+
+### Docker Compose (Production)
+
+A ready-to-use `docker-compose.yml` is included in the repository with:
+
+- ✅ Health check (every 30s)
+- ✅ Resource limits (1GB RAM, 1 CPU)
+- ✅ Named volumes for persistence
+- ✅ Log rotation (10MB, 3 files)
+- ✅ Auto-restart on failure
+
+```bash
+docker compose up -d
 ```
 
 ### Production Checklist
 
-- [ ] Set strong `ADMIN_PASSWORD` and `JWT_SECRET`
-- [ ] Mount data volume for persistence: `-v $(pwd)/data:/app/data`
+- [ ] Set strong `ADMIN_PASSWORD`, `JWT_SECRET`, and `SIGNED_URL_SECRET`
+- [ ] Mount volumes for data persistence
+- [ ] Set `CORS_ORIGINS` to specific domains (not `*`)
 - [ ] Disable guest access in production: `allow_guest_access: false`
 - [ ] Create API keys for each integration
 - [ ] Configure rate limits per API key
 - [ ] Set up reverse proxy (nginx/traefik) with HTTPS
+- [ ] Monitor `/health` endpoint
+- [ ] Configure log rotation and monitoring
 
 ---
 
 ## 📊 API Response Format
 
-All responses follow a consistent format:
+All responses follow a consistent JSON format:
+
+**Success:**
 
 ```json
 {
@@ -760,12 +1073,22 @@ All responses follow a consistent format:
 }
 ```
 
-Error responses:
+**Error:**
 
 ```json
 {
   "status": "error",
   "error": "html_content is required"
+}
+```
+
+**Timeout:**
+
+```json
+{
+  "status": "error",
+  "error": "Request timeout",
+  "message": "Request exceeded 120s limit"
 }
 ```
 
@@ -779,21 +1102,95 @@ Full Swagger/OpenAPI documentation is available at:
 http://localhost:3000/docs
 ```
 
+All v7.0.0 endpoints are documented including the new Security, Monitoring, and Signature management endpoints.
+
 ---
 
 ## 🛠 Tech Stack
 
-| Component    | Technology           |
-| ------------ | -------------------- |
-| Runtime      | Node.js 18+          |
-| Framework    | Express.js           |
-| Rendering    | Puppeteer (Chromium) |
-| QR Code      | qrcode               |
-| Barcode      | bwip-js              |
-| PDF Security | qpdf                 |
-| Auth         | JWT + API Keys       |
-| Docs         | Swagger UI           |
-| Container    | Docker (Alpine)      |
+| Component        | Technology            |
+| ---------------- | --------------------- |
+| Runtime          | Node.js 20+           |
+| Framework        | Express.js            |
+| Rendering        | Puppeteer (Chromium)  |
+| PDF Manipulation | pdf-lib               |
+| QR Code          | qrcode                |
+| Barcode          | bwip-js               |
+| PDF Encryption   | qpdf (AES-256)        |
+| Security         | Helmet.js, bcryptjs   |
+| Auth             | JWT + API Keys        |
+| Docs             | Swagger UI            |
+| Container        | Docker (Node 20 Slim) |
+| Orchestration    | Docker Compose        |
+
+---
+
+## 📝 Changelog
+
+### v7.0.0 (2026-02-13)
+
+- 🔐 **Security:** Helmet.js headers, configurable CORS, request timeout, environment validation
+- ✨ **New:** PDF encryption (AES-256), digital signature stamps, signed URLs
+- ✨ **New:** Health check endpoint with system metrics
+- ✨ **New:** Template preview with sample data
+- ✨ **New:** Webhook retry with exponential backoff
+- ✨ **New:** Admin signature management (upload/list/delete)
+- 🐳 **DevOps:** Docker Compose, Dockerfile health check
+- ⚡ **Performance:** Top-level imports in renderer
+- 📐 **Size:** Legal page size preset added
+- 🛡️ **Stability:** Graceful shutdown with connection draining
+
+### v6.0.0
+
+- 📱 QR Code & Barcode embedding in PDFs
+- 🎨 Custom template upload via Admin Panel
+- 📊 Enhanced admin dashboard with charts
+- 🔒 PDF password protection inline
+- 📑 Batch generation & PDF merge
+
+### v5.0.0
+
+- 🖥️ Admin Panel web dashboard
+- 🔑 API Key management with quotas
+- 📈 Usage statistics and request logging
+
+### v4.0.0
+
+- 📸 Screenshot endpoints (HTML/URL → Image)
+- 🔄 PDF to Image conversion
+- 📝 CSV export
+
+### v3.0.0
+
+- 🎨 Built-in templates (invoice, receipt, certificate, letter, label)
+- 💧 Watermark support
+
+### v2.0.0
+
+- 🌐 URL to PDF conversion
+- 📄 Header/Footer with page numbers
+
+### v1.0.0
+
+- 📄 Basic HTML to PDF conversion
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -801,5 +1198,6 @@ http://localhost:3000/docs
   Built with ❤️ for seamless document generation integration.
   <br />
   <a href="https://github.com/volumeee/html-to-pdf-api">GitHub</a> •
-  <a href="https://hub.docker.com/r/bagose/html-to-pdf-api">Docker Hub</a>
+  <a href="https://hub.docker.com/r/bagose/html-to-pdf-api">Docker Hub</a> •
+  <a href="http://localhost:3000/docs">API Docs</a>
 </p>

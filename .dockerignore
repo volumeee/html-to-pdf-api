@@ -1,5 +1,49 @@
+# Dependencies
 node_modules
-npm-debug.log
+npm-debug.log*
+
+# Output files
 output/*.pdf
+output/*.png
+output/*.csv
+output/*.jpg
+output/*.webp
+
+# Data (persisted via volumes)
+data/
+
+# Environment
 .env
+.env.*
+
+# Git
 .git
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation (not needed in image)
+README.md
+LICENSE
+CHANGELOG.md
+docs/
+
+# Tests
+test_api.js
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Gemini/Agent
+.gemini/
+.agent/
