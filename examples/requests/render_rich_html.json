@@ -1,0 +1,52 @@
+{
+  "source_type": "html",
+  "source": "<h1>Feature Test</h1><div id=\"table-placeholder\"></div>",
+  "options": {
+    "pageSize": "a4",
+    "watermark": {
+      "text": "INTERNAL USE",
+      "opacity": 0.1
+    },
+    "chart": {
+      "data": {
+        "type": "line",
+        "data": {
+          "labels": [
+            "A",
+            "B",
+            "C"
+          ],
+          "datasets": [
+            {
+              "label": "Sales",
+              "data": [
+                100,
+                200,
+                150
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "table": {
+      "data": [
+        [
+          "Item",
+          "Price"
+        ],
+        [
+          "Laptop",
+          "1500"
+        ],
+        [
+          "Mouse",
+          "25"
+        ]
+      ],
+      "options": {
+        "zebra": true
+      }
+    }
+  }
+}

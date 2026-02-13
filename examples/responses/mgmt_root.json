@@ -1,0 +1,29 @@
+{
+  "name": "HTML to PDF API",
+  "version": "7.2.0",
+  "architecture": "Unified Gateway",
+  "docs": "/docs",
+  "health": "/health",
+  "admin": "/admin-panel",
+  "endpoints": {
+    "core": [
+      "POST /render         → Universal Generator (HTML/URL/Template → PDF/Image)",
+      "POST /pdf-action     → Universal Processor (compress/encrypt/sign/merge/split/extract/metadata/thumbnail/email)"
+    ],
+    "queue": [
+      "POST /queue          → Submit background job",
+      "GET  /jobs/:id       → Check job status",
+      "GET  /queue/stats    → Queue statistics"
+    ],
+    "legacy": [
+      "POST /cetak_struk_pdf → Thermal receipt PDF (backward compatible)"
+    ],
+    "management": [
+      "GET  /files          → List generated files",
+      "GET  /templates      → Discover templates & capabilities",
+      "GET  /health         → System health check",
+      "GET  /docs           → Interactive API documentation",
+      "GET  /admin-panel    → Admin dashboard"
+    ]
+  }
+}

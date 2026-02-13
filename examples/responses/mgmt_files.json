@@ -1,0 +1,306 @@
+{
+  "status": "success",
+  "total": 50,
+  "files": [
+    {
+      "filename": "struk_1770996207247.pdf",
+      "url": "http://localhost:3000/output/struk_1770996207247.pdf",
+      "size_kb": 28,
+      "created": "2026-02-13T15:23:29.276Z"
+    },
+    {
+      "filename": "struk_1770996205128.pdf",
+      "url": "http://localhost:3000/output/struk_1770996205128.pdf",
+      "size_kb": 24,
+      "created": "2026-02-13T15:23:27.229Z"
+    },
+    {
+      "filename": "render_1770996203001.pdf",
+      "url": "http://localhost:3000/output/render_1770996203001.pdf",
+      "size_kb": 12,
+      "created": "2026-02-13T15:23:25.072Z"
+    },
+    {
+      "filename": "extracted_1770996200964.pdf",
+      "url": "http://localhost:3000/output/extracted_1770996200964.pdf",
+      "size_kb": 34,
+      "created": "2026-02-13T15:23:20.974Z"
+    },
+    {
+      "filename": "compressed_1770996200488.pdf",
+      "url": "http://localhost:3000/output/compressed_1770996200488.pdf",
+      "size_kb": 38,
+      "created": "2026-02-13T15:23:20.583Z"
+    },
+    {
+      "filename": "thumb_1770996199071.jpeg",
+      "url": "http://localhost:3000/output/thumb_1770996199071.jpeg",
+      "size_kb": 12,
+      "created": "2026-02-13T15:23:20.471Z"
+    },
+    {
+      "filename": "render_1770996196995.pdf",
+      "url": "http://localhost:3000/output/render_1770996196995.pdf",
+      "size_kb": 29,
+      "created": "2026-02-13T15:23:19.036Z"
+    },
+    {
+      "filename": "render_1770996195731.png",
+      "url": "http://localhost:3000/output/render_1770996195731.png",
+      "size_kb": 30,
+      "created": "2026-02-13T15:23:16.978Z"
+    },
+    {
+      "filename": "render_1770996192535.pdf",
+      "url": "http://localhost:3000/output/render_1770996192535.pdf",
+      "size_kb": 34,
+      "created": "2026-02-13T15:23:15.647Z"
+    },
+    {
+      "filename": "struk_1770996107666.pdf",
+      "url": "http://localhost:3000/output/struk_1770996107666.pdf",
+      "size_kb": 6,
+      "created": "2026-02-13T15:21:49.689Z"
+    },
+    {
+      "filename": "render_1770996105567.pdf",
+      "url": "http://localhost:3000/output/render_1770996105567.pdf",
+      "size_kb": 12,
+      "created": "2026-02-13T15:21:47.648Z"
+    },
+    {
+      "filename": "extracted_1770996103535.pdf",
+      "url": "http://localhost:3000/output/extracted_1770996103535.pdf",
+      "size_kb": 37,
+      "created": "2026-02-13T15:21:43.541Z"
+    },
+    {
+      "filename": "compressed_1770996103089.pdf",
+      "url": "http://localhost:3000/output/compressed_1770996103089.pdf",
+      "size_kb": 42,
+      "created": "2026-02-13T15:21:43.161Z"
+    },
+    {
+      "filename": "thumb_1770996101945.jpeg",
+      "url": "http://localhost:3000/output/thumb_1770996101945.jpeg",
+      "size_kb": 12,
+      "created": "2026-02-13T15:21:43.073Z"
+    },
+    {
+      "filename": "render_1770996099812.pdf",
+      "url": "http://localhost:3000/output/render_1770996099812.pdf",
+      "size_kb": 30,
+      "created": "2026-02-13T15:21:41.864Z"
+    },
+    {
+      "filename": "render_1770996098530.png",
+      "url": "http://localhost:3000/output/render_1770996098530.png",
+      "size_kb": 30,
+      "created": "2026-02-13T15:21:39.792Z"
+    },
+    {
+      "filename": "render_1770996095299.pdf",
+      "url": "http://localhost:3000/output/render_1770996095299.pdf",
+      "size_kb": 37,
+      "created": "2026-02-13T15:21:38.446Z"
+    },
+    {
+      "filename": "extracted_1770996048450.pdf",
+      "url": "http://localhost:3000/output/extracted_1770996048450.pdf",
+      "size_kb": 37,
+      "created": "2026-02-13T15:20:48.460Z"
+    },
+    {
+      "filename": "compressed_1770996047992.pdf",
+      "url": "http://localhost:3000/output/compressed_1770996047992.pdf",
+      "size_kb": 42,
+      "created": "2026-02-13T15:20:48.068Z"
+    },
+    {
+      "filename": "thumb_1770996046937.jpeg",
+      "url": "http://localhost:3000/output/thumb_1770996046937.jpeg",
+      "size_kb": 12,
+      "created": "2026-02-13T15:20:47.975Z"
+    },
+    {
+      "filename": "render_1770996044808.pdf",
+      "url": "http://localhost:3000/output/render_1770996044808.pdf",
+      "size_kb": 30,
+      "created": "2026-02-13T15:20:46.866Z"
+    },
+    {
+      "filename": "render_1770996043542.png",
+      "url": "http://localhost:3000/output/render_1770996043542.png",
+      "size_kb": 30,
+      "created": "2026-02-13T15:20:44.788Z"
+    },
+    {
+      "filename": "render_1770996040227.pdf",
+      "url": "http://localhost:3000/output/render_1770996040227.pdf",
+      "size_kb": 37,
+      "created": "2026-02-13T15:20:43.459Z"
+    },
+    {
+      "filename": "extracted_1770995932584.pdf",
+      "url": "http://localhost:3000/output/extracted_1770995932584.pdf",
+      "size_kb": 13,
+      "created": "2026-02-13T15:18:52.597Z"
+    },
+    {
+      "filename": "thumb_1770995930520.jpeg",
+      "url": "http://localhost:3000/output/thumb_1770995930520.jpeg",
+      "size_kb": 2,
+      "created": "2026-02-13T15:18:52.561Z"
+    },
+    {
+      "filename": "render_1770995928451.pdf",
+      "url": "http://localhost:3000/output/render_1770995928451.pdf",
+      "size_kb": 49,
+      "created": "2026-02-13T15:18:50.482Z"
+    },
+    {
+      "filename": "render_1770995926403.pdf",
+      "url": "http://localhost:3000/output/render_1770995926403.pdf",
+      "size_kb": 13,
+      "created": "2026-02-13T15:18:48.426Z"
+    },
+    {
+      "filename": "render_1770995925273.pdf",
+      "url": "http://localhost:3000/output/render_1770995925273.pdf",
+      "size_kb": 14,
+      "created": "2026-02-13T15:18:46.521Z"
+    },
+    {
+      "filename": "thumb_1770995832486.png",
+      "url": "http://localhost:3000/output/thumb_1770995832486.png",
+      "size_kb": 11,
+      "created": "2026-02-13T15:17:13.502Z"
+    },
+    {
+      "filename": "render_1770995830378.pdf",
+      "url": "http://localhost:3000/output/render_1770995830378.pdf",
+      "size_kb": 28,
+      "created": "2026-02-13T15:17:12.420Z"
+    },
+    {
+      "filename": "render_1770995828311.png",
+      "url": "http://localhost:3000/output/render_1770995828311.png",
+      "size_kb": 7,
+      "created": "2026-02-13T15:17:10.358Z"
+    },
+    {
+      "filename": "render_1770995826265.pdf",
+      "url": "http://localhost:3000/output/render_1770995826265.pdf",
+      "size_kb": 14,
+      "created": "2026-02-13T15:17:08.289Z"
+    },
+    {
+      "filename": "render_1770995825084.pdf",
+      "url": "http://localhost:3000/output/render_1770995825084.pdf",
+      "size_kb": 14,
+      "created": "2026-02-13T15:17:06.340Z"
+    },
+    {
+      "filename": "queued_1770995654636.pdf",
+      "url": "http://localhost:3000/output/queued_1770995654636.pdf",
+      "size_kb": 15,
+      "created": "2026-02-13T15:14:16.665Z"
+    },
+    {
+      "filename": "thumb_1770995652570.png",
+      "url": "http://localhost:3000/output/thumb_1770995652570.png",
+      "size_kb": 4,
+      "created": "2026-02-13T15:14:14.609Z"
+    },
+    {
+      "filename": "compressed_1770995652353.pdf",
+      "url": "http://localhost:3000/output/compressed_1770995652353.pdf",
+      "size_kb": 17,
+      "created": "2026-02-13T15:14:12.454Z"
+    },
+    {
+      "filename": "render_1770995649073.pdf",
+      "url": "http://localhost:3000/output/render_1770995649073.pdf",
+      "size_kb": 26,
+      "created": "2026-02-13T15:14:12.329Z"
+    },
+    {
+      "filename": "render_1770995646997.pdf",
+      "url": "http://localhost:3000/output/render_1770995646997.pdf",
+      "size_kb": 29,
+      "created": "2026-02-13T15:14:09.051Z"
+    },
+    {
+      "filename": "render_1770995641693.png",
+      "url": "http://localhost:3000/output/render_1770995641693.png",
+      "size_kb": 104,
+      "created": "2026-02-13T15:14:06.975Z"
+    },
+    {
+      "filename": "render_1770995639644.pdf",
+      "url": "http://localhost:3000/output/render_1770995639644.pdf",
+      "size_kb": 16,
+      "created": "2026-02-13T15:14:01.670Z"
+    },
+    {
+      "filename": "render_1770995638493.pdf",
+      "url": "http://localhost:3000/output/render_1770995638493.pdf",
+      "size_kb": 17,
+      "created": "2026-02-13T15:13:59.745Z"
+    },
+    {
+      "filename": "render_1770995604817.png",
+      "url": "http://localhost:3000/output/render_1770995604817.png",
+      "size_kb": 104,
+      "created": "2026-02-13T15:13:30.828Z"
+    },
+    {
+      "filename": "render_1770995602752.pdf",
+      "url": "http://localhost:3000/output/render_1770995602752.pdf",
+      "size_kb": 17,
+      "created": "2026-02-13T15:13:24.795Z"
+    },
+    {
+      "filename": "render_1770995601494.pdf",
+      "url": "http://localhost:3000/output/render_1770995601494.pdf",
+      "size_kb": 17,
+      "created": "2026-02-13T15:13:22.946Z"
+    },
+    {
+      "filename": "struk_1770991291673.pdf",
+      "url": "http://localhost:3000/output/struk_1770991291673.pdf",
+      "size_kb": 12,
+      "created": "2026-02-13T14:01:33.697Z"
+    },
+    {
+      "filename": "queued_1770991268652.pdf",
+      "url": "http://localhost:3000/output/queued_1770991268652.pdf",
+      "size_kb": 6,
+      "created": "2026-02-13T14:01:10.677Z"
+    },
+    {
+      "filename": "queued_1770991254342.pdf",
+      "url": "http://localhost:3000/output/queued_1770991254342.pdf",
+      "size_kb": 6,
+      "created": "2026-02-13T14:00:56.364Z"
+    },
+    {
+      "filename": "thumb_1770991165521.png",
+      "url": "http://localhost:3000/output/thumb_1770991165521.png",
+      "size_kb": 2,
+      "created": "2026-02-13T13:59:27.552Z"
+    },
+    {
+      "filename": "compressed_1770991156697.pdf",
+      "url": "http://localhost:3000/output/compressed_1770991156697.pdf",
+      "size_kb": 15,
+      "created": "2026-02-13T13:59:16.749Z"
+    },
+    {
+      "filename": "struk_1770991136167.pdf",
+      "url": "http://localhost:3000/output/struk_1770991136167.pdf",
+      "size_kb": 13,
+      "created": "2026-02-13T13:58:59.691Z"
+    }
+  ]
+}

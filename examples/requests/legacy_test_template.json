@@ -1,0 +1,15 @@
+{
+  "template": "indomaret",
+  "data": {
+    "store_name": "LEGACY STORE",
+    "items": [
+      {
+        "name": "Item A",
+        "qty": 1,
+        "price": 1000
+      }
+    ],
+    "payment": 2000
+  },
+  "page_size": "thermal_default"
+}

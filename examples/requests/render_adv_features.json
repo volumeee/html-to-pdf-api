@@ -1,0 +1,10 @@
+{
+  "source_type": "html",
+  "source": "<div class=\"test\">Styled Content</div>",
+  "options": {
+    "inject_css": ".test { color: red; font-size: 50px; }",
+    "displayHeaderFooter": true,
+    "headerTemplate": "<div style=\"font-size:10px;margin-left:20px;\">Header v7.2.0</div>",
+    "footerTemplate": "<div style=\"font-size:10px;margin-left:20px;\">Page <span class=\"pageNumber\"></span></div>"
+  }
+}

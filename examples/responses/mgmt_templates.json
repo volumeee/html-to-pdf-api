@@ -1,0 +1,87 @@
+{
+  "status": "success",
+  "templates": [
+    {
+      "name": "indomaret",
+      "description": "Struk thermal ala Indomaret/Alfamart",
+      "default_page_size": "thermal_default",
+      "category": "receipt",
+      "type": "built-in",
+      "has_preview": true
+    },
+    {
+      "name": "modern",
+      "description": "Struk thermal desain modern & minimalis",
+      "default_page_size": "thermal_default",
+      "category": "receipt",
+      "type": "built-in",
+      "has_preview": true
+    },
+    {
+      "name": "invoice",
+      "description": "Invoice A4 profesional dengan PPN",
+      "default_page_size": "a4",
+      "category": "document",
+      "type": "built-in",
+      "has_preview": true
+    },
+    {
+      "name": "surat",
+      "description": "Surat resmi dengan kop surat & tanda tangan",
+      "default_page_size": "a4",
+      "category": "document",
+      "type": "built-in",
+      "has_preview": true
+    },
+    {
+      "name": "sertifikat",
+      "description": "Sertifikat/piagam landscape dengan border dekoratif",
+      "default_page_size": "sertifikat",
+      "category": "document",
+      "type": "built-in",
+      "has_preview": true
+    },
+    {
+      "name": "label",
+      "description": "Label pengiriman paket (100x150mm)",
+      "default_page_size": "label",
+      "category": "shipping",
+      "type": "built-in",
+      "has_preview": true
+    }
+  ],
+  "page_sizes": [
+    "thermal_58mm",
+    "thermal_80mm",
+    "thermal_default",
+    "a4",
+    "a5",
+    "letter",
+    "legal",
+    "label",
+    "sertifikat"
+  ],
+  "image_formats": [
+    "png",
+    "jpeg",
+    "webp"
+  ],
+  "barcode_types": [
+    "code128",
+    "ean13",
+    "ean8",
+    "upca",
+    "upce",
+    "itf14",
+    "code39",
+    "code93",
+    "datamatrix",
+    "pdf417",
+    "qrcode"
+  ],
+  "capabilities": {
+    "unified": true,
+    "processor": true,
+    "queue": true
+  }
+}

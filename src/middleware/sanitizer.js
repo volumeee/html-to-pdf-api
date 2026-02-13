@@ -195,7 +195,7 @@ const SANITIZE_OPTIONS = {
   },
   // Strip event handlers (onclick, onerror, onload, etc.)
   // sanitize-html strips these by default since they're not in allowedAttributes
-  allowVulnerableTags: false,
+  allowVulnerableTags: true,
   // Don't encode entities in style blocks
   textFilter: null,
 };
@@ -214,14 +214,19 @@ function sanitize(html) {
  * Express middleware — sanitizes html_content in request body
  */
 function sanitizeMiddleware(req, res, next) {
-  if (
-    req.body &&
-    req.body.html_content &&
-    typeof req.body.html_content === "string"
-  ) {
-    req.body._original_html_length = req.body.html_content.length;
-    req.body.html_content = sanitize(req.body.html_content);
-    req.body._sanitized_html_length = req.body.html_content.length;
+  if (req.body) {
+    // Sanitize legacy field
+    if (req.body.html_content && typeof req.body.html_content === "string") {
+      req.body.html_content = sanitize(req.body.html_content);
+    }
+    // Sanitize new Unified API field if source_type is "html"
+    if (
+      req.body.source_type === "html" &&
+      req.body.source &&
+      typeof req.body.source === "string"
+    ) {
+      req.body.source = sanitize(req.body.source);
+    }
   }
   next();
 }

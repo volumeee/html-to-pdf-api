@@ -86,7 +86,7 @@ app.use("/output", express.static(path.join(__dirname, "../output")));
 app.use("/admin-panel", express.static(path.join(__dirname, "admin")));
 
 // ─── Swagger Docs ────────────────────────────────────────────
-setupSwagger(app);
+app.use("/docs", setupSwagger.serve, setupSwagger.setup);
 
 // ─── API Routes ──────────────────────────────────────────────
 registerRoutes(app);

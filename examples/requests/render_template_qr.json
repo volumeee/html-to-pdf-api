@@ -1,0 +1,21 @@
+{
+  "source_type": "template",
+  "source": "indomaret",
+  "data": {
+    "store_name": "TEST SHOP",
+    "items": [
+      {
+        "name": "Test",
+        "qty": 1,
+        "price": 500
+      }
+    ],
+    "payment": 1000
+  },
+  "options": {
+    "qr_code": {
+      "text": "ORDER-001",
+      "position": "bottom-center"
+    }
+  }
+}

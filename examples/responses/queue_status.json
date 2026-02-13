@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "job": {
+    "id": "975649cc-79fa-4c70-9931-6132d7ab6cbf",
+    "type": "render",
+    "status": "failed",
+    "data": {
+      "source_type": "html",
+      "source": "<h1>Queue Test</h1>",
+      "_base_url": "http://localhost:3000"
+    },
+    "result": null,
+    "error": "Either 'html' or 'url' must be provided.",
+    "created_at": 1770996200983,
+    "started_at": 1770996200983,
+    "completed_at": 1770996201145,
+    "priority": 0,
+    "duration_ms": 162,
+    "waiting_ms": 0
+  }
+}
