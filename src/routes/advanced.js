@@ -3,11 +3,12 @@
  *
  * POST /merge        - Merge multiple PDFs into one
  * POST /batch        - Generate batch PDFs from template (multi-page)
- * POST /webhook      - Generate PDF and send result to webhook
+ * POST /webhook      - Generate PDF and send result to webhook (with retry)
  */
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
+const path = require("path");
 const axios = require("axios");
 const { renderPdf } = require("../services/renderer");
 const { mergePdfs } = require("../services/pdfUtils");
@@ -15,6 +16,7 @@ const { getFilePath, getOutputDir } = require("../services/fileManager");
 const { getTemplate, listTemplates } = require("../templates");
 const { generateFilename } = require("../utils/format");
 const { success, error } = require("../utils/response");
+const config = require("../config");
 
 // ─── Merge PDFs ──────────────────────────────────────────────
 router.post("/merge", async (req, res) => {
@@ -33,12 +35,7 @@ router.post("/merge", async (req, res) => {
     // Validate all files exist
     for (const p of inputPaths) {
       if (!fs.existsSync(p)) {
-        return error(
-          res,
-          `File not found: ${require("path").basename(p)}`,
-          null,
-          404,
-        );
+        return error(res, `File not found: ${path.basename(p)}`, null, 404);
       }
     }
 
@@ -120,7 +117,28 @@ router.post("/batch", async (req, res) => {
   }
 });
 
-// ─── Webhook (Async Generate + Callback) ────────────────────
+// ─── Webhook Helper: Retry with exponential backoff ──────────
+async function sendWebhookWithRetry(url, payload, maxRetries, delayMs) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await axios.post(url, payload, { timeout: 30000 });
+      return { success: true, attempt, status: response.status };
+    } catch (err) {
+      lastError = err;
+      console.warn(
+        `[Webhook] Attempt ${attempt}/${maxRetries} failed: ${err.message}`,
+      );
+      if (attempt < maxRetries) {
+        const backoff = delayMs * Math.pow(2, attempt - 1);
+        await new Promise((r) => setTimeout(r, backoff));
+      }
+    }
+  }
+  throw lastError;
+}
+
+// ─── Webhook (Async Generate + Callback with Retry) ──────────
 router.post("/webhook", async (req, res) => {
   const { source, template, data, webhook_url, options } = req.body;
 
@@ -137,10 +155,14 @@ router.post("/webhook", async (req, res) => {
 
   // Respond immediately
   const jobId = `job_${Date.now()}`;
+  const maxRetries = options?.max_retries || config.WEBHOOK_MAX_RETRIES;
+  const retryDelay = options?.retry_delay_ms || config.WEBHOOK_RETRY_DELAY_MS;
+
   success(res, {
     message: "Job accepted, result will be sent to webhook",
     job_id: jobId,
     webhook_url,
+    max_retries: maxRetries,
   });
 
   // Process in background
@@ -169,30 +191,46 @@ router.post("/webhook", async (req, res) => {
         pageSize,
         watermark: options?.watermark,
         inject_css: options?.inject_css,
+        qr_code: options?.qr_code,
+        barcode: options?.barcode,
         return_base64: true,
       });
 
-      // Send result to webhook
-      await axios.post(webhook_url, {
-        status: "success",
-        job_id: jobId,
-        filename: pdfFilename,
-        base64: renderResult.base64,
-      });
+      // Send result to webhook with retry
+      const deliveryResult = await sendWebhookWithRetry(
+        webhook_url,
+        {
+          status: "success",
+          job_id: jobId,
+          filename: pdfFilename,
+          base64: renderResult.base64,
+        },
+        maxRetries,
+        retryDelay,
+      );
 
-      console.log(`[Webhook] Job ${jobId} completed → ${webhook_url}`);
+      console.log(
+        `[Webhook] Job ${jobId} delivered → ${webhook_url} (attempt ${deliveryResult.attempt})`,
+      );
     } catch (err) {
       console.error(`[Webhook] Job ${jobId} failed:`, err.message);
 
-      // Notify webhook of failure
+      // Notify webhook of failure (also with retry)
       try {
-        await axios.post(webhook_url, {
-          status: "error",
-          job_id: jobId,
-          error: err.message,
-        });
+        await sendWebhookWithRetry(
+          webhook_url,
+          {
+            status: "error",
+            job_id: jobId,
+            error: err.message,
+          },
+          2,
+          1000,
+        );
       } catch {
-        console.error(`[Webhook] Failed to notify webhook of error`);
+        console.error(
+          `[Webhook] Failed to notify webhook of error after retries`,
+        );
       }
     }
   });

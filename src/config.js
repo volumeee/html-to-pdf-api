@@ -15,6 +15,14 @@ module.exports = {
   JWT_SECRET:
     process.env.JWT_SECRET || "html-to-pdf-secret-key-change-in-production",
 
+  // Security
+  CORS_ORIGINS: process.env.CORS_ORIGINS || "*", // comma-separated origins or *
+  REQUEST_TIMEOUT_MS: parseInt(process.env.REQUEST_TIMEOUT_MS) || 120000, // 2 minutes
+  SIGNED_URL_SECRET:
+    process.env.SIGNED_URL_SECRET || "signed-url-secret-change-me",
+  SIGNED_URL_EXPIRY_MINUTES:
+    parseInt(process.env.SIGNED_URL_EXPIRY_MINUTES) || 60,
+
   // Puppeteer launch options
   BROWSER_OPTIONS: {
     headless: "new",
@@ -27,6 +35,9 @@ module.exports = {
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || null,
   },
 
+  // Browser pool
+  BROWSER_POOL_SIZE: parseInt(process.env.BROWSER_POOL_SIZE) || 1,
+
   // Page size presets
   PAGE_SIZES: {
     thermal_58mm: { width: "220px", viewport: 220 },
@@ -35,10 +46,15 @@ module.exports = {
     a4: { width: "210mm", height: "297mm", viewport: 794 },
     a5: { width: "148mm", height: "210mm", viewport: 559 },
     letter: { width: "8.5in", height: "11in", viewport: 816 },
+    legal: { width: "8.5in", height: "14in", viewport: 816 },
     label: { width: "100mm", height: "150mm", viewport: 378 },
     sertifikat: { width: "297mm", height: "210mm", viewport: 1123 },
   },
 
   // Supported image formats
   IMAGE_FORMATS: ["png", "jpeg", "webp"],
+
+  // Webhook
+  WEBHOOK_MAX_RETRIES: parseInt(process.env.WEBHOOK_MAX_RETRIES) || 3,
+  WEBHOOK_RETRY_DELAY_MS: parseInt(process.env.WEBHOOK_RETRY_DELAY_MS) || 3000,
 };

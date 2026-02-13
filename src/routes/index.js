@@ -1,6 +1,7 @@
 /**
  * Route Aggregator
  * Combines all route modules and mounts them on the Express app.
+ * v7.0.0
  */
 const pdfRoutes = require("./pdf");
 const screenshotRoutes = require("./screenshot");
@@ -9,6 +10,8 @@ const advancedRoutes = require("./advanced");
 const convertRoutes = require("./convert");
 const adminRoutes = require("./admin");
 const qrBarcodeRoutes = require("./qrBarcode");
+const healthRoutes = require("./health");
+const securityRoutes = require("./security");
 const { listTemplates } = require("../templates");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("../config");
 const { isQpdfAvailable } = require("../services/pdfUtils");
@@ -17,6 +20,9 @@ const { apiKeyAuth } = require("../middleware/apiKeyAuth");
 const { BARCODE_TYPES } = require("../services/qrBarcode");
 
 function registerRoutes(app) {
+  // ─── Health Check (no auth needed) ─────────────────────────
+  app.use(healthRoutes);
+
   // ─── API Key & Request Logging Middleware ──────────────────
   app.use(apiKeyAuth);
 
@@ -25,7 +31,8 @@ function registerRoutes(app) {
     if (
       req.path.startsWith("/output/") ||
       req.path.startsWith("/admin-panel") ||
-      req.path === "/docs"
+      req.path === "/docs" ||
+      req.path === "/health"
     ) {
       return next();
     }
@@ -60,6 +67,7 @@ function registerRoutes(app) {
   app.use(advancedRoutes);
   app.use(convertRoutes);
   app.use(qrBarcodeRoutes);
+  app.use(securityRoutes);
   app.use(adminRoutes);
 
   // ─── Templates & Capabilities Info ──────────────────────────
@@ -67,9 +75,9 @@ function registerRoutes(app) {
     res.json({
       status: "success",
       templates: listTemplates(),
-      page_sizes: Object.entries(PAGE_SIZES).map(([name, config]) => ({
+      page_sizes: Object.entries(PAGE_SIZES).map(([name, cfg]) => ({
         name,
-        ...config,
+        ...cfg,
       })),
       image_formats: IMAGE_FORMATS,
       barcode_types: BARCODE_TYPES,
@@ -78,6 +86,8 @@ function registerRoutes(app) {
         css_injection: true,
         base64_response: true,
         password_protection: isQpdfAvailable(),
+        digital_signature: true,
+        signed_urls: true,
         merge_pdf: true,
         batch_generation: true,
         webhook: true,
@@ -89,18 +99,66 @@ function registerRoutes(app) {
         header_footer: true,
         admin_panel: true,
         swagger_docs: true,
+        health_check: true,
+        helmet_security: true,
       },
     });
   });
 
-  // ─── Health Check ───────────────────────────────────────────
+  // ─── Template Preview ──────────────────────────────────────
+  app.get("/templates/:name/preview", async (req, res) => {
+    const { getTemplate } = require("../templates");
+    const { renderPdf } = require("../services/renderer");
+    const { getFilePath } = require("../services/fileManager");
+    const { generateFilename } = require("../utils/format");
+
+    const tmpl = getTemplate(req.params.name);
+    if (!tmpl) {
+      return res.status(404).json({
+        status: "error",
+        error: `Template "${req.params.name}" not found`,
+        available: listTemplates().map((t) => t.name),
+      });
+    }
+
+    try {
+      const sampleData = tmpl.sampleData || {};
+      const html = tmpl.fn(sampleData);
+      const filename = generateFilename(`preview_${req.params.name}`);
+      const outputPath = getFilePath(filename);
+
+      await renderPdf({ html }, outputPath, {
+        pageSize: tmpl.defaultPageSize,
+      });
+
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      return res.json({
+        status: "success",
+        message: `Preview generated for template "${req.params.name}"`,
+        template: req.params.name,
+        file_url: `${baseUrl}/output/${filename}`,
+        filename,
+        note: "Uses sample data. Provide your own data via POST /generate for production use.",
+      });
+    } catch (err) {
+      console.error("[Preview] Error:", err.message);
+      return res.status(500).json({
+        status: "error",
+        error: "Failed to generate preview",
+        details: err.message,
+      });
+    }
+  });
+
+  // ─── Root Info ─────────────────────────────────────────────
   app.get("/", (req, res) => {
     res.json({
       name: "HTML to PDF API",
-      version: "6.0.0",
+      version: "7.0.0",
       status: "running",
       docs: "/docs",
       admin: "/admin-panel",
+      health: "/health",
       endpoints: {
         pdf: [
           "POST /cetak_struk_pdf  → HTML to PDF",
@@ -120,6 +178,12 @@ function registerRoutes(app) {
           "POST /barcode           → Generate Barcode",
           "POST /qr-pdf            → QR Code embedded in PDF",
         ],
+        security: [
+          "POST /encrypt-pdf      → Password protect PDF",
+          "POST /sign-pdf         → Digital signature stamp",
+          "POST /secure/generate  → Generate signed URL",
+          "GET  /secure/:filename → Access via signed URL",
+        ],
         advanced: [
           "POST /merge            → Merge multiple PDFs",
           "POST /batch            → Batch generate from template",
@@ -130,16 +194,19 @@ function registerRoutes(app) {
           "DELETE /files/:filename  → Delete a file",
           "POST   /cleanup          → Remove old files",
           "GET    /templates        → Templates & capabilities",
+          "GET    /templates/:name/preview → Preview template",
         ],
         admin: [
-          "POST /admin/login      → Get JWT token",
-          "GET  /admin/stats       → Usage statistics",
-          "GET  /admin/logs        → Request logs",
-          "GET  /admin/system      → System info",
-          "CRUD /admin/keys        → API Key management",
-          "CRUD /admin/settings    → Global settings",
-          "CRUD /admin/templates   → Custom templates",
+          "POST /admin/login        → Get JWT token",
+          "GET  /admin/stats         → Usage statistics",
+          "GET  /admin/logs          → Request logs",
+          "GET  /admin/system        → System info",
+          "CRUD /admin/keys          → API Key management",
+          "CRUD /admin/settings      → Global settings",
+          "CRUD /admin/templates     → Custom templates",
+          "CRUD /admin/signatures    → Signature stamps",
         ],
+        monitoring: ["GET /health → System health check"],
       },
     });
   });

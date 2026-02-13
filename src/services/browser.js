@@ -3,11 +3,15 @@
  *
  * Reuses a single browser instance across all requests
  * instead of launching a new one each time (major performance gain).
+ *
+ * v7.0.0: Added health check and proactive monitoring.
  */
 const puppeteer = require("puppeteer");
 const { BROWSER_OPTIONS } = require("../config");
 
 let browserInstance = null;
+let launchCount = 0;
+let lastHealthCheck = null;
 
 /**
  * Get or create the shared browser instance
@@ -16,6 +20,7 @@ let browserInstance = null;
 async function getBrowser() {
   if (!browserInstance || !browserInstance.isConnected()) {
     browserInstance = await puppeteer.launch(BROWSER_OPTIONS);
+    launchCount++;
 
     browserInstance.on("disconnected", () => {
       browserInstance = null;
@@ -41,6 +46,34 @@ async function createPage(viewportWidth = 380, viewportHeight = 800) {
 }
 
 /**
+ * Get browser health status
+ * @returns {Promise<object>}
+ */
+async function getHealth() {
+  const status = {
+    connected: false,
+    pages: 0,
+    launch_count: launchCount,
+    last_check: new Date().toISOString(),
+    version: null,
+  };
+
+  try {
+    if (browserInstance && browserInstance.isConnected()) {
+      status.connected = true;
+      const pages = await browserInstance.pages();
+      status.pages = pages.length;
+      status.version = await browserInstance.version();
+    }
+  } catch (err) {
+    status.error = err.message;
+  }
+
+  lastHealthCheck = status;
+  return status;
+}
+
+/**
  * Gracefully close the browser
  */
 async function closeBrowser() {
@@ -50,4 +83,4 @@ async function closeBrowser() {
   }
 }
 
-module.exports = { getBrowser, createPage, closeBrowser };
+module.exports = { getBrowser, createPage, closeBrowser, getHealth };

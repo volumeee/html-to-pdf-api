@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  html-to-pdf-api:
+    build: .
+    image: bagose/html-to-pdf-api:7.0.0
+    container_name: html-to-pdf-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - PORT=3000
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - JWT_SECRET=${JWT_SECRET:-html-to-pdf-secret-key-change-in-production}
+      - SIGNED_URL_SECRET=${SIGNED_URL_SECRET:-signed-url-secret-change-me}
+      - SIGNED_URL_EXPIRY_MINUTES=${SIGNED_URL_EXPIRY_MINUTES:-60}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - REQUEST_TIMEOUT_MS=${REQUEST_TIMEOUT_MS:-120000}
+      - AUTO_CLEANUP_HOURS=${AUTO_CLEANUP_HOURS:-24}
+      - MAX_BODY_SIZE=${MAX_BODY_SIZE:-10mb}
+      - WEBHOOK_MAX_RETRIES=${WEBHOOK_MAX_RETRIES:-3}
+      - WEBHOOK_RETRY_DELAY_MS=${WEBHOOK_RETRY_DELAY_MS:-3000}
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+    volumes:
+      - pdf_output:/app/output
+      - pdf_data:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
+        reservations:
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  pdf_output:
+    driver: local
+  pdf_data:
+    driver: local

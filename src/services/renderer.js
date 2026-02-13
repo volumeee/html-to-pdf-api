@@ -9,6 +9,7 @@
 const fs = require("fs");
 const { createPage } = require("./browser");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("../config");
+const { generateQRDataUri, generateBarcode } = require("./qrBarcode");
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -107,7 +108,7 @@ async function injectWatermark(page, watermark) {
 async function injectQrCode(page, qrConfig) {
   if (!qrConfig || !qrConfig.text) return;
 
-  const { generateQRDataUri } = require("./qrBarcode");
+  // generateQRDataUri imported at top level
   const dataUri = await generateQRDataUri(qrConfig.text, {
     width: qrConfig.width || 120,
     margin: qrConfig.margin !== undefined ? qrConfig.margin : 1,
@@ -190,7 +191,7 @@ async function injectQrCode(page, qrConfig) {
 async function injectBarcode(page, barcodeConfig) {
   if (!barcodeConfig || !barcodeConfig.text) return;
 
-  const { generateBarcode } = require("./qrBarcode");
+  // generateBarcode imported at top level
   const buffer = await generateBarcode(
     barcodeConfig.text,
     barcodeConfig.type || "code128",

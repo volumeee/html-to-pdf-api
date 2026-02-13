@@ -1,5 +1,6 @@
 /**
  * Swagger / OpenAPI Documentation
+ * v7.0.0
  */
 const swaggerUi = require("swagger-ui-express");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("./config");
@@ -8,9 +9,9 @@ const spec = {
   openapi: "3.0.0",
   info: {
     title: "HTML to PDF API",
-    version: "6.0.0",
+    version: "7.0.0",
     description:
-      "Universal HTML/URL to PDF & Screenshot API with template engine, watermark, QR/Barcode generation, custom templates, API Key management, and advanced admin panel.",
+      "Universal HTML/URL to PDF & Screenshot API with template engine, watermark, QR/Barcode generation, digital signatures, PDF encryption, signed URLs, custom templates, API Key management, and enterprise admin panel.",
     contact: {
       name: "volumeee",
       url: "https://github.com/volumeee/html-to-pdf-api",
@@ -38,9 +39,14 @@ const spec = {
     { name: "PDF", description: "Generate PDF documents" },
     { name: "Screenshot", description: "Capture screenshots" },
     { name: "QR & Barcode", description: "Generate QR codes and barcodes" },
+    {
+      name: "Security",
+      description: "PDF encryption, digital signatures, signed URLs",
+    },
     { name: "Convert", description: "File format conversion" },
     { name: "Advanced", description: "Merge, batch, webhook" },
     { name: "Files", description: "File management" },
+    { name: "Monitoring", description: "Health check & system status" },
     { name: "Admin", description: "Admin panel API (requires auth)" },
   ],
   paths: {
@@ -75,7 +81,6 @@ const spec = {
                     properties: {
                       text: {
                         type: "string",
-                        description: "Content to encode",
                         example: "https://example.com",
                       },
                       position: {
@@ -196,7 +201,6 @@ const spec = {
                   watermark: { type: "object" },
                   qr_code: {
                     type: "object",
-                    description: "Embed QR code",
                     properties: {
                       text: { type: "string" },
                       position: { type: "string" },
@@ -205,7 +209,6 @@ const spec = {
                   },
                   barcode: {
                     type: "object",
-                    description: "Embed barcode",
                     properties: {
                       text: { type: "string" },
                       type: { type: "string" },
@@ -270,6 +273,188 @@ const spec = {
           },
         },
         responses: { 200: { description: "Screenshot captured" } },
+      },
+    },
+    "/encrypt-pdf": {
+      post: {
+        tags: ["Security"],
+        summary: "Encrypt PDF with password",
+        description:
+          "Add AES-256 password protection to an existing PDF file. Requires qpdf on server.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["filename", "password"],
+                properties: {
+                  filename: {
+                    type: "string",
+                    description: "Name of existing PDF in output folder",
+                    example: "invoice_1234567890.pdf",
+                  },
+                  password: {
+                    type: "string",
+                    description: "Password to protect the PDF",
+                    example: "mySecret123",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: "PDF encrypted successfully" },
+          501: { description: "qpdf not available" },
+        },
+      },
+    },
+    "/sign-pdf": {
+      post: {
+        tags: ["Security"],
+        summary: "Digital signature stamp",
+        description:
+          "Embed a signature stamp image onto a specific page of a PDF. Upload stamps via /admin/signatures.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["filename"],
+                properties: {
+                  filename: {
+                    type: "string",
+                    description: "Name of PDF in output folder",
+                    example: "invoice_1234567890.pdf",
+                  },
+                  signature_name: {
+                    type: "string",
+                    description: "Name of a saved signature stamp",
+                    example: "ceo_signature",
+                  },
+                  signature_base64: {
+                    type: "string",
+                    description:
+                      "OR inline base64 image (PNG/JPG). Use data:image/png;base64,... format.",
+                  },
+                  position: {
+                    type: "string",
+                    enum: [
+                      "bottom-right",
+                      "bottom-left",
+                      "bottom-center",
+                      "top-right",
+                      "top-left",
+                      "top-center",
+                      "center",
+                      "custom",
+                    ],
+                    default: "bottom-right",
+                  },
+                  page: {
+                    type: "integer",
+                    description:
+                      "Page to sign (0=last page, 1-based). Default: last page.",
+                    default: 0,
+                  },
+                  width: {
+                    type: "integer",
+                    description: "Signature width in points",
+                    default: 120,
+                  },
+                  height: {
+                    type: "integer",
+                    description: "Signature height in points",
+                    default: 60,
+                  },
+                  opacity: {
+                    type: "number",
+                    minimum: 0,
+                    maximum: 1,
+                    default: 1.0,
+                  },
+                  x: {
+                    type: "number",
+                    description: "Custom x position (only if position=custom)",
+                  },
+                  y: {
+                    type: "number",
+                    description: "Custom y position (only if position=custom)",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: "PDF signed successfully" } },
+      },
+    },
+    "/secure/generate": {
+      post: {
+        tags: ["Security"],
+        summary: "Generate signed URL",
+        description:
+          "Generate a time-limited, tamper-proof URL for accessing a file.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["filename"],
+                properties: {
+                  filename: {
+                    type: "string",
+                    example: "invoice_1234567890.pdf",
+                  },
+                  expiry_minutes: {
+                    type: "integer",
+                    description: "URL expiry in minutes (default from config)",
+                    example: 60,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: "Signed URL generated" },
+          404: { description: "File not found" },
+        },
+      },
+    },
+    "/secure/{filename}": {
+      get: {
+        tags: ["Security"],
+        summary: "Access file via signed URL",
+        description:
+          "Serve a file using a signed URL with expiry and HMAC verification.",
+        parameters: [
+          {
+            name: "filename",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+          {
+            name: "expires",
+            in: "query",
+            required: true,
+            schema: { type: "string" },
+          },
+          {
+            name: "sig",
+            in: "query",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: {
+          200: { description: "File served" },
+          403: { description: "Invalid or expired signature" },
+        },
       },
     },
     "/pdf-to-image": {
@@ -365,7 +550,9 @@ const spec = {
     "/webhook": {
       post: {
         tags: ["Advanced"],
-        summary: "Async Generate + Webhook",
+        summary: "Async Generate + Webhook (with retry)",
+        description:
+          "Generate PDF asynchronously and deliver the result to a webhook URL. Supports configurable retry with exponential backoff.",
         requestBody: {
           content: {
             "application/json": {
@@ -383,12 +570,58 @@ const spec = {
                   },
                   template: { type: "string" },
                   data: { type: "object" },
+                  options: {
+                    type: "object",
+                    properties: {
+                      max_retries: {
+                        type: "integer",
+                        description: "Max delivery retries (default 3)",
+                      },
+                      retry_delay_ms: {
+                        type: "integer",
+                        description: "Base retry delay in ms (default 3000)",
+                      },
+                    },
+                  },
                 },
               },
             },
           },
         },
         responses: { 200: { description: "Job accepted" } },
+      },
+    },
+    "/health": {
+      get: {
+        tags: ["Monitoring"],
+        summary: "System health check",
+        description:
+          "Returns system status including browser health, memory, disk usage, CPU load.",
+        responses: {
+          200: { description: "System healthy" },
+          503: { description: "System degraded (browser disconnected)" },
+        },
+      },
+    },
+    "/templates/{name}/preview": {
+      get: {
+        tags: ["Files"],
+        summary: "Preview template",
+        description:
+          "Generate a sample PDF from a template using built-in sample data.",
+        parameters: [
+          {
+            name: "name",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+            description: "Template name",
+          },
+        ],
+        responses: {
+          200: { description: "Preview PDF generated" },
+          404: { description: "Template not found" },
+        },
       },
     },
     "/files": {
@@ -434,7 +667,9 @@ const spec = {
       get: {
         tags: ["Files"],
         summary: "List templates & capabilities",
-        responses: { 200: { description: "Templates and capabilities info" } },
+        responses: {
+          200: { description: "Templates and capabilities info" },
+        },
       },
     },
     "/admin/login": {
@@ -456,6 +691,59 @@ const spec = {
           },
         },
         responses: { 200: { description: "JWT token returned" } },
+      },
+    },
+    "/admin/signatures": {
+      get: {
+        tags: ["Admin"],
+        summary: "List all signature stamps",
+        security: [{ BearerAuth: [] }],
+        responses: { 200: { description: "Signatures listed" } },
+      },
+      post: {
+        tags: ["Admin"],
+        summary: "Upload signature stamp",
+        security: [{ BearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "image"],
+                properties: {
+                  name: {
+                    type: "string",
+                    description: "Signature name identifier",
+                    example: "ceo_signature",
+                  },
+                  image: {
+                    type: "string",
+                    description:
+                      "Base64 encoded image (PNG/JPG). Can include data:image/... header.",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: { 200: { description: "Signature saved" } },
+      },
+    },
+    "/admin/signatures/{name}": {
+      delete: {
+        tags: ["Admin"],
+        summary: "Delete signature stamp",
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          {
+            name: "name",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
+        ],
+        responses: { 200: { description: "Signature deleted" } },
       },
     },
     "/qr-code": {
@@ -583,7 +871,7 @@ function setupSwagger(app) {
     swaggerUi.serve,
     swaggerUi.setup(spec, {
       customCss: ".swagger-ui .topbar { display: none }",
-      customSiteTitle: "HTML to PDF API — Documentation",
+      customSiteTitle: "HTML to PDF API v7.0.0 — Documentation",
     }),
   );
 }

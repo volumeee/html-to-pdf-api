@@ -54,13 +54,17 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --omit=dev
 
 # Copy application code
 COPY . .
 
-# Create output directory
-RUN mkdir -p output data
+# Create output and data directories
+RUN mkdir -p output data data/signatures
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"
 
 # Expose port
 EXPOSE 3000
