@@ -105,9 +105,10 @@ async function injectQrCode(page, qrConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:block;" />`;
+      // Use display: block with margin: 0 auto for centering block elements
+      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:block; margin:0 auto;" />`;
       const labelHtml = params.label
-        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center; max-width:${params.width}px; word-wrap:break-word;">${params.label}</div>`
+        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center; max-width:${params.width}px; word-wrap:break-word; margin: 0 auto;">${params.label}</div>`
         : "";
 
       const pos = params.position;
@@ -134,22 +135,22 @@ async function injectQrCode(page, qrConfig) {
         document.body.appendChild(container);
       } else if (pos === "bottom-center") {
         container.style.cssText =
-          "text-align:center; margin:16px auto 0 auto; padding:8px 0;";
+          "text-align:center; margin:16px auto 0 auto; padding:8px 0; clear:both;";
         container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       } else if (pos === "bottom-left") {
         container.style.cssText =
-          "text-align:left; margin:16px 0 0 0; padding:8px 0;";
+          "text-align:left; margin:16px 0 0 0; padding:8px 0; clear:both;";
         container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       } else if (pos === "bottom-right") {
         container.style.cssText =
-          "text-align:right; margin:16px 0 0 0; padding:8px 0;";
+          "text-align:right; margin:16px 0 0 0; padding:8px 0; clear:both;";
         container.innerHTML = `<div style="display:inline-block; text-align:center;">${imgHtml}${labelHtml}</div>`;
         document.body.appendChild(container);
       } else {
         container.style.cssText =
-          "text-align:center; margin:16px auto; padding:8px 0;";
+          "text-align:center; margin:16px auto; padding:8px 0; clear:both;";
         container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       }

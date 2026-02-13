@@ -1,10 +1,10 @@
 {
   "status": "success",
   "message": "Action \"compress\" completed successfully",
-  "file_url": "http://localhost:3000/output/compressed_1770998868570.pdf",
-  "filename": "compressed_1770998868570.pdf",
-  "original_size": 38270,
-  "compressed_size": 42614,
+  "file_url": "http://localhost:3000/output/compressed_1770998967326.pdf",
+  "filename": "compressed_1770998967326.pdf",
+  "original_size": 38085,
+  "compressed_size": 42701,
   "reduction_percent": 0,
   "method": "ghostscript (ebook)"
 }
