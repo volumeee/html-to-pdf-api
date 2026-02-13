@@ -1,7 +1,7 @@
 {
   "status": "success",
   "job": {
-    "id": "890f4109-ca0d-4ad4-8929-d9969a392fad",
+    "id": "3a644ea6-40f7-4fc8-943e-f0e3b7c74a59",
     "type": "render",
     "status": "failed",
     "data": {
@@ -11,11 +11,11 @@
     },
     "result": null,
     "error": "Either 'html' or 'url' must be provided.",
-    "created_at": 1770998967759,
-    "started_at": 1770998967759,
-    "completed_at": 1770998967921,
+    "created_at": 1770999214529,
+    "started_at": 1770999214530,
+    "completed_at": 1770999214648,
     "priority": 0,
-    "duration_ms": 162,
-    "waiting_ms": 0
+    "duration_ms": 118,
+    "waiting_ms": 1
   }
 }

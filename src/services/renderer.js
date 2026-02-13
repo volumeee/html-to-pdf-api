@@ -105,53 +105,40 @@ async function injectQrCode(page, qrConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      // Use display: block with margin: 0 auto for centering block elements
-      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:block; margin:0 auto;" />`;
+      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:block;" />`;
       const labelHtml = params.label
-        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center; max-width:${params.width}px; word-wrap:break-word; margin: 0 auto;">${params.label}</div>`
+        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center; word-break:break-word;">${params.label}</div>`
         : "";
 
       const pos = params.position;
 
-      if (pos === "top-right") {
-        container.style.cssText =
-          "float:right; margin:0 0 12px 12px; text-align:center; padding:6px; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); border:1px solid #eee;";
-        container.innerHTML = imgHtml + labelHtml;
-        document.body.insertBefore(container, document.body.firstChild);
-      } else if (pos === "top-left") {
-        container.style.cssText =
-          "float:left; margin:0 12px 12px 0; text-align:center; padding:6px; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); border:1px solid #eee;";
-        container.innerHTML = imgHtml + labelHtml;
-        document.body.insertBefore(container, document.body.firstChild);
-      } else if (pos === "top-center") {
-        container.style.cssText =
-          "text-align:center; margin:0 auto 12px auto; padding:6px; display:table; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); border:1px solid #eee;";
-        container.innerHTML = imgHtml + labelHtml;
+      // Use Flexbox for guaranteed centering on any paper width
+      let containerStyle =
+        "clear:both; width:100%; display:flex; flex-direction:column; padding:8px 0; font-family:Arial,sans-serif; box-sizing:border-box;";
+
+      if (pos.includes("right")) {
+        containerStyle += " align-items: flex-end;";
+      } else if (pos.includes("left")) {
+        containerStyle += " align-items: flex-start;";
+      } else {
+        containerStyle += " align-items: center;";
+      }
+
+      if (pos.includes("top")) {
+        containerStyle += " margin-bottom:12px;";
+        container.style.cssText = containerStyle;
+        container.innerHTML = `<div style="text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
         document.body.insertBefore(container, document.body.firstChild);
       } else if (pos === "center") {
         container.style.cssText =
-          "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; text-align:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
+          "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; display:flex; flex-direction:column; align-items:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
         container.innerHTML = imgHtml + labelHtml;
-        document.body.appendChild(container);
-      } else if (pos === "bottom-center") {
-        container.style.cssText =
-          "text-align:center; margin:16px auto 0 auto; padding:8px 0; clear:both;";
-        container.innerHTML = imgHtml + labelHtml;
-        document.body.appendChild(container);
-      } else if (pos === "bottom-left") {
-        container.style.cssText =
-          "text-align:left; margin:16px 0 0 0; padding:8px 0; clear:both;";
-        container.innerHTML = imgHtml + labelHtml;
-        document.body.appendChild(container);
-      } else if (pos === "bottom-right") {
-        container.style.cssText =
-          "text-align:right; margin:16px 0 0 0; padding:8px 0; clear:both;";
-        container.innerHTML = `<div style="display:inline-block; text-align:center;">${imgHtml}${labelHtml}</div>`;
         document.body.appendChild(container);
       } else {
-        container.style.cssText =
-          "text-align:center; margin:16px auto; padding:8px 0; clear:both;";
-        container.innerHTML = imgHtml + labelHtml;
+        // Bottom positions or default
+        containerStyle += " margin-top:16px;";
+        container.style.cssText = containerStyle;
+        container.innerHTML = `<div style="text-align:center; max-width:${params.width}px;">${imgHtml}${labelHtml}</div>`;
         document.body.appendChild(container);
       }
     },
@@ -181,24 +168,22 @@ async function injectBarcode(page, barcodeConfig) {
   await page.evaluate(
     (params) => {
       const container = document.createElement("div");
-      const imgHtml = `<img src="${params.dataUri}" style="display:block; margin:0 auto;" />`;
+      const imgHtml = `<img src="${params.dataUri}" style="display:block; max-width:100%;" />`;
       const labelHtml = params.label
         ? `<div style="font-size:9px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center;">${params.label}</div>`
         : "";
 
+      let containerStyle =
+        "clear:both; width:100%; display:flex; flex-direction:column; align-items:center; padding:8px 0;";
+
       if (params.position === "top-center") {
-        container.style.cssText =
-          "text-align:center; margin:0 auto 12px auto; padding:6px; display:table;";
+        containerStyle += " margin-bottom:12px;";
+        container.style.cssText = containerStyle;
         container.innerHTML = imgHtml + labelHtml;
         document.body.insertBefore(container, document.body.firstChild);
-      } else if (params.position === "bottom-center") {
-        container.style.cssText =
-          "text-align:center; margin:16px auto 0 auto; padding:6px 0;";
-        container.innerHTML = imgHtml + labelHtml;
-        document.body.appendChild(container);
       } else {
-        container.style.cssText =
-          "text-align:center; margin:12px auto; padding:6px 0;";
+        containerStyle += " margin-top:16px;";
+        container.style.cssText = containerStyle;
         container.innerHTML = imgHtml + labelHtml;
         document.body.appendChild(container);
       }
