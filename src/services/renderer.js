@@ -48,8 +48,13 @@ async function injectCss(page, css) {
 
 /**
  * Inject watermark overlay into the page
+ * Supports two modes:
+ *   - Single (default): one large centered text
+ *   - Repeat/Tiling:    small text repeated diagonally across entire page
+ *
  * @param {import('puppeteer').Page} page
- * @param {object} watermark - { text, opacity?, color?, fontSize?, rotate? }
+ * @param {object} watermark - { text, opacity?, color?, fontSize?, rotate?, repeat? }
+ *   repeat: boolean - if true, tile the text across the entire page
  */
 async function injectWatermark(page, watermark) {
   if (!watermark || !watermark.text) return;
@@ -57,32 +62,111 @@ async function injectWatermark(page, watermark) {
   const text = watermark.text;
   const opacity = watermark.opacity || 0.12;
   const color = watermark.color || "#000000";
-  const fontSize = watermark.fontSize || 60;
   const rotate = watermark.rotate !== undefined ? watermark.rotate : -35;
+  const repeat = watermark.repeat || false;
 
-  await page.evaluate(
-    (params) => {
-      const div = document.createElement("div");
-      div.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        display: flex; align-items: center; justify-content: center;
-        pointer-events: none; z-index: 99999;
-      `;
-      div.innerHTML = `<span style="
-        font-size: ${params.fontSize}px;
-        color: ${params.color};
-        opacity: ${params.opacity};
-        transform: rotate(${params.rotate}deg);
-        font-weight: bold;
-        font-family: Arial, sans-serif;
-        letter-spacing: 8px;
-        white-space: nowrap;
-        user-select: none;
-      ">${params.text}</span>`;
-      document.body.appendChild(div);
-    },
-    { text, opacity, color, fontSize, rotate },
-  );
+  // Default font size: 14px for repeat mode, 60px for single
+  const fontSize = watermark.fontSize || (repeat ? 14 : 60);
+
+  if (repeat) {
+    // REPEAT/TILING MODE: wrap body content and overlay watermark
+    await page.evaluate(
+      (params) => {
+        // Wrap all body children in a container so we can overlay watermark
+        const wrapper = document.createElement("div");
+        wrapper.style.cssText = "position:relative; overflow:hidden;";
+
+        // Move all body children into wrapper
+        while (document.body.firstChild) {
+          wrapper.appendChild(document.body.firstChild);
+        }
+        document.body.appendChild(wrapper);
+
+        // Measure the actual content height
+        const pageH = wrapper.scrollHeight;
+        const pageW = wrapper.scrollWidth || wrapper.offsetWidth;
+
+        // Container covers 3x the page diagonal to fill after rotation
+        const diagonal = Math.sqrt(pageW * pageW + pageH * pageH);
+        const size = diagonal * 2;
+
+        const container = document.createElement("div");
+        container.style.cssText = `
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: ${size}px;
+          height: ${size}px;
+          margin-top: ${-size / 2}px;
+          margin-left: ${-size / 2}px;
+          pointer-events: none;
+          z-index: 99999;
+          display: flex;
+          flex-wrap: wrap;
+          align-content: flex-start;
+          align-items: flex-start;
+          transform: rotate(${params.rotate}deg);
+          overflow: hidden;
+        `;
+
+        // Build spans
+        const spanStyle = `
+          display:inline-block;
+          font-size:${params.fontSize}px;
+          color:${params.color};
+          opacity:${params.opacity};
+          font-weight:600;
+          font-family:Arial,Helvetica,sans-serif;
+          white-space:nowrap;
+          user-select:none;
+          padding:4px 16px;
+          line-height:2.2;
+        `;
+
+        // Calculate items needed to fill the rotated area
+        const charWidth = params.fontSize * 0.6;
+        const spanWidth = params.text.length * charWidth + 32;
+        const rowHeight = params.fontSize * 2.2;
+        const cols = Math.ceil(size / spanWidth) + 2;
+        const rows = Math.ceil(size / rowHeight) + 2;
+        const total = cols * rows;
+
+        const spans = [];
+        for (let i = 0; i < total; i++) {
+          spans.push(`<span style="${spanStyle}">${params.text}</span>`);
+        }
+
+        container.innerHTML = spans.join("");
+        wrapper.appendChild(container);
+      },
+      { text, opacity, color, fontSize, rotate },
+    );
+  } else {
+    // SINGLE MODE: one large centered text
+    await page.evaluate(
+      (params) => {
+        const div = document.createElement("div");
+        div.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          display: flex; align-items: center; justify-content: center;
+          pointer-events: none; z-index: 99999;
+        `;
+        div.innerHTML = `<span style="
+          font-size: ${params.fontSize}px;
+          color: ${params.color};
+          opacity: ${params.opacity};
+          transform: rotate(${params.rotate}deg);
+          font-weight: bold;
+          font-family: Arial, sans-serif;
+          letter-spacing: 8px;
+          white-space: nowrap;
+          user-select: none;
+        ">${params.text}</span>`;
+        document.body.appendChild(div);
+      },
+      { text, opacity, color, fontSize, rotate },
+    );
+  }
 }
 
 /**
@@ -282,7 +366,7 @@ async function renderPdf(source, outputPath, options = {}) {
   try {
     await loadContent(page, source, options);
     await injectCss(page, options.inject_css);
-    await injectWatermark(page, options.watermark);
+    // Watermark injected AFTER height measurement for thermal (see below)
     await injectChart(page, options.chart);
     await injectTable(page, options.table);
     await injectQrCode(page, options.qr_code);
@@ -304,7 +388,7 @@ async function renderPdf(source, outputPath, options = {}) {
       pdfOptions.width = size.width;
       pdfOptions.height = size.height;
     } else {
-      // Thermal/receipt: measure actual content height for single continuous page
+      // Thermal/receipt: measure actual content height BEFORE watermark injection
       pdfOptions.width = size.width;
       const contentHeight = await page.evaluate(() => {
         return Math.max(
@@ -317,6 +401,9 @@ async function renderPdf(source, outputPath, options = {}) {
       // Set height to actual content + small padding to prevent clipping
       pdfOptions.height = `${contentHeight + 20}px`;
     }
+
+    // Inject watermark AFTER height measurement so it doesn't inflate page size
+    await injectWatermark(page, options.watermark);
 
     if (options.landscape) pdfOptions.landscape = true;
     if (options.format) pdfOptions.format = options.format;
