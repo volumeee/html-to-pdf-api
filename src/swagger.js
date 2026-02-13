@@ -1,6 +1,6 @@
 /**
  * Swagger / OpenAPI Documentation
- * v7.2.0 — Unified API Architecture (Complete)
+ * v7.2.1 — Unified API Architecture (Complete)
  */
 const swaggerUi = require("swagger-ui-express");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("./config");
@@ -9,7 +9,7 @@ const spec = {
   openapi: "3.0.0",
   info: {
     title: "HTML to PDF API",
-    version: "7.2.0",
+    version: "7.2.1",
     description:
       "Enterprise-Grade Document Generation & Processing API.\n\n" +
       "## Architecture\n" +

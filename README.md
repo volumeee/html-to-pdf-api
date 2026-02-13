@@ -4,7 +4,7 @@
 
 # 📄 HTML to PDF API
 
-> **v7.2.0 — Unified Gateway Architecture**
+> **v7.2.1 — Unified Gateway Architecture**
 >
 > Enterprise-grade document generation & processing API. Convert HTML, URLs, and templates into professional PDFs and images with a single endpoint.
 
@@ -19,7 +19,7 @@
 
 ## ⚡ Architecture Overview
 
-Version 7.2.0 consolidates 20+ legacy endpoints into **two core gateways**:
+Version 7.2.1 consolidates 20+ legacy endpoints into **two core gateways**:
 
 | Endpoint | Purpose | Method |
 |---|---|---|
@@ -451,7 +451,7 @@ version: "3.8"
 services:
   html-to-pdf-api:
     build: .
-    image: bagose/html-to-pdf-api:7.2.0
+    image: bagose/html-to-pdf-api:7.2.1
     ports:
       - "3000:3000"
     environment:
@@ -580,7 +580,7 @@ curl http://localhost:3000/templates
 
 ## 🏎️ Resource Optimization (Lite Mode)
 
-Version 7.2.0 is optimized for low-resource environments (VPS/Container):
+Version 7.2.1 is optimized for low-resource environments (VPS/Container):
 
 - **Chromium Lite Mode**: We use specialized flags (`--disable-extensions`, `--no-first-run`, etc.) to minimize memory footprint.
 - **Concurrency Control**: Use `QUEUE_CONCURRENCY` and `BROWSER_POOL_SIZE` to prevent CPU spikes.

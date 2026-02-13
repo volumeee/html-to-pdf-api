@@ -1,6 +1,6 @@
 /**
  * HTML to PDF API — Server Entry Point
- * v7.2.0
+ * v7.2.1
  */
 const app = require("./src/app");
 const config = require("./src/config");
