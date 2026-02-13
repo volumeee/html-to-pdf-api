@@ -300,10 +300,22 @@ async function renderPdf(source, outputPath, options = {}) {
     };
 
     if (size.height) {
+      // Fixed-height pages (A4, letter, label, etc.)
       pdfOptions.width = size.width;
       pdfOptions.height = size.height;
     } else {
+      // Thermal/receipt: measure actual content height for single continuous page
       pdfOptions.width = size.width;
+      const contentHeight = await page.evaluate(() => {
+        return Math.max(
+          document.body.scrollHeight,
+          document.body.offsetHeight,
+          document.documentElement.scrollHeight,
+          document.documentElement.offsetHeight,
+        );
+      });
+      // Set height to actual content + small padding to prevent clipping
+      pdfOptions.height = `${contentHeight + 20}px`;
     }
 
     if (options.landscape) pdfOptions.landscape = true;
