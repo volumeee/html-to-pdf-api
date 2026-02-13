@@ -38,6 +38,9 @@ module.exports = {
   // Browser pool
   BROWSER_POOL_SIZE: parseInt(process.env.BROWSER_POOL_SIZE) || 1,
 
+  // Queue
+  QUEUE_CONCURRENCY: parseInt(process.env.QUEUE_CONCURRENCY) || 3,
+
   // Page size presets
   PAGE_SIZES: {
     thermal_58mm: { width: "220px", viewport: 220 },

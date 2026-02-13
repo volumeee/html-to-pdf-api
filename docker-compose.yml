@@ -3,7 +3,7 @@ version: "3.8"
 services:
   html-to-pdf-api:
     build: .
-    image: bagose/html-to-pdf-api:7.0.0
+    image: bagose/html-to-pdf-api:7.1.0
     container_name: html-to-pdf-api
     restart: unless-stopped
     ports:
@@ -22,6 +22,24 @@ services:
       - WEBHOOK_MAX_RETRIES=${WEBHOOK_MAX_RETRIES:-3}
       - WEBHOOK_RETRY_DELAY_MS=${WEBHOOK_RETRY_DELAY_MS:-3000}
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      - BROWSER_POOL_SIZE=${BROWSER_POOL_SIZE:-1}
+      - QUEUE_CONCURRENCY=${QUEUE_CONCURRENCY:-3}
+      # Email (optional)
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM=${SMTP_FROM:-}
+      # Cloud Storage (optional)
+      - STORAGE_PROVIDER=${STORAGE_PROVIDER:-local}
+      - STORAGE_ENDPOINT=${STORAGE_ENDPOINT:-}
+      - STORAGE_BUCKET=${STORAGE_BUCKET:-}
+      - STORAGE_REGION=${STORAGE_REGION:-us-east-1}
+      - STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY:-}
+      - STORAGE_SECRET_KEY=${STORAGE_SECRET_KEY:-}
+      - STORAGE_PATH_PREFIX=${STORAGE_PATH_PREFIX:-}
+      - STORAGE_KEEP_LOCAL=${STORAGE_KEEP_LOCAL:-true}
     volumes:
       - pdf_output:/app/output
       - pdf_data:/app/data

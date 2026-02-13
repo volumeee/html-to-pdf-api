@@ -26,14 +26,14 @@ const { success, error } = require("../utils/response");
 const config = require("../config");
 
 // ─── Login ───────────────────────────────────────────────────
-router.post("/admin/login", (req, res) => {
+router.post("/admin/login", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     return error(res, "username and password are required");
   }
 
-  const result = login(username, password);
+  const result = await login(username, password);
   if (!result) {
     return error(res, "Invalid credentials", null, 401);
   }
@@ -97,7 +97,15 @@ router.get("/admin/system", requireAdmin, (req, res) => {
       page_sizes: Object.keys(config.PAGE_SIZES),
       image_formats: config.IMAGE_FORMATS,
       password_protection: isQpdfAvailable(),
+      pdf_compression: true,
+      pdf_metadata: true,
+      thumbnails: true,
+      job_queue: true,
+      browser_pool_size: config.BROWSER_POOL_SIZE,
     },
+    email: require("../services/email").getEmailInfo(),
+    cloud_storage: require("../services/cloudStorage").getStorageInfo(),
+    queue: require("../services/queue").getQueueStats(),
   });
 });
 

@@ -1,7 +1,7 @@
 {
   "name": "html-to-pdf-api",
-  "version": "7.0.0",
-  "description": "Universal HTML/URL to PDF & Screenshot API with template engine, digital signatures, and enterprise security.",
+  "version": "7.1.0",
+  "description": "Enterprise-Grade Document Generation Platform — PDF/Screenshot/QR/Barcode with browser pool, job queue, PDF compression, metadata, thumbnails, email delivery, and cloud storage.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -19,9 +19,11 @@
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^8.0.1",
     "pdf-lib": "^1.17.1",
     "puppeteer": "^21.0.0",
     "qrcode": "^1.5.4",
+    "sanitize-html": "^2.17.0",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.1.0"
   },

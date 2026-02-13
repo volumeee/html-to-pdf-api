@@ -12,6 +12,7 @@ const adminRoutes = require("./admin");
 const qrBarcodeRoutes = require("./qrBarcode");
 const healthRoutes = require("./health");
 const securityRoutes = require("./security");
+const enhancedRoutes = require("./enhanced");
 const { listTemplates } = require("../templates");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("../config");
 const { isQpdfAvailable } = require("../services/pdfUtils");
@@ -68,6 +69,7 @@ function registerRoutes(app) {
   app.use(convertRoutes);
   app.use(qrBarcodeRoutes);
   app.use(securityRoutes);
+  app.use(enhancedRoutes);
   app.use(adminRoutes);
 
   // ─── Templates & Capabilities Info ──────────────────────────
@@ -101,6 +103,12 @@ function registerRoutes(app) {
         swagger_docs: true,
         health_check: true,
         helmet_security: true,
+        pdf_compression: true,
+        pdf_metadata: true,
+        thumbnails: true,
+        email_integration: require("../services/email").isEnabled(),
+        cloud_storage: require("../services/cloudStorage").isEnabled(),
+        job_queue: true,
       },
     });
   });
@@ -154,7 +162,7 @@ function registerRoutes(app) {
   app.get("/", (req, res) => {
     res.json({
       name: "HTML to PDF API",
-      version: "7.0.0",
+      version: "7.1.0",
       status: "running",
       docs: "/docs",
       admin: "/admin-panel",
@@ -207,6 +215,16 @@ function registerRoutes(app) {
           "CRUD /admin/signatures    → Signature stamps",
         ],
         monitoring: ["GET /health → System health check"],
+        enhanced: [
+          "POST /compress-pdf     → Compress PDF file",
+          "GET  /pdf-metadata     → Read PDF metadata",
+          "POST /pdf-metadata     → Set PDF metadata",
+          "POST /thumbnail        → Generate PDF thumbnail",
+          "POST /send-email       → Send file via email",
+          "POST /queue            → Submit async job",
+          "GET  /jobs/:id         → Check job status",
+          "GET  /queue/stats      → Queue statistics",
+        ],
       },
     });
   });

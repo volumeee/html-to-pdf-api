@@ -11,6 +11,7 @@ const config = require("./config");
 const { apiLimiter, renderLimiter } = require("./middleware/rateLimiter");
 const registerRoutes = require("./routes");
 const setupSwagger = require("./swagger");
+const { sanitizeMiddleware } = require("./middleware/sanitizer");
 
 const app = express();
 
@@ -38,6 +39,9 @@ app.use(cors(corsOptions));
 // ─── Body Parser ─────────────────────────────────────────────
 app.use(bodyParser.json({ limit: config.MAX_BODY_SIZE }));
 app.use(bodyParser.urlencoded({ extended: true, limit: config.MAX_BODY_SIZE }));
+
+// ─── HTML Sanitization (XSS Prevention) ─────────────────────
+app.use(sanitizeMiddleware);
 
 // ─── Request Timeout Middleware ──────────────────────────────
 app.use((req, res, next) => {

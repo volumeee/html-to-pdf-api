@@ -18,11 +18,21 @@ const { generateFilename } = require("../utils/format");
 const { success, error } = require("../utils/response");
 
 /**
- * Shared logic: apply password protection and build response
+ * Shared logic: apply password protection, metadata, and build response
  */
 async function finalizePdf(req, res, pdfFilename, renderResult, options = {}) {
   const baseUrl = `${req.protocol}://${req.get("host")}`;
   let finalFilename = pdfFilename;
+
+  // Apply PDF metadata if provided
+  if (options.metadata) {
+    try {
+      const { setMetadata } = require("../services/pdfMetadata");
+      await setMetadata(getFilePath(finalFilename), options.metadata);
+    } catch (err) {
+      console.warn("[PDF] Metadata error:", err.message);
+    }
+  }
 
   // Apply password protection if requested
   if (options.password) {
@@ -76,6 +86,7 @@ router.post("/cetak_struk_pdf", async (req, res) => {
     barcode,
     return_base64,
     password,
+    metadata,
   } = req.body;
 
   if (!html_content) {
@@ -98,6 +109,7 @@ router.post("/cetak_struk_pdf", async (req, res) => {
     return finalizePdf(req, res, pdfFilename, renderResult, {
       password,
       return_base64,
+      metadata,
       extraData: {
         message: "PDF created successfully",
         page_size: page_size || "thermal_default",
