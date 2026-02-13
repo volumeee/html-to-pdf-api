@@ -4,7 +4,7 @@
  * Single point of truth for all rendering operations.
  * Supports: HTML→PDF, URL→PDF, HTML→Image, URL→Image
  *
- * Features: Watermark, CSS Injection, Base64 output
+ * Features: Watermark, CSS Injection, QR/Barcode Injection, Base64 output
  */
 const fs = require("fs");
 const { createPage } = require("./browser");
@@ -85,6 +85,162 @@ async function injectWatermark(page, watermark) {
 }
 
 /**
+ * Inject QR Code into the rendered page
+ *
+ * Positioning Strategy:
+ *   - "top-left" / "top-right": Uses CSS float, inserted at START of body.
+ *     Content wraps around the QR so there's no overlap.
+ *   - "top-center": Inserted as block at START of body, centered.
+ *   - "bottom-left" / "bottom-right" / "bottom-center": Appended at END of body as block.
+ *   - "center": Absolute positioned overlay (intentional overlap for stamp-like use).
+ *   - "inline": Appended at END of body as centered block.
+ *
+ * @param {import('puppeteer').Page} page
+ * @param {object} qrConfig
+ *   text: content to encode (required)
+ *   position: placement (default "bottom-right")
+ *   width: QR width in px (default 120)
+ *   label: text label below QR
+ *   margin: QR quiet zone
+ *   color / background: QR colors
+ */
+async function injectQrCode(page, qrConfig) {
+  if (!qrConfig || !qrConfig.text) return;
+
+  const { generateQRDataUri } = require("./qrBarcode");
+  const dataUri = await generateQRDataUri(qrConfig.text, {
+    width: qrConfig.width || 120,
+    margin: qrConfig.margin !== undefined ? qrConfig.margin : 1,
+    color: qrConfig.color || "#000000",
+    background: qrConfig.background || "#ffffff",
+  });
+
+  const position = qrConfig.position || "bottom-right";
+  const width = qrConfig.width || 120;
+  const label = qrConfig.label || "";
+
+  await page.evaluate(
+    (params) => {
+      const container = document.createElement("div");
+      const imgHtml = `<img src="${params.dataUri}" width="${params.width}" height="${params.width}" style="display:block;" />`;
+      const labelHtml = params.label
+        ? `<div style="font-size:8px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center; max-width:${params.width}px; word-wrap:break-word;">${params.label}</div>`
+        : "";
+
+      const pos = params.position;
+
+      if (pos === "top-right") {
+        // Float right at the START of body — content wraps around it
+        container.style.cssText =
+          "float:right; margin:0 0 12px 12px; text-align:center; padding:6px; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); border:1px solid #eee;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.insertBefore(container, document.body.firstChild);
+      } else if (pos === "top-left") {
+        container.style.cssText =
+          "float:left; margin:0 12px 12px 0; text-align:center; padding:6px; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); border:1px solid #eee;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.insertBefore(container, document.body.firstChild);
+      } else if (pos === "top-center") {
+        container.style.cssText =
+          "text-align:center; margin:0 auto 12px auto; padding:6px; display:table; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); border:1px solid #eee;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.insertBefore(container, document.body.firstChild);
+      } else if (pos === "center") {
+        // Center absolute — intentional overlay (stamp-like)
+        container.style.cssText =
+          "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:99998; text-align:center; padding:8px; background:#fff; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.2); border:1px solid #ddd;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.appendChild(container);
+      } else if (pos === "bottom-center") {
+        container.style.cssText =
+          "text-align:center; margin:16px auto 0 auto; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.appendChild(container);
+      } else if (pos === "bottom-left") {
+        container.style.cssText =
+          "text-align:left; margin:16px 0 0 0; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.appendChild(container);
+      } else if (pos === "bottom-right") {
+        container.style.cssText =
+          "text-align:right; margin:16px 0 0 0; padding:8px 0;";
+        container.innerHTML =
+          '<div style="display:inline-block; text-align:center;">' +
+          imgHtml +
+          labelHtml +
+          "</div>";
+        document.body.appendChild(container);
+      } else {
+        // "inline" — simple block at the end
+        container.style.cssText =
+          "text-align:center; margin:16px auto; padding:8px 0;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.appendChild(container);
+      }
+    },
+    { dataUri, width, label, position },
+  );
+}
+
+/**
+ * Inject Barcode into the rendered page
+ * @param {import('puppeteer').Page} page
+ * @param {object} barcodeConfig - { text, type?, position?, height?, label? }
+ */
+async function injectBarcode(page, barcodeConfig) {
+  if (!barcodeConfig || !barcodeConfig.text) return;
+
+  const { generateBarcode } = require("./qrBarcode");
+  const buffer = await generateBarcode(
+    barcodeConfig.text,
+    barcodeConfig.type || "code128",
+    {
+      scale: barcodeConfig.scale || 2,
+      height: barcodeConfig.height || 8,
+      includetext: barcodeConfig.includetext !== false,
+    },
+  );
+  const dataUri = `data:image/png;base64,${buffer.toString("base64")}`;
+
+  const position = barcodeConfig.position || "inline";
+  const label = barcodeConfig.label || "";
+
+  await page.evaluate(
+    (params) => {
+      const container = document.createElement("div");
+      const imgHtml =
+        '<img src="' +
+        params.dataUri +
+        '" style="display:block; margin:0 auto;" />';
+      const labelHtml = params.label
+        ? '<div style="font-size:9px; color:#555; font-family:Arial,sans-serif; margin-top:3px; text-align:center;">' +
+          params.label +
+          "</div>"
+        : "";
+
+      if (params.position === "top-center") {
+        container.style.cssText =
+          "text-align:center; margin:0 auto 12px auto; padding:6px; display:table;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.insertBefore(container, document.body.firstChild);
+      } else if (params.position === "bottom-center") {
+        container.style.cssText =
+          "text-align:center; margin:16px auto 0 auto; padding:6px 0;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.appendChild(container);
+      } else {
+        // "inline" — appended at end of content
+        container.style.cssText =
+          "text-align:center; margin:12px auto; padding:6px 0;";
+        container.innerHTML = imgHtml + labelHtml;
+        document.body.appendChild(container);
+      }
+    },
+    { dataUri, label, position },
+  );
+}
+
+/**
  * Read file as base64 string
  */
 function readAsBase64(filePath) {
@@ -104,6 +260,8 @@ function readAsBase64(filePath) {
  * @param {boolean} options.landscape
  * @param {string} options.inject_css - custom CSS to inject
  * @param {object} options.watermark - { text, opacity, color, fontSize, rotate }
+ * @param {object} options.qr_code - { text, position, width, color, label }
+ * @param {object} options.barcode - { text, type, position, height, label }
  * @param {boolean} options.return_base64 - also return base64 string
  * @param {boolean} options.displayHeaderFooter
  * @param {string} options.headerTemplate
@@ -118,6 +276,8 @@ async function renderPdf(source, outputPath, options = {}) {
     await loadContent(page, source, options);
     await injectCss(page, options.inject_css);
     await injectWatermark(page, options.watermark);
+    await injectQrCode(page, options.qr_code);
+    await injectBarcode(page, options.barcode);
 
     const pdfOptions = {
       path: outputPath,
@@ -176,6 +336,8 @@ async function renderPdf(source, outputPath, options = {}) {
  * @param {boolean} options.fullPage
  * @param {string} options.inject_css
  * @param {object} options.watermark
+ * @param {object} options.qr_code - { text, position, width, color, label }
+ * @param {object} options.barcode - { text, type, position, height, label }
  * @param {boolean} options.return_base64
  * @returns {Promise<{ base64?: string }>}
  */
@@ -190,6 +352,8 @@ async function renderImage(source, outputPath, options = {}) {
     await loadContent(page, source, options);
     await injectCss(page, options.inject_css);
     await injectWatermark(page, options.watermark);
+    await injectQrCode(page, options.qr_code);
+    await injectBarcode(page, options.barcode);
 
     const screenshotOptions = {
       path: outputPath,

@@ -371,7 +371,7 @@
       <div class="sidebar">
         <div class="logo">
           <h2>📄 PDF API</h2>
-          <span>v5.0.0 Admin</span>
+          <span>v6.0.0 Admin</span>
         </div>
         <nav>
           <a href="#" class="active" data-section="overview"
@@ -383,6 +383,9 @@
           >
           <a href="#" data-section="files"
             ><span class="icon">📂</span> Files</a
+          >
+          <a href="#" data-section="templates"
+            ><span class="icon">🎨</span> Templates</a
           >
           <a href="#" data-section="system"
             ><span class="icon">⚙️</span> System</a
@@ -533,6 +536,86 @@
               </thead>
               <tbody id="filesTable"></tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Templates Section -->
+        <div class="section" id="sec-templates">
+          <div class="topbar">
+            <h1>Template Manager</h1>
+            <div class="actions">
+              <button class="btn" onclick="loadTemplateList()">🔄 Refresh</button>
+              <button class="btn" style="background:#6366f1;border:none;color:#fff;" onclick="showTemplateEditor()">+ New Template</button>
+            </div>
+          </div>
+          
+          <!-- Built-in Templates -->
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-header"><h3>📦 Built-in Templates</h3></div>
+            <div style="padding:16px;" id="builtinTemplatesList"></div>
+          </div>
+
+          <!-- Custom Templates -->
+          <div class="card">
+            <div class="card-header"><h3>🎨 Custom Templates</h3></div>
+            <table>
+              <thead><tr><th>Name</th><th>Description</th><th>Page Size</th><th>Category</th><th>Updated</th><th>Actions</th></tr></thead>
+              <tbody id="customTemplatesTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Template Editor Modal -->
+        <div id="templateModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:100; align-items:center; justify-content:center; overflow-y:auto; padding:20px;">
+          <div class="card" style="width:900px; max-width:95vw; padding:24px; background:#1c1d2e; margin:auto;">
+            <h2 id="tmplModalTitle" style="margin-bottom:20px; font-size:18px;">Create Custom Template</h2>
+            <input type="hidden" id="tmplEditName">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Template Name</label>
+                <input type="text" id="tmplName" placeholder="e.g. receipt_custom" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Description</label>
+                <input type="text" id="tmplDesc" placeholder="My custom template" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Page Size</label>
+                <select id="tmplPageSize" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+                  <option value="a4">A4</option>
+                  <option value="a5">A5</option>
+                  <option value="letter">Letter</option>
+                  <option value="thermal_58mm">Thermal 58mm</option>
+                  <option value="thermal_80mm">Thermal 80mm</option>
+                  <option value="thermal_default">Thermal Default</option>
+                  <option value="label">Label (100x150mm)</option>
+                  <option value="sertifikat">Sertifikat (Landscape)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Category</label>
+                <select id="tmplCategory" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+                  <option value="custom">Custom</option>
+                  <option value="receipt">Receipt</option>
+                  <option value="document">Document</option>
+                  <option value="shipping">Shipping</option>
+                  <option value="certificate">Certificate</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">Variables (comma-separated, e.g: name,date,amount)</label>
+              <input type="text" id="tmplVars" placeholder="name,date,amount" style="width:100%; padding:10px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#fff;">
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="display:block; font-size:12px; color:#71717a; margin-bottom:4px;">HTML Template (use <code style="color:#6366f1;">{{variable}}</code> for dynamic data)</label>
+              <textarea id="tmplHtml" style="width:100%; height:350px; padding:12px; border-radius:8px; border:1px solid #2a2b3d; background:#12131f; color:#10b981; font-family:monospace; font-size:13px; resize:vertical;" spellcheck="false"></textarea>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn" style="flex:1;" onclick="closeTemplateEditor()">Cancel</button>
+              <button class="btn" style="flex:1; background:#10b981; border:none; color:#fff;" onclick="previewTemplate()">👁️ Preview</button>
+              <button class="btn" style="flex:1; background:#6366f1; border:none; color:#fff;" onclick="saveTemplate()">💾 Save Template</button>
+            </div>
           </div>
         </div>
 
@@ -885,6 +968,115 @@
         loadSystem();
       }
 
+      // ─── Template Management ───────────────────────
+      async function loadTemplateList() {
+        // Load all templates (built-in + custom)
+        const tmplRes = await fetch(`${API}/templates`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const tmplData = await tmplRes.json();
+
+        if (tmplData.templates) {
+          const builtIn = tmplData.templates.filter(t => t.type === 'built-in' || !t.type);
+          const custom = tmplData.templates.filter(t => t.type === 'custom');
+
+          document.getElementById("builtinTemplatesList").innerHTML = builtIn.length > 0
+            ? builtIn.map(t => `<span class="badge badge-blue" style="margin:4px; padding:8px 16px; font-size:13px;">
+                📄 ${t.name} <span style="opacity:0.6;">(${t.default_page_size || t.defaultPageSize})</span>
+              </span>`).join("")
+            : '<p style="color:#71717a;">No built-in templates found</p>';
+
+          document.getElementById("customTemplatesTable").innerHTML = custom.length > 0
+            ? custom.map(t => `<tr>
+                <td><strong>${t.name}</strong></td>
+                <td>${t.description || '-'}</td>
+                <td><span class="badge badge-green">${t.default_page_size || t.defaultPageSize}</span></td>
+                <td><span class="badge badge-blue">${t.category || 'custom'}</span></td>
+                <td>${t.updated_at ? new Date(t.updated_at).toLocaleDateString() : '-'}</td>
+                <td>
+                  <button class="btn" onclick="editTemplate('${t.name}')" style="padding:4px 10px;font-size:11px;">✏️</button>
+                  <button class="btn btn-danger" onclick="deleteTemplate('${t.name}')" style="padding:4px 10px;font-size:11px;">🗑️</button>
+                </td>
+              </tr>`).join("")
+            : '<tr><td colspan="6" class="empty-state">No custom templates yet. Click "+ New Template" to create one!</td></tr>';
+        }
+      }
+
+      function showTemplateEditor(data) {
+        document.getElementById("tmplModalTitle").textContent = data ? "Edit Template" : "Create Custom Template";
+        document.getElementById("tmplEditName").value = data ? data.name : "";
+        document.getElementById("tmplName").value = data ? data.name : "";
+        document.getElementById("tmplName").disabled = !!data;
+        document.getElementById("tmplDesc").value = data ? (data.description || "") : "";
+        document.getElementById("tmplPageSize").value = data ? (data.defaultPageSize || "a4") : "a4";
+        document.getElementById("tmplCategory").value = data ? (data.category || "custom") : "custom";
+        document.getElementById("tmplVars").value = data && data.variables ? data.variables.join(",") : "";
+        document.getElementById("tmplHtml").value = data ? (data.html || "") : `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; }
+    h1 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <p>{{content}}</p>
+</body>
+</html>`;
+        document.getElementById("templateModal").style.display = "flex";
+      }
+
+      function closeTemplateEditor() {
+        document.getElementById("templateModal").style.display = "none";
+      }
+
+      async function editTemplate(name) {
+        const data = await api(`/admin/templates/custom/${name}`);
+        if (data && data.template) {
+          showTemplateEditor(data.template);
+        }
+      }
+
+      async function saveTemplate() {
+        const editName = document.getElementById("tmplEditName").value;
+        const name = editName || document.getElementById("tmplName").value;
+        const html = document.getElementById("tmplHtml").value;
+        const description = document.getElementById("tmplDesc").value;
+        const page_size = document.getElementById("tmplPageSize").value;
+        const category = document.getElementById("tmplCategory").value;
+        const varsStr = document.getElementById("tmplVars").value;
+        const variables = varsStr ? varsStr.split(",").map(v => v.trim()).filter(Boolean) : [];
+
+        if (!name) return alert("Please enter a template name");
+        if (!html) return alert("Please enter HTML template code");
+
+        const result = await api("/admin/templates/custom", "POST", {
+          name, html, description, page_size, category, variables
+        });
+
+        if (result) {
+          alert("Template saved successfully!");
+          closeTemplateEditor();
+          loadTemplateList();
+        }
+      }
+
+      async function deleteTemplate(name) {
+        if (!confirm(`Delete template "${name}"? This cannot be undone.`)) return;
+        await api(`/admin/templates/custom/${name}`, "DELETE");
+        loadTemplateList();
+      }
+
+      function previewTemplate() {
+        const html = document.getElementById("tmplHtml").value;
+        if (!html) return alert("No HTML to preview");
+        const win = window.open("", "_blank");
+        win.document.write(html);
+        win.document.close();
+      }
+
       async function deleteFile(filename) {
         if (!confirm(`Delete ${filename}?`)) return;
         await api(`/admin/files/${filename}`, "DELETE");
@@ -917,6 +1109,7 @@
         if (a.dataset.section === "system") loadSystem();
         if (a.dataset.section === "logs") loadLogs();
         if (a.dataset.section === "keys") loadKeys();
+        if (a.dataset.section === "templates") loadTemplateList();
       });
     });
 

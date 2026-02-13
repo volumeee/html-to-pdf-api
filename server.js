@@ -1,6 +1,6 @@
 /**
  * HTML to PDF API — Server Entry Point
- * v5.2.5
+ * v6.0.0
  */
 const app = require("./src/app");
 const { PORT } = require("./src/config");
@@ -39,19 +39,21 @@ app.listen(PORT, () => {
   const settings = getSettings();
   console.log(`
 ┌──────────────────────────────────────────────────┐
-│        🚀 HTML to PDF API v5.2.5                │
+│        🚀 HTML to PDF API v6.0.0                │
 ├──────────────────────────────────────────────────┤
 │  Port:        ${String(PORT).padEnd(34)}│
-│  Templates:   ${templates.join(", ").padEnd(34)}│
+│  Templates:   ${String(templates.length + " registered").padEnd(34)}│
 │  Cleanup:     every ${String(settings.auto_cleanup_hours + "h").padEnd(28)}│
 │  Security:    API Keys, JWT, & UI Auth Control   │
 │                                                  │
 │  📄 PDF:       /cetak_struk_pdf, /generate,      │
 │                /url-to-pdf                        │
 │  📸 Screenshot: /html-to-image, /url-to-image    │
+│  📱 QR/Barcode: /qr-code, /barcode, /qr-pdf     │
 │  🔄 Convert:   /pdf-to-image, /to-csv            │
 │  ⚡ Advanced:  /merge, /batch, /webhook           │
 │  📂 Files:     /files, /cleanup, /templates       │
+│  🎨 Templates: Custom upload via Admin Panel     │
 │                                                  │
 │  📖 API Docs:  http://localhost:${PORT}/docs${" ".repeat(Math.max(0, 11 - String(PORT).length))}│
 │  🔐 Admin:     http://localhost:${PORT}/admin-panel${" ".repeat(Math.max(0, 4 - String(PORT).length))}│

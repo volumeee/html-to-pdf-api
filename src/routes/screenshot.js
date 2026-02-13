@@ -24,6 +24,8 @@ router.post("/html-to-image", async (req, res) => {
     quality,
     full_page,
     watermark,
+    qr_code,
+    barcode,
     return_base64,
   } = req.body;
 
@@ -42,6 +44,8 @@ router.post("/html-to-image", async (req, res) => {
       quality,
       fullPage: full_page,
       watermark,
+      qr_code,
+      barcode,
       return_base64,
     });
 
@@ -72,6 +76,8 @@ router.post("/url-to-image", async (req, res) => {
     quality,
     full_page,
     watermark,
+    qr_code,
+    barcode,
     inject_css,
     return_base64,
   } = req.body;
@@ -91,6 +97,8 @@ router.post("/url-to-image", async (req, res) => {
       quality,
       fullPage: full_page,
       watermark,
+      qr_code,
+      barcode,
       inject_css,
       return_base64,
     });

@@ -1,7 +1,13 @@
 /**
  * Template Registry
  * Central place to register and access all templates.
+ * Now supports custom templates uploaded via Admin Panel.
  */
+const {
+  getCustomTemplate,
+  listCustomTemplates,
+} = require("../services/customTemplate");
+
 const templates = {
   indomaret: {
     fn: require("./indomaret"),
@@ -42,16 +48,28 @@ const templates = {
 };
 
 function getTemplate(name) {
-  return templates[name] || null;
+  // Check built-in templates first
+  if (templates[name]) return templates[name];
+
+  // Fallback to custom templates
+  const custom = getCustomTemplate(name);
+  if (custom) return custom;
+
+  return null;
 }
 
 function listTemplates() {
-  return Object.entries(templates).map(([name, t]) => ({
+  const builtIn = Object.entries(templates).map(([name, t]) => ({
     name,
     description: t.description,
     default_page_size: t.defaultPageSize,
     category: t.category,
+    type: "built-in",
   }));
+
+  const custom = listCustomTemplates();
+
+  return [...builtIn, ...custom];
 }
 
 module.exports = { getTemplate, listTemplates };

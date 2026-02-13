@@ -172,4 +172,39 @@ router.delete("/admin/keys/:id", requireAdmin, (req, res) => {
   return success(res, { message: "API Key deleted" });
 });
 
+// ─── Custom Template Management ─────────────────────────────
+const customTemplateService = require("../services/customTemplate");
+
+router.get("/admin/templates/custom", requireAdmin, (req, res) => {
+  return success(res, {
+    templates: customTemplateService.listCustomTemplates(),
+  });
+});
+
+router.get("/admin/templates/custom/:name", requireAdmin, (req, res) => {
+  const tmpl = customTemplateService.getTemplateSource(req.params.name);
+  if (!tmpl) return error(res, "Template not found", null, 404);
+  return success(res, { template: tmpl });
+});
+
+router.post("/admin/templates/custom", requireAdmin, (req, res) => {
+  const { name, html, description, page_size, category, variables } = req.body;
+  if (!name || !html) return error(res, "name and html are required");
+
+  const saved = customTemplateService.saveCustomTemplate(name, {
+    html,
+    description,
+    page_size,
+    category,
+    variables,
+  });
+  return success(res, { message: "Template saved", template: saved });
+});
+
+router.delete("/admin/templates/custom/:name", requireAdmin, (req, res) => {
+  const deleted = customTemplateService.deleteCustomTemplate(req.params.name);
+  if (!deleted) return error(res, "Template not found", null, 404);
+  return success(res, { message: "Template deleted" });
+});
+
 module.exports = router;

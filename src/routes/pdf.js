@@ -5,7 +5,7 @@
  * POST /generate          - Template → PDF
  * POST /url-to-pdf        - URL → PDF
  *
- * All endpoints support: watermark, base64, password, CSS injection
+ * All endpoints support: watermark, base64, password, CSS injection, QR code, barcode
  */
 const express = require("express");
 const router = express.Router();
@@ -72,6 +72,8 @@ router.post("/cetak_struk_pdf", async (req, res) => {
     page_size,
     options,
     watermark,
+    qr_code,
+    barcode,
     return_base64,
     password,
   } = req.body;
@@ -87,6 +89,8 @@ router.post("/cetak_struk_pdf", async (req, res) => {
     const renderResult = await renderPdf({ html: html_content }, pdfPath, {
       pageSize: page_size,
       watermark,
+      qr_code,
+      barcode,
       return_base64,
       ...options,
     });
@@ -112,7 +116,10 @@ router.post("/generate", async (req, res) => {
     data,
     filename,
     page_size,
+    options,
     watermark,
+    qr_code,
+    barcode,
     return_base64,
     password,
   } = req.body;
@@ -138,7 +145,10 @@ router.post("/generate", async (req, res) => {
     const renderResult = await renderPdf({ html: html_content }, pdfPath, {
       pageSize: page_size || tmpl.defaultPageSize,
       watermark,
+      qr_code,
+      barcode,
       return_base64,
+      ...options,
     });
 
     return finalizePdf(req, res, pdfFilename, renderResult, {
@@ -160,6 +170,8 @@ router.post("/url-to-pdf", async (req, res) => {
     page_size,
     options,
     watermark,
+    qr_code,
+    barcode,
     inject_css,
     return_base64,
     password,
@@ -176,6 +188,8 @@ router.post("/url-to-pdf", async (req, res) => {
     const renderResult = await renderPdf({ url }, pdfPath, {
       pageSize: page_size || "a4",
       watermark,
+      qr_code,
+      barcode,
       inject_css,
       return_base64,
       ...options,

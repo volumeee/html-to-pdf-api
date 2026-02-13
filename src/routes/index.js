@@ -8,11 +8,13 @@ const fileRoutes = require("./files");
 const advancedRoutes = require("./advanced");
 const convertRoutes = require("./convert");
 const adminRoutes = require("./admin");
+const qrBarcodeRoutes = require("./qrBarcode");
 const { listTemplates } = require("../templates");
 const { PAGE_SIZES, IMAGE_FORMATS } = require("../config");
 const { isQpdfAvailable } = require("../services/pdfUtils");
 const { recordRequest } = require("../services/stats");
 const { apiKeyAuth } = require("../middleware/apiKeyAuth");
+const { BARCODE_TYPES } = require("../services/qrBarcode");
 
 function registerRoutes(app) {
   // ─── API Key & Request Logging Middleware ──────────────────
@@ -57,6 +59,7 @@ function registerRoutes(app) {
   app.use(fileRoutes);
   app.use(advancedRoutes);
   app.use(convertRoutes);
+  app.use(qrBarcodeRoutes);
   app.use(adminRoutes);
 
   // ─── Templates & Capabilities Info ──────────────────────────
@@ -69,6 +72,7 @@ function registerRoutes(app) {
         ...config,
       })),
       image_formats: IMAGE_FORMATS,
+      barcode_types: BARCODE_TYPES,
       capabilities: {
         watermark: true,
         css_injection: true,
@@ -79,6 +83,10 @@ function registerRoutes(app) {
         webhook: true,
         pdf_to_image: true,
         csv_export: true,
+        qr_code: true,
+        barcode: true,
+        custom_templates: true,
+        header_footer: true,
         admin_panel: true,
         swagger_docs: true,
       },
@@ -89,7 +97,7 @@ function registerRoutes(app) {
   app.get("/", (req, res) => {
     res.json({
       name: "HTML to PDF API",
-      version: "5.0.0",
+      version: "6.0.0",
       status: "running",
       docs: "/docs",
       admin: "/admin-panel",
@@ -107,6 +115,11 @@ function registerRoutes(app) {
           "POST /pdf-to-image     → PDF to PNG/JPEG/WebP",
           "POST /to-csv           → Data to CSV",
         ],
+        qr_barcode: [
+          "POST /qr-code          → Generate QR Code",
+          "POST /barcode           → Generate Barcode",
+          "POST /qr-pdf            → QR Code embedded in PDF",
+        ],
         advanced: [
           "POST /merge            → Merge multiple PDFs",
           "POST /batch            → Batch generate from template",
@@ -123,6 +136,9 @@ function registerRoutes(app) {
           "GET  /admin/stats       → Usage statistics",
           "GET  /admin/logs        → Request logs",
           "GET  /admin/system      → System info",
+          "CRUD /admin/keys        → API Key management",
+          "CRUD /admin/settings    → Global settings",
+          "CRUD /admin/templates   → Custom templates",
         ],
       },
     });
