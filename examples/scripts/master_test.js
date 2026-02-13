@@ -200,6 +200,32 @@ async function runMasterTest() {
     const rl2 = await client.post("/cetak_struk_pdf", l2);
     await logResult("legacy_test_template", l2, rl2.data);
 
+    // Testing legacy complex transaction (Enterprise Mockup)
+    const l3 = {
+      template: "indomaret",
+      data: {
+        store_name: "ENTERPRISE MART V7",
+        cashier: "Super-AI",
+        items: [
+          { name: "Monitor 24 Inch", qty: 2, price: 1500000 },
+          { name: "Mechanical Keyboard", qty: 1, price: 750000 },
+          { name: "Gaming Mouse", qty: 1, price: 450000 },
+          { name: "Mousepad XL", qty: 3, price: 125000 },
+          { name: "HDMI Cable 2M", qty: 5, price: 45000 },
+        ],
+        payment: 5000000,
+      },
+      page_size: "thermal_80mm",
+      qr_code: {
+        text: "TX-999-PRO-MAX",
+        position: "bottom-center",
+        label: "Scan for Warranty",
+      },
+      watermark: { text: "PAID / LUNAS", opacity: 0.15, color: "#ff0000" },
+    };
+    const rl3 = await client.post("/cetak_struk_pdf", l3);
+    await logResult("legacy_test_complex_struk", l3, rl3.data);
+
     // --- 6. MANAGEMENT ---
     console.log("\n--- Testing Management ---");
     const m1 = await client.get("/files");
