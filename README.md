@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.png" width="1000" alt="HTML to PDF API Banner">
+</p>
+
 # 📄 HTML to PDF API
 
 > **v7.2.0 — Unified Gateway Architecture**
@@ -30,11 +34,19 @@ Plus background job processing via `/queue`, `/jobs/:id`, and `/queue/stats`.
 
 ### Docker (Recommended)
 
+**Pull from Docker Hub:**
+```bash
+docker pull bagose/html-to-pdf-api:latest
+```
+
+**Running with Docker Compose:**
 ```bash
 docker-compose up -d
 ```
 
 The API will be available at `http://localhost:3000`.
+Official Image: [bagose/html-to-pdf-api](https://hub.docker.com/r/bagose/html-to-pdf-api)
+
 
 ### Local Development
 
