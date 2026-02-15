@@ -1,0 +1,34 @@
+{
+  "source_type": "template",
+  "source": "indomaret",
+  "data": {
+    "store_name": "LOGO TEST SHOP",
+    "items": [
+      {
+        "name": "Coffee Beans",
+        "qty": 2,
+        "price": 45000
+      },
+      {
+        "name": "Sugar Pack",
+        "qty": 1,
+        "price": 12000
+      }
+    ],
+    "payment": 150000
+  },
+  "options": {
+    "pageSize": "thermal_80mm",
+    "logo": {
+      "src": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+      "width": "150px",
+      "position": "top-center",
+      "grayscale": true,
+      "margin": "30px 0 10px 0"
+    },
+    "qr_code": {
+      "text": "LOGO-TEST-001",
+      "position": "bottom-center"
+    }
+  }
+}

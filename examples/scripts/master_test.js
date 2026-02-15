@@ -296,6 +296,101 @@ async function runMasterTest() {
     const res_label = await client.post("/render", tmpl_label);
     await logResult("template_label", tmpl_label, res_label.data);
 
+    // 2g. Feature: Universal Logo Injection
+    const feat_logo = {
+      source_type: "template",
+      source: "indomaret",
+      data: {
+        store_name: "LOGO TEST SHOP",
+        items: [
+          { name: "Coffee Beans", qty: 2, price: 45000 },
+          { name: "Sugar Pack", qty: 1, price: 12000 },
+        ],
+        payment: 150000,
+      },
+      options: {
+        pageSize: "thermal_80mm",
+        logo: {
+          src: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+          width: "150px",
+          position: "top-center",
+          grayscale: true,
+          margin: "30px 0 10px 0",
+        },
+        qr_code: { text: "LOGO-TEST-001", position: "bottom-center" },
+      },
+    };
+    await delay(RENDER_DELAY);
+    const res_logo = await client.post("/render", feat_logo);
+    await logResult("feature_universal_logo", feat_logo, res_logo.data);
+
+    // 2h. Feature: Long Receipt (Dynamic Height Test)
+    const longItems = Array.from({ length: 50 }, (_, i) => ({
+      name: `Item Belanja ke-${i + 1} (Produk Test)`,
+      qty: 1,
+      price: 10000 + i * 500,
+    }));
+    const feat_long = {
+      source_type: "template",
+      source: "indomaret",
+      data: {
+        store_name: "TES STRUK PANJANG",
+        store_address: "Jalan Merdeka No. 45, Jakarta Pusat",
+        items: longItems,
+        payment: 5000000,
+      },
+      options: {
+        pageSize: "thermal_80mm",
+        logo: {
+          src: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+          width: "150px",
+          position: "top-center",
+          grayscale: true,
+          margin: "30px 0 10px 0",
+        },
+      },
+    };
+    await delay(RENDER_DELAY);
+    const res_long = await client.post("/render", feat_long);
+    await logResult("feature_long_receipt", feat_long, res_long.data);
+
+    // 2i. Feature: Watermark (Single Center)
+    const feat_wm_single = {
+      source_type: "html",
+      source:
+        '<h1 style="text-align:center;margin-top:200px">CONFIDENTIAL DOCUMENT</h1>',
+      options: {
+        watermark: {
+          text: "DRAFT V1",
+          opacity: 0.2,
+          color: "#ff0000",
+          fontSize: 80,
+          rotate: -45,
+        },
+      },
+    };
+    await delay(RENDER_DELAY);
+    const res_wm1 = await client.post("/render", feat_wm_single);
+    await logResult("feature_watermark_single", feat_wm_single, res_wm1.data);
+
+    // 2j. Feature: Watermark (Repeat/Tiled)
+    const feat_wm_repeat = {
+      source_type: "html",
+      source:
+        '<h1 style="text-align:center;margin-top:200px">COPYRIGHTED MATERIAL</h1>',
+      options: {
+        watermark: {
+          text: "DO NOT COPY",
+          opacity: 0.1,
+          repeat: true,
+          color: "#0000ff",
+        },
+      },
+    };
+    await delay(RENDER_DELAY);
+    const res_wm2 = await client.post("/render", feat_wm_repeat);
+    await logResult("feature_watermark_repeat", feat_wm_repeat, res_wm2.data);
+
     // ============================================================
     // 3. PDF ACTIONS (/pdf-action)
     // ============================================================
@@ -497,6 +592,42 @@ async function runMasterTest() {
     const rl4 = await client.post("/cetak_struk_pdf", l4);
     await logResult("legacy_test_modern_template", l4, rl4.data);
 
+    // 6e. Legacy with Watermark REPEAT
+    const l5 = {
+      html_content:
+        '<h1 style="text-align:center;margin-top:50px">LEGACY REPEAT WM</h1>',
+      page_size: "thermal_80mm",
+      watermark: {
+        text: "LEGACY REPEAT",
+        opacity: 0.1,
+        repeat: true,
+        color: "#fa0000",
+      },
+    };
+    await delay(RENDER_DELAY);
+    const rl5 = await client.post("/cetak_struk_pdf", l5);
+    await logResult("legacy_test_watermark_repeat", l5, rl5.data);
+
+    // 6f. Legacy with Logo Injection
+    const l6 = {
+      template: "indomaret",
+      data: {
+        store_name: "LEGACY LOGO STORE",
+        items: [{ name: "Test Item", qty: 1, price: 100 }],
+        payment: 100,
+      },
+      page_size: "thermal_80mm",
+      logo: {
+        src: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+        width: "120px",
+        position: "top-center",
+        grayscale: true,
+      },
+    };
+    await delay(RENDER_DELAY);
+    const rl6 = await client.post("/cetak_struk_pdf", l6);
+    await logResult("legacy_test_logo", l6, rl6.data);
+
     // ============================================================
     // 7. MANAGEMENT ENDPOINTS
     // ============================================================
@@ -532,9 +663,16 @@ async function runMasterTest() {
     console.log(
       `   Templates tested: indomaret, modern, invoice, surat, sertifikat, label`,
     );
-    console.log(`   Legacy struk items: 25 diverse products`);
-    console.log(`   QR Code centering: tested on all templates`);
-    console.log(`   Watermark: tested on receipt templates`);
+    console.log(
+      `   Legacy Features: 25 items, Watermark Repeat, Logo Injection`,
+    );
+    console.log(`   Scanner features: QR Code centering, Barcode`);
+    console.log(
+      `   New Features: Universal Logo Injection, Dynamic Long Receipt (50 items)`,
+    );
+    console.log(
+      `   Watermark: tested Single (Red/Rotated) and Repeat/Tiled (Blue)`,
+    );
     console.log(`   PDF Actions: metadata, thumbnail, compress, extract`);
     console.log(`   Queue: submit, status, stats`);
     console.log(`   Advanced: CSS injection, header/footer`);

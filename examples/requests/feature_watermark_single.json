@@ -1,0 +1,13 @@
+{
+  "source_type": "html",
+  "source": "<h1 style=\"text-align:center;margin-top:200px\">CONFIDENTIAL DOCUMENT</h1>",
+  "options": {
+    "watermark": {
+      "text": "DRAFT V1",
+      "opacity": 0.2,
+      "color": "#ff0000",
+      "fontSize": 80,
+      "rotate": -45
+    }
+  }
+}

@@ -25,7 +25,7 @@ module.exports = function indomaret(data) {
 <html><head><style>
   @page { size: auto; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { width: 100%; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; color: #000; overflow: hidden; }
+  body { width: 100%; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; color: #000; }
   .center { text-align: center; } .r { text-align: right; } .bold { font-weight: bold; }
   .sep { border-top: 1px dashed #000; margin: 6px 0; }
   .sep-double { border-top: 2px double #000; margin: 6px 0; }

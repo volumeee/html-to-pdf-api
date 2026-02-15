@@ -1,0 +1,10 @@
+{
+  "html_content": "<h1 style=\"text-align:center;margin-top:50px\">LEGACY REPEAT WM</h1>",
+  "page_size": "thermal_80mm",
+  "watermark": {
+    "text": "LEGACY REPEAT",
+    "opacity": 0.1,
+    "repeat": true,
+    "color": "#fa0000"
+  }
+}

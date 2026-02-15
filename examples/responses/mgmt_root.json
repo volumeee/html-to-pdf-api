@@ -1,6 +1,6 @@
 {
   "name": "HTML to PDF API",
-  "version": "7.2.0",
+  "version": "7.2.2",
   "architecture": "Unified Gateway",
   "docs": "/docs",
   "health": "/health",

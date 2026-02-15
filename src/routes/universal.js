@@ -1,5 +1,5 @@
 /**
- * Unified API Engine — v7.2.1 (Complete)
+ * Unified API Engine — v7.2.2 (Complete)
  *
  * ALL feature routes consolidated into three endpoints:
  *   POST /render      → Generate PDFs/Images from HTML, URL, or Templates
@@ -426,6 +426,7 @@ router.post("/cetak_struk_pdf", async (req, res) => {
       qr_code,
       barcode,
       watermark,
+      logo, // Added logo support
       filename,
     } = req.body;
 
@@ -440,6 +441,7 @@ router.post("/cetak_struk_pdf", async (req, res) => {
       qr_code,
       barcode,
       watermark,
+      logo, // Pass logo to renderer
     };
 
     if (template) {

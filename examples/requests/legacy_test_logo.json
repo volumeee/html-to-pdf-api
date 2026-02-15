@@ -1,0 +1,21 @@
+{
+  "template": "indomaret",
+  "data": {
+    "store_name": "LEGACY LOGO STORE",
+    "items": [
+      {
+        "name": "Test Item",
+        "qty": 1,
+        "price": 100
+      }
+    ],
+    "payment": 100
+  },
+  "page_size": "thermal_80mm",
+  "logo": {
+    "src": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+    "width": "120px",
+    "position": "top-center",
+    "grayscale": true
+  }
+}

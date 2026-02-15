@@ -9,7 +9,7 @@ const spec = {
   openapi: "3.0.0",
   info: {
     title: "HTML to PDF API",
-    version: "7.2.1",
+    version: "7.2.2",
     description:
       "Enterprise-Grade Document Generation & Processing API.\n\n" +
       "## Architecture\n" +
@@ -150,6 +150,40 @@ const spec = {
                         },
                         description:
                           "Overlay watermark. Use repeat: true to tile text diagonally across entire page (ideal for receipts)",
+                      },
+                      logo: {
+                        type: "object",
+                        properties: {
+                          src: {
+                            type: "string",
+                            description: "URL or Base64 data URI of the logo",
+                          },
+                          width: { type: "string", default: "100px" },
+                          height: { type: "string", default: "auto" },
+                          position: {
+                            type: "string",
+                            enum: [
+                              "top-left",
+                              "top-center",
+                              "top-right",
+                              "bottom-left",
+                              "bottom-center",
+                              "bottom-right",
+                              "center",
+                            ],
+                            default: "top-center",
+                          },
+                          opacity: { type: "number", default: 1 },
+                          grayscale: {
+                            type: "boolean",
+                            default: false,
+                            description:
+                              "Convert logo to grayscale (useful for thermal printers)",
+                          },
+                          margin: { type: "string", default: "0 0 15px 0" },
+                        },
+                        description:
+                          "Universal Logo Injection. Supports any image URL or Base64.",
                       },
                       chart: {
                         type: "object",
@@ -548,6 +582,23 @@ const spec = {
                   page_size: { type: "string", default: "thermal_default" },
                   qr_code: { type: "object" },
                   barcode: { type: "object" },
+                  logo: {
+                    type: "object",
+                    properties: {
+                      src: {
+                        type: "string",
+                        description: "URL or Base64 data URI",
+                      },
+                      width: { type: "string", default: "100px" },
+                      position: {
+                        type: "string",
+                        enum: ["top-left", "top-center", "top-right", "center"],
+                        default: "top-center",
+                      },
+                      grayscale: { type: "boolean", default: false },
+                    },
+                    description: "Inject logo at the top of the receipt",
+                  },
                   watermark: {
                     type: "object",
                     properties: {
@@ -556,7 +607,10 @@ const spec = {
                       color: { type: "string" },
                       fontSize: { type: "integer" },
                       rotate: { type: "integer" },
-                      repeat: { type: "boolean" },
+                      repeat: {
+                        type: "boolean",
+                        description: "Tile watermark across page",
+                      },
                     },
                   },
                 },

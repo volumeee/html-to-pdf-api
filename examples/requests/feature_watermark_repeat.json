@@ -1,0 +1,12 @@
+{
+  "source_type": "html",
+  "source": "<h1 style=\"text-align:center;margin-top:200px\">COPYRIGHTED MATERIAL</h1>",
+  "options": {
+    "watermark": {
+      "text": "DO NOT COPY",
+      "opacity": 0.1,
+      "repeat": true,
+      "color": "#0000ff"
+    }
+  }
+}

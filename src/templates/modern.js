@@ -23,7 +23,7 @@ module.exports = function modern(data) {
 <html><head><style>
   @page { size: 380px auto; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { width: 380px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; padding: 15px; color: #333; overflow: hidden; }
+  body { width: 380px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; padding: 15px; color: #333; }
   .center { text-align: center; } .r { text-align: right; } .bold { font-weight: bold; }
   .sep { border-top: 1px solid #ddd; margin: 10px 0; }
   table { width: 100%; border-collapse: collapse; }

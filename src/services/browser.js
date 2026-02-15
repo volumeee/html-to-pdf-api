@@ -64,6 +64,15 @@ async function getBrowser() {
 async function createPage(viewportWidth = 380, viewportHeight = 800) {
   const browser = await getBrowser();
   const page = await browser.newPage();
+
+  // Forward browser console to server logs for debugging
+  page.on("console", (msg) => {
+    const text = msg.text();
+    if (text.startsWith("[BROWSER]")) {
+      console.log(text);
+    }
+  });
+
   await page.setViewport({ width: viewportWidth, height: viewportHeight });
   return page;
 }

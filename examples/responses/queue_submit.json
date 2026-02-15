@@ -1,7 +1,7 @@
 {
   "status": "processing",
   "message": "Job queued for processing",
-  "id": "b2946f65-5223-4b01-ad63-21d91a59d174",
+  "id": "a2611c2e-46eb-40bd-aa21-245d911e485e",
   "position": 0,
-  "queue_size": 3
+  "queue_size": 1
 }

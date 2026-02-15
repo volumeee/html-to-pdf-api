@@ -170,6 +170,120 @@ async function injectWatermark(page, watermark) {
 }
 
 /**
+ * Inject Logo into the rendered page
+ * Supports: URL, Base64, local data URI
+ * Universal: works for any HTML/URL source
+ */
+async function injectLogo(page, logoConfig) {
+  if (!logoConfig || !logoConfig.src) return;
+
+  const config = {
+    src: logoConfig.src,
+    width: logoConfig.width || "100px",
+    height: logoConfig.height || "auto",
+    position: logoConfig.position || "top-center",
+    opacity: logoConfig.opacity !== undefined ? logoConfig.opacity : 1,
+    grayscale: logoConfig.grayscale || false,
+    margin: logoConfig.margin || "0 0 15px 0",
+  };
+
+  await page.evaluate(async (params) => {
+    const container = document.createElement("div");
+    const pos = params.position;
+
+    // Build Style
+    let containerStyle = `
+      pointer-events: none;
+      opacity: ${params.opacity};
+      clear: both;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    `;
+
+    let imgStyle = `
+      width: ${params.width};
+      height: ${params.height};
+      filter: ${params.grayscale ? "grayscale(1)" : "none"};
+      display: inline-block;
+      vertical-align: middle;
+    `;
+
+    // Position Logic
+    if (pos === "center") {
+      containerStyle += `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000000;
+        text-align: center;
+      `;
+    } else if (pos.includes("top")) {
+      containerStyle += `
+        text-align: ${pos === "top-center" ? "center" : pos === "top-right" ? "right" : "left"};
+        padding: ${params.margin};
+        position: relative;
+        z-index: 1000000;
+      `;
+    } else if (pos.includes("bottom")) {
+      containerStyle += `
+        text-align: ${pos === "bottom-center" ? "center" : pos === "bottom-right" ? "right" : "left"};
+        padding: ${params.margin};
+        position: relative;
+        z-index: 1000000;
+      `;
+    }
+
+    container.style.cssText = containerStyle;
+    container.innerHTML = `<img id="injected-logo" src="${params.src}" style="${imgStyle}" />`;
+
+    console.log(`[BROWSER] Injecting logo to body (${pos})...`);
+
+    // FORCE BODY TO SHOW OVERFLOW
+    document.body.style.overflow = "visible";
+    document.body.style.position = "relative";
+
+    if (pos === "center" || pos.includes("bottom")) {
+      document.body.appendChild(container);
+    } else {
+      // Use insertAdjacentElement 'afterbegin' to ensure it's at the very top
+      document.body.insertAdjacentElement("afterbegin", container);
+    }
+
+    // WAIT FOR IMAGE TO LOAD (BETTER)
+    const img = container.querySelector("img");
+    if (img) {
+      if (img.complete && img.naturalWidth > 0) {
+        console.log(
+          `[BROWSER] Logo already loaded (${img.naturalWidth}x${img.naturalHeight})`,
+        );
+        return "already_loaded";
+      }
+
+      console.log("[BROWSER] Waiting for logo to load...");
+      return new Promise((resolve) => {
+        img.onload = () => {
+          console.log(
+            `[BROWSER] Logo loaded successfully (${img.naturalWidth}x${img.naturalHeight})`,
+          );
+          resolve("loaded");
+        };
+        img.onerror = () => {
+          console.error("[BROWSER] Logo failed to load!");
+          resolve("error");
+        };
+        setTimeout(() => {
+          console.warn("[BROWSER] Logo load timeout (5s)");
+          resolve("timeout");
+        }, 5000);
+      });
+    }
+    return "no_img";
+  }, config);
+}
+
+/**
  * Inject QR Code into the rendered page
  * Uses display:block + margin:0 auto for centering (simplest & most reliable method)
  */
@@ -367,6 +481,7 @@ async function renderPdf(source, outputPath, options = {}) {
     await loadContent(page, source, options);
     await injectCss(page, options.inject_css);
     // Watermark injected AFTER height measurement for thermal (see below)
+    await injectLogo(page, options.logo);
     await injectChart(page, options.chart);
     await injectTable(page, options.table);
     await injectQrCode(page, options.qr_code);
@@ -446,6 +561,7 @@ async function renderImage(source, outputPath, options = {}) {
     await loadContent(page, source, options);
     await injectCss(page, options.inject_css);
     await injectWatermark(page, options.watermark);
+    await injectLogo(page, options.logo);
     await injectChart(page, options.chart);
     await injectTable(page, options.table);
     await injectQrCode(page, options.qr_code);

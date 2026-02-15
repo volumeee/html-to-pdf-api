@@ -1,0 +1,271 @@
+{
+  "source_type": "template",
+  "source": "indomaret",
+  "data": {
+    "store_name": "TES STRUK PANJANG",
+    "store_address": "Jalan Merdeka No. 45, Jakarta Pusat",
+    "items": [
+      {
+        "name": "Item Belanja ke-1 (Produk Test)",
+        "qty": 1,
+        "price": 10000
+      },
+      {
+        "name": "Item Belanja ke-2 (Produk Test)",
+        "qty": 1,
+        "price": 10500
+      },
+      {
+        "name": "Item Belanja ke-3 (Produk Test)",
+        "qty": 1,
+        "price": 11000
+      },
+      {
+        "name": "Item Belanja ke-4 (Produk Test)",
+        "qty": 1,
+        "price": 11500
+      },
+      {
+        "name": "Item Belanja ke-5 (Produk Test)",
+        "qty": 1,
+        "price": 12000
+      },
+      {
+        "name": "Item Belanja ke-6 (Produk Test)",
+        "qty": 1,
+        "price": 12500
+      },
+      {
+        "name": "Item Belanja ke-7 (Produk Test)",
+        "qty": 1,
+        "price": 13000
+      },
+      {
+        "name": "Item Belanja ke-8 (Produk Test)",
+        "qty": 1,
+        "price": 13500
+      },
+      {
+        "name": "Item Belanja ke-9 (Produk Test)",
+        "qty": 1,
+        "price": 14000
+      },
+      {
+        "name": "Item Belanja ke-10 (Produk Test)",
+        "qty": 1,
+        "price": 14500
+      },
+      {
+        "name": "Item Belanja ke-11 (Produk Test)",
+        "qty": 1,
+        "price": 15000
+      },
+      {
+        "name": "Item Belanja ke-12 (Produk Test)",
+        "qty": 1,
+        "price": 15500
+      },
+      {
+        "name": "Item Belanja ke-13 (Produk Test)",
+        "qty": 1,
+        "price": 16000
+      },
+      {
+        "name": "Item Belanja ke-14 (Produk Test)",
+        "qty": 1,
+        "price": 16500
+      },
+      {
+        "name": "Item Belanja ke-15 (Produk Test)",
+        "qty": 1,
+        "price": 17000
+      },
+      {
+        "name": "Item Belanja ke-16 (Produk Test)",
+        "qty": 1,
+        "price": 17500
+      },
+      {
+        "name": "Item Belanja ke-17 (Produk Test)",
+        "qty": 1,
+        "price": 18000
+      },
+      {
+        "name": "Item Belanja ke-18 (Produk Test)",
+        "qty": 1,
+        "price": 18500
+      },
+      {
+        "name": "Item Belanja ke-19 (Produk Test)",
+        "qty": 1,
+        "price": 19000
+      },
+      {
+        "name": "Item Belanja ke-20 (Produk Test)",
+        "qty": 1,
+        "price": 19500
+      },
+      {
+        "name": "Item Belanja ke-21 (Produk Test)",
+        "qty": 1,
+        "price": 20000
+      },
+      {
+        "name": "Item Belanja ke-22 (Produk Test)",
+        "qty": 1,
+        "price": 20500
+      },
+      {
+        "name": "Item Belanja ke-23 (Produk Test)",
+        "qty": 1,
+        "price": 21000
+      },
+      {
+        "name": "Item Belanja ke-24 (Produk Test)",
+        "qty": 1,
+        "price": 21500
+      },
+      {
+        "name": "Item Belanja ke-25 (Produk Test)",
+        "qty": 1,
+        "price": 22000
+      },
+      {
+        "name": "Item Belanja ke-26 (Produk Test)",
+        "qty": 1,
+        "price": 22500
+      },
+      {
+        "name": "Item Belanja ke-27 (Produk Test)",
+        "qty": 1,
+        "price": 23000
+      },
+      {
+        "name": "Item Belanja ke-28 (Produk Test)",
+        "qty": 1,
+        "price": 23500
+      },
+      {
+        "name": "Item Belanja ke-29 (Produk Test)",
+        "qty": 1,
+        "price": 24000
+      },
+      {
+        "name": "Item Belanja ke-30 (Produk Test)",
+        "qty": 1,
+        "price": 24500
+      },
+      {
+        "name": "Item Belanja ke-31 (Produk Test)",
+        "qty": 1,
+        "price": 25000
+      },
+      {
+        "name": "Item Belanja ke-32 (Produk Test)",
+        "qty": 1,
+        "price": 25500
+      },
+      {
+        "name": "Item Belanja ke-33 (Produk Test)",
+        "qty": 1,
+        "price": 26000
+      },
+      {
+        "name": "Item Belanja ke-34 (Produk Test)",
+        "qty": 1,
+        "price": 26500
+      },
+      {
+        "name": "Item Belanja ke-35 (Produk Test)",
+        "qty": 1,
+        "price": 27000
+      },
+      {
+        "name": "Item Belanja ke-36 (Produk Test)",
+        "qty": 1,
+        "price": 27500
+      },
+      {
+        "name": "Item Belanja ke-37 (Produk Test)",
+        "qty": 1,
+        "price": 28000
+      },
+      {
+        "name": "Item Belanja ke-38 (Produk Test)",
+        "qty": 1,
+        "price": 28500
+      },
+      {
+        "name": "Item Belanja ke-39 (Produk Test)",
+        "qty": 1,
+        "price": 29000
+      },
+      {
+        "name": "Item Belanja ke-40 (Produk Test)",
+        "qty": 1,
+        "price": 29500
+      },
+      {
+        "name": "Item Belanja ke-41 (Produk Test)",
+        "qty": 1,
+        "price": 30000
+      },
+      {
+        "name": "Item Belanja ke-42 (Produk Test)",
+        "qty": 1,
+        "price": 30500
+      },
+      {
+        "name": "Item Belanja ke-43 (Produk Test)",
+        "qty": 1,
+        "price": 31000
+      },
+      {
+        "name": "Item Belanja ke-44 (Produk Test)",
+        "qty": 1,
+        "price": 31500
+      },
+      {
+        "name": "Item Belanja ke-45 (Produk Test)",
+        "qty": 1,
+        "price": 32000
+      },
+      {
+        "name": "Item Belanja ke-46 (Produk Test)",
+        "qty": 1,
+        "price": 32500
+      },
+      {
+        "name": "Item Belanja ke-47 (Produk Test)",
+        "qty": 1,
+        "price": 33000
+      },
+      {
+        "name": "Item Belanja ke-48 (Produk Test)",
+        "qty": 1,
+        "price": 33500
+      },
+      {
+        "name": "Item Belanja ke-49 (Produk Test)",
+        "qty": 1,
+        "price": 34000
+      },
+      {
+        "name": "Item Belanja ke-50 (Produk Test)",
+        "qty": 1,
+        "price": 34500
+      }
+    ],
+    "payment": 5000000
+  },
+  "options": {
+    "pageSize": "thermal_80mm",
+    "logo": {
+      "src": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+      "width": "150px",
+      "position": "top-center",
+      "grayscale": true,
+      "margin": "30px 0 10px 0"
+    }
+  }
+}

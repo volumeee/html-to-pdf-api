@@ -1,6 +1,6 @@
 {
   "source_type": "url",
-  "source": "http://localhost:3003/health",
+  "source": "http://localhost:3000/health",
   "output": "image",
   "options": {
     "format": "png"

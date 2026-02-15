@@ -51,7 +51,7 @@ async function setMetadata(filePath, metadata = {}) {
 
   // Default producer
   if (!metadata.producer) {
-    pdfDoc.setProducer("HTML to PDF API v7.2.1");
+    pdfDoc.setProducer("HTML to PDF API v7.2.2");
   }
 
   const modifiedBytes = await pdfDoc.save();

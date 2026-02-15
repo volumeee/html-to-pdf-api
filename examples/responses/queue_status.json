@@ -1,21 +1,21 @@
 {
   "status": "success",
   "job": {
-    "id": "b2946f65-5223-4b01-ad63-21d91a59d174",
+    "id": "a2611c2e-46eb-40bd-aa21-245d911e485e",
     "type": "render",
     "status": "failed",
     "data": {
       "source_type": "html",
       "source": "<h1>Queue Test v7.2.1</h1>",
-      "_base_url": "http://localhost:3003"
+      "_base_url": "http://localhost:3000"
     },
     "result": null,
     "error": "Either 'html' or 'url' must be provided.",
-    "created_at": 1771001627782,
-    "started_at": 1771001627782,
-    "completed_at": 1771001627815,
+    "created_at": 1771117147414,
+    "started_at": 1771117147414,
+    "completed_at": 1771117147645,
     "priority": 0,
-    "duration_ms": 33,
+    "duration_ms": 231,
     "waiting_ms": 0
   }
 }

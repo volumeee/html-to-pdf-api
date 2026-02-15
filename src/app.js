@@ -1,6 +1,6 @@
 /**
  * Express Application Setup
- * v7.2.1 — with Unified API & Enhanced Security
+ * v7.2.2 — with Unified API & Enhanced Security
  */
 const express = require("express");
 const cors = require("cors");

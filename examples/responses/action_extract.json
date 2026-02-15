@@ -1,8 +1,8 @@
 {
   "status": "success",
   "message": "Action \"extract\" completed successfully",
-  "file_url": "http://localhost:3003/output/extracted_1771001627770.pdf",
-  "filename": "extracted_1771001627770.pdf",
+  "file_url": "http://localhost:3000/output/extracted_1771117147349.pdf",
+  "filename": "extracted_1771117147349.pdf",
   "page_count": 1,
   "original_pages": [
     0

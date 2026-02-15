@@ -1,0 +1,6 @@
+{
+  "status": "success",
+  "message": "Receipt PDF generated",
+  "file_url": "http://localhost:3000/output/struk_1771117204904.pdf",
+  "filename": "struk_1771117204904.pdf"
+}

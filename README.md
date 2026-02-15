@@ -4,7 +4,7 @@
 
 # 📄 HTML to PDF API
 
-> **v7.2.1 — Unified Gateway Architecture**
+> **v7.2.2 — Unified Gateway & Logo Injection**
 >
 > Enterprise-grade document generation & processing API. Convert HTML, URLs, and templates into professional PDFs and images with a single endpoint.
 
@@ -19,7 +19,7 @@
 
 ## ⚡ Architecture Overview
 
-Version 7.2.1 consolidates 20+ legacy endpoints into **two core gateways**:
+Version 7.2.2 consolidates 20+ legacy endpoints into **two core gateways**:
 
 | Endpoint | Purpose | Method |
 |---|---|---|
@@ -139,6 +139,7 @@ Generate PDFs or images from **HTML**, **URLs**, or **Templates**. Supports inli
 | `table` | `object` | `{ data: [...], options: { columns, headers, zebra } }` |
 | `qr_code` | `object` | `{ text, position, width, label, color, background }` |
 | `barcode` | `object` | `{ text, type, position, label, scale, height }` |
+| `logo` | `object` | `{ src, width, height, position, grayscale, opacity, margin }` — Universal image injection (URL or Base64) |
 | `displayHeaderFooter` | `boolean` | Enable header/footer templates |
 | `headerTemplate` | `string` | HTML template for page header |
 | `footerTemplate` | `string` | HTML template for page footer |
@@ -560,6 +561,14 @@ curl http://localhost:3000/templates
 
 ## 📋 Changelog
 
+### v7.2.2 — Logo, Watermark & Receipt Perfection
+- 🖼️ **Universal Logo Injection**: Add logos to any PDF/Image via URL/Base64 on ALL endpoints (including legacy)
+- 📜 **Dynamic Long Receipt**: Auto-expanding height for thermal receipts (no more clipping on long lists!)
+- 🌊 **Repeating Watermarks**: Added `repeat: true` for diagonal tiling (supported in `/render` & `/cetak_struk_pdf`)
+- 🔄 **Legacy Upgrade**: `POST /cetak_struk_pdf` now supports `logo` parameter
+- 🛠️ **Bug Fixes**: Resolved CSS overflow issues and improved image loading reliability
+- 📝 Updated all metadata to version 7.2.2
+
 ### v7.2.0 — Unified Gateway Architecture
 - 🏗️ Consolidated 20+ endpoints into `/render` and `/pdf-action`
 - 📊 Added Chart.js integration for automated chart generation
@@ -580,7 +589,7 @@ curl http://localhost:3000/templates
 
 ## 🏎️ Resource Optimization (Lite Mode)
 
-Version 7.2.1 is optimized for low-resource environments (VPS/Container):
+Version 7.2.2 is optimized for low-resource environments (VPS/Container):
 
 - **Chromium Lite Mode**: We use specialized flags (`--disable-extensions`, `--no-first-run`, etc.) to minimize memory footprint.
 - **Concurrency Control**: Use `QUEUE_CONCURRENCY` and `BROWSER_POOL_SIZE` to prevent CPU spikes.
