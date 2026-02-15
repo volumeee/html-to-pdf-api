@@ -113,7 +113,8 @@
   "logo": {
     "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Indomaret.png/1280px-Logo_Indomaret.png",
     "width": "140px",
-    "position": "top-center"
+    "position": "top-center",
+    "grayscale": true
   },
   "watermark": {
     "text": "INDOMARET LEGACY",
