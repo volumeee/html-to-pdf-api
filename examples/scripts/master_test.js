@@ -391,6 +391,71 @@ async function runMasterTest() {
     const res_wm2 = await client.post("/render", feat_wm_repeat);
     await logResult("feature_watermark_repeat", feat_wm_repeat, res_wm2.data);
 
+    // 2k. Feature: Indomaret Real Data (Long, Logo, Watermark)
+    const indomaretItems = [
+      { name: "Aqua Botol 600ml", qty: 2, price: 3500 },
+      { name: "Indomie Goreng Spesial", qty: 5, price: 3100 },
+      { name: "Sari Roti Tawar Kupas", qty: 1, price: 18500 },
+      { name: "Ultra Milk Coklat 1L", qty: 1, price: 19800 },
+      { name: "Bimoli Minyak Goreng 2L", qty: 1, price: 38900 },
+      { name: "Gulaku Gula Pasir 1kg", qty: 2, price: 16500 },
+      { name: "Kapal Api Special 165g", qty: 1, price: 14200 },
+      { name: "Teh Botol Sosro 450ml", qty: 3, price: 6500 },
+      { name: "Tissue Paseo 250s", qty: 2, price: 21500 },
+      { name: "Pantene Shampoo 135ml", qty: 1, price: 28900 },
+      { name: "Chitato Sapi Panggang", qty: 2, price: 11500 },
+      { name: "Oreo Vanilla 133g", qty: 2, price: 9800 },
+      { name: "Silverqueen Cashew 65g", qty: 1, price: 15900 },
+      { name: "Rokok Sampoerna Mild", qty: 1, price: 32500 },
+      { name: "Pepsodent White 190g", qty: 1, price: 13800 },
+      { name: "Lifebuoy Body Wash 450ml", qty: 1, price: 24500 },
+      { name: "Sunlight Jeruk Nipis 755ml", qty: 1, price: 18900 },
+      { name: "Baygon Aerosol 600ml", qty: 1, price: 42500 },
+      { name: "Molto Pewangi Blue 820ml", qty: 1, price: 12900 },
+      { name: "Beras Pandan Wangi 5kg", qty: 1, price: 78000 },
+    ];
+
+    const feat_indo_real = {
+      source_type: "template",
+      source: "indomaret",
+      data: {
+        store_name: "INDOMARET POINT",
+        store_address: "Jl. Jend. Sudirman No. Kav 52-53, Jakarta Selatan",
+        date: "15/02/2026 09:30",
+        cashier: "Budi Santoso",
+        items: indomaretItems,
+        payment: 500000,
+      },
+      options: {
+        pageSize: "thermal_80mm",
+        logo: {
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Indomaret.png/1280px-Logo_Indomaret.png",
+          width: "140px",
+          position: "top-center",
+          margin: "10px 0 20px 0",
+          grayscale: true,
+        },
+        watermark: {
+          text: "INDOMARET",
+          opacity: 0.05,
+          color: "#005baa", // Indomaret Blue
+          repeat: true,
+        },
+        qr_code: {
+          text: "INDOMARET-TRX-20260215-001",
+          position: "bottom-center",
+          label: "Scan Struk",
+        },
+      },
+    };
+    await delay(RENDER_DELAY);
+    const res_indo_real = await client.post("/render", feat_indo_real);
+    await logResult(
+      "feature_indomaret_real",
+      feat_indo_real,
+      res_indo_real.data,
+    );
+
     // ============================================================
     // 3. PDF ACTIONS (/pdf-action)
     // ============================================================
@@ -628,6 +693,39 @@ async function runMasterTest() {
     const rl6 = await client.post("/cetak_struk_pdf", l6);
     await logResult("legacy_test_logo", l6, rl6.data);
 
+    // 6g. Legacy Indomaret Real Data (Full Test)
+    const l7 = {
+      template: "indomaret",
+      data: {
+        store_name: "INDOMARET LEGACY",
+        store_address: "Jl. Legacy No. 99, Jakarta",
+        date: "15/02/2026 10:00",
+        cashier: "Legacy User",
+        items: indomaretItems,
+        payment: 500000,
+      },
+      page_size: "thermal_80mm",
+      logo: {
+        src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Indomaret.png/1280px-Logo_Indomaret.png",
+        width: "140px",
+        position: "top-center",
+        grayscale: true,
+      },
+      watermark: {
+        text: "INDOMARET LEGACY",
+        opacity: 0.1,
+        color: "#005baa",
+        repeat: true,
+      },
+      qr_code: {
+        text: "LEGACY-TRX-999",
+        position: "bottom-center",
+      },
+    };
+    await delay(RENDER_DELAY);
+    const rl7 = await client.post("/cetak_struk_pdf", l7);
+    await logResult("legacy_indomaret_real", l7, rl7.data);
+
     // ============================================================
     // 7. MANAGEMENT ENDPOINTS
     // ============================================================
@@ -664,11 +762,11 @@ async function runMasterTest() {
       `   Templates tested: indomaret, modern, invoice, surat, sertifikat, label`,
     );
     console.log(
-      `   Legacy Features: 25 items, Watermark Repeat, Logo Injection`,
+      `   Legacy Features: Indomaret Real Data (Full), 25 items, Logo, Watermark Repeat`,
     );
     console.log(`   Scanner features: QR Code centering, Barcode`);
     console.log(
-      `   New Features: Universal Logo Injection, Dynamic Long Receipt (50 items)`,
+      `   New Features: Universal Logo Injection, Dynamic Long Receipt, Indomaret Real Data`,
     );
     console.log(
       `   Watermark: tested Single (Red/Rotated) and Repeat/Tiled (Blue)`,
