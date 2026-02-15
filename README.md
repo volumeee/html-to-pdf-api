@@ -232,6 +232,25 @@ Generate PDFs or images from **HTML**, **URLs**, or **Templates**. Supports inli
 }
 ```
 
+**PDF with Barcode**
+```json
+{
+  "source_type": "html",
+  "source": "<h1>Product Label</h1>",
+  "options": {
+    "pageSize": "label",
+    "barcode": {
+      "text": "SKU-999-XYZ",
+      "type": "code39",
+      "position": "bottom-center",
+      "width": 2,
+      "height": 40,
+      "displayValue": true
+    }
+  }
+}
+```
+
 **Receipt with Repeating Watermark** _(Thermal Paper)_
 ```json
 {
@@ -375,6 +394,7 @@ GET /queue/stats
 ### 4. Legacy Endpoint
 
 **`POST /cetak_struk_pdf`** — Backward-compatible receipt generator.
+> Supports: `html_content`, `template`, `qr_code`, `barcode`, `logo`, and `watermark` (including repeat).
 
 ```json
 {
