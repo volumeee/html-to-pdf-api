@@ -23,14 +23,23 @@ module.exports = function indomaret(data) {
 
   return `<!DOCTYPE html>
 <html><head><style>
-  @page { size: auto; margin: 0; }
+  @page { size: 58mm auto; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { width: 100%; font-family: 'Courier New', monospace; font-size: 13px; padding: 10px; color: #000; }
+  html, body { background: #fff; }
+  body { 
+    width: 46mm; 
+    margin: 0 auto;
+    font-family: 'Courier New', monospace; 
+    font-size: 11px; 
+    padding: 1mm 3mm; 
+    color: #000; 
+    overflow-x: hidden;
+  }
   .center { text-align: center; } .r { text-align: right; } .bold { font-weight: bold; }
-  .sep { border-top: 1px dashed #000; margin: 6px 0; }
-  .sep-double { border-top: 2px double #000; margin: 6px 0; }
-  table { width: 100%; border-collapse: collapse; }
-  td { padding: 1px 0; vertical-align: top; }
+  .sep { border-top: 1px dashed #000; margin: 4px 0; }
+  .sep-double { border-top: 2px double #000; margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  td { padding: 1px 0; vertical-align: top; word-break: break-word; }
   .store-name { font-size: 18px; font-weight: bold; letter-spacing: 2px; }
   .footer { font-size: 11px; margin-top: 10px; }
   .barcode { font-family: 'Libre Barcode 39', cursive; font-size: 40px; letter-spacing: 2px; overflow-wrap: break-word; word-break: break-all; max-width: 100%; }
@@ -67,6 +76,7 @@ module.exports = function indomaret(data) {
     <div>Barang yang sudah dibeli</div>
     <div>tidak dapat ditukar/dikembalikan</div>
     <div style="margin-top:8px;" class="barcode">*${data.order_id || Date.now()}*</div>
+    <div style="height: 10mm; font-size: 1px; color: transparent;">&nbsp;</div>
   </div>
 </body></html>`;
 };

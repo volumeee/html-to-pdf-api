@@ -61,7 +61,7 @@ async function getBrowser() {
  * @param {number} viewportHeight
  * @returns {Promise<import('puppeteer').Page>}
  */
-async function createPage(viewportWidth = 380, viewportHeight = 800) {
+async function createPage(viewportWidth = 220, viewportHeight = 800) {
   const browser = await getBrowser();
   const page = await browser.newPage();
 

@@ -21,19 +21,28 @@ module.exports = function modern(data) {
 
   return `<!DOCTYPE html>
 <html><head><style>
-  @page { size: 380px auto; margin: 0; }
+  @page { size: 58mm auto; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { width: 380px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; padding: 15px; color: #333; }
+  html, body { background: #fff; }
+  body { 
+    width: 46mm; 
+    margin: 0 auto;
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    font-size: 11px; 
+    padding: 2mm 3mm; 
+    color: #333; 
+    overflow-x: hidden;
+  }
   .center { text-align: center; } .r { text-align: right; } .bold { font-weight: bold; }
-  .sep { border-top: 1px solid #ddd; margin: 10px 0; }
-  table { width: 100%; border-collapse: collapse; }
-  td, th { padding: 4px 2px; }
-  th { text-align: left; font-size: 11px; color: #888; border-bottom: 2px solid #333; }
-  .logo { font-size: 22px; font-weight: 800; color: #1a1a2e; letter-spacing: 1px; }
-  .total-box { background: #1a1a2e; color: #fff; padding: 10px; border-radius: 6px; margin: 10px 0; }
-  .total-box .amount { font-size: 20px; font-weight: bold; }
-  .footer { font-size: 10px; color: #999; margin-top: 15px; }
-  .badge { display: inline-block; background: #fff3; color: #fff; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+  .sep { border-top: 1px solid #ddd; margin: 6px 0; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  td, th { padding: 3px 1px; vertical-align: top; word-break: break-word; }
+  th { text-align: left; font-size: 10px; color: #888; border-bottom: 2px solid #333; }
+  .logo { font-size: 18px; font-weight: 800; color: #1a1a2e; letter-spacing: 0.5px; }
+  .total-box { background: #1a1a2e; color: #fff; padding: 8px; border-radius: 4px; margin: 8px 0; }
+  .total-box .amount { font-size: 18px; font-weight: bold; }
+  .footer { font-size: 9px; color: #999; margin-top: 12px; }
+  .badge { display: inline-block; background: #fff3; color: #fff; padding: 1px 6px; border-radius: 8px; font-size: 9px; }
 </style></head><body>
   <div class="center">
     <div class="logo">${data.store_name || "STORE"}</div>
@@ -61,5 +70,6 @@ module.exports = function modern(data) {
     <span class="badge">${data.payment_method || "TUNAI"}</span>
   </div>
   <div class="center footer">${data.footer_message || "Terima kasih!"}</div>
+  <div style="height: 10mm; font-size: 1px; color: transparent;">&nbsp;</div>
 </body></html>`;
 };

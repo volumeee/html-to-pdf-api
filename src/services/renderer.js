@@ -60,7 +60,7 @@ async function injectWatermark(page, watermark) {
   if (!watermark || !watermark.text) return;
 
   const text = watermark.text;
-  const opacity = watermark.opacity || 0.12;
+  const opacity = watermark.opacity || 0.7;
   const color = watermark.color || "#000000";
   const rotate = watermark.rotate !== undefined ? watermark.rotate : -35;
   const repeat = watermark.repeat || false;

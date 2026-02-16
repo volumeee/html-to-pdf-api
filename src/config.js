@@ -52,9 +52,9 @@ module.exports = {
 
   // Page size presets
   PAGE_SIZES: {
-    thermal_58mm: { width: "220px", viewport: 220 },
-    thermal_80mm: { width: "302px", viewport: 302 },
-    thermal_default: { width: "380px", viewport: 380 },
+    thermal_58mm: { width: "58mm", viewport: 220 }, // Standard 58mm (approx 48mm printable)
+    thermal_80mm: { width: "80mm", viewport: 302 }, // Standard 80mm (approx 72mm printable)
+    thermal_default: { width: "58mm", viewport: 220 }, // Default to 58mm for better compatibility
     a4: { width: "210mm", height: "297mm", viewport: 794 },
     a5: { width: "148mm", height: "210mm", viewport: 559 },
     letter: { width: "8.5in", height: "11in", viewport: 816 },
