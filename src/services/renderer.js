@@ -65,8 +65,8 @@ async function injectWatermark(page, watermark) {
   const rotate = watermark.rotate !== undefined ? watermark.rotate : -35;
   const repeat = watermark.repeat || false;
 
-  // Default font size: 14px for repeat mode, 60px for single
-  const fontSize = watermark.fontSize || (repeat ? 14 : 60);
+  // Default font size: 20px for repeat mode, 75px for single
+  const fontSize = watermark.fontSize || (repeat ? 20 : 75);
 
   if (repeat) {
     // REPEAT/TILING MODE: wrap body content and overlay watermark

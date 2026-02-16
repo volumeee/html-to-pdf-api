@@ -25,7 +25,7 @@ module.exports = function modern(data) {
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { background: #fff; }
   body { 
-    width: 46mm; 
+    width: 48mm; 
     margin: 0 auto;
     font-family: 'Segoe UI', Arial, sans-serif; 
     font-size: 11px; 
