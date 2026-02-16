@@ -5,11 +5,11 @@ module.exports = function indomaret(data) {
   const itemRows = items
     .map(
       (item) => `
-    <tr><td colspan="3" style="padding:2px 0 0;">${item.name}</td></tr>
+    <tr><td colspan="3" style="padding:2px 0 0; font-weight:bold; font-size: 12px;">${item.name}</td></tr>
     <tr>
-      <td style="padding:0 0 2px;">${item.qty} x ${formatRp(item.price)}</td>
+      <td style="padding:0 0 2px; font-size: 11.5px;">&nbsp;&nbsp;${item.qty} x ${formatRp(item.price)}</td>
       <td></td>
-      <td class="r">${formatRp(item.qty * item.price)}</td>
+      <td class="r" style="font-size: 11.5px; font-weight: bold;">${formatRp(item.qty * item.price)}</td>
     </tr>`,
     )
     .join("");
@@ -31,7 +31,7 @@ module.exports = function indomaret(data) {
     margin: 0 auto;
     font-family: 'Courier New', monospace; 
     font-size: 11px; 
-    padding: 1mm 3mm; 
+    padding: 8mm 3mm 2mm; 
     color: #000; 
     overflow-x: hidden;
   }
@@ -40,15 +40,26 @@ module.exports = function indomaret(data) {
   .sep-double { border-top: 2px double #000; margin: 4px 0; }
   table { width: 100%; border-collapse: collapse; table-layout: fixed; }
   td { padding: 1px 0; vertical-align: top; word-break: break-word; }
-  .store-name { font-size: 18px; font-weight: bold; letter-spacing: 2px; }
+  .store-name { font-size: 16px; font-weight: 900; }
   .footer { font-size: 11px; margin-top: 10px; }
-  .barcode { font-family: 'Libre Barcode 39', cursive; font-size: 40px; letter-spacing: 2px; overflow-wrap: break-word; word-break: break-all; max-width: 100%; }
+  .barcode { font-family: 'Libre Barcode 39', cursive; font-size: 40px; letter-spacing: 2px; }
   .total-line { font-size: 16px; font-weight: bold; }
+  
+  .pixel-trigger {
+    width: 2px;
+    height: 1px;
+    background: #000;
+    margin: 0 auto;
+    opacity: 0.1;
+  }
 </style></head><body>
+  <div style="height: 5mm; text-align: center;"><div class="pixel-trigger"></div></div>
+  
   <div class="center">
-    <div class="store-name">${data.store_name || "TOKO SAYA"}</div>
-    <div>${data.store_address || ""}</div>
-    <div>${data.store_phone || ""}</div>
+    ${data.store_logo ? `<img src="${data.store_logo}" style="max-width:120px; max-height:60px; filter:grayscale(100%); margin-bottom:4px;" />` : ""}
+    ${data.store_name ? `<div class="store-name">${data.store_name.toUpperCase()}</div>` : ""}
+    <div style="font-size: 11px;">${data.store_address || ""}</div>
+    <div style="font-size: 11px;">${data.store_phone ? "Telp: " + data.store_phone : ""}</div>
   </div>
   <div class="sep-double"></div>
   <table>
@@ -76,7 +87,10 @@ module.exports = function indomaret(data) {
     <div>Barang yang sudah dibeli</div>
     <div>tidak dapat ditukar/dikembalikan</div>
     <div style="margin-top:8px;" class="barcode">*${data.order_id || Date.now()}*</div>
-    <div style="height: 10mm; font-size: 1px; color: transparent;">&nbsp;</div>
+    
+    <div style="height: 30mm; position: relative; overflow: hidden; display: block;">
+      <div style="position: absolute; bottom: 1px; left: 50%; width: 2px; height: 1px; background: #000; opacity: 0.1;"></div>
+    </div>
   </div>
 </body></html>`;
 };
